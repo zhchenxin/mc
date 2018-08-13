@@ -11,12 +11,8 @@ Vue.component('message', {
       <br>
       <Row>
         <Form label-position="left" :label-width="80" inline>
-          <FormItem label="Topic" prop="topicId">
-            <Select v-model="formSearch.topicId">
-                <Option v-for="item in topic_list" :value="item.id" :key="item.id">{{ item.name }}</Option>
-            </Select>
-          </FormItem>
-          <FormItem label="Customer" prop="customer_id">
+
+          <FormItem label="Customer" prop="customerId">
             <Select v-model="formSearch.customerId">
                 <Option v-for="item in customer_list" :value="item.id" :key="item.id">{{ item.name }}</Option>
             </Select>
@@ -64,7 +60,6 @@ Vue.component('message', {
         customerId: '',
         status: 0,
       },
-      topic_list: [],
       customer_list: [],
       statusList: [
         {id: 0, name: '全部'},
@@ -80,8 +75,8 @@ Vue.component('message', {
     this.formSearch.customerId = this.$route.query.customerId
     this.formSearch.status = this.$route.query.status
     this.featchTableData()
-    client.get('/topic', {params: {limit: 10000}}).then((response) => {
-      this.topic_list = response.data.data.list
+    client.get('/customer', {params: {limit: 10000}}).then((response) => {
+      this.customer_list = response.data.data.list
     }).catch((error) => {
       this.$Message.error(error)
       this.topic_list = []
@@ -115,7 +110,6 @@ Vue.component('message', {
         params:{
           page: this.currentPage,
           limit: this.limit,
-          topicId: this.formSearch.topicId,
           customerId: this.formSearch.customerId,
           status: this.formSearch.status
         }
