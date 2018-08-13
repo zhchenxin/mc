@@ -18,7 +18,7 @@ public class RetryTimeoutJob implements DisposableBean, Runnable {
 
         this.thread = new Thread(this);
         this.thread.setName("retry-timeout-job");
-        this.thread.run();
+        this.thread.start();
     }
 
     @Override
