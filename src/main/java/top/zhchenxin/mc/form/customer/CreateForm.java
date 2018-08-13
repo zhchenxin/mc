@@ -7,11 +7,11 @@ import javax.validation.constraints.NotNull;
 public class CreateForm {
 
     @NotNull
-    private Long topicId;
+    private Long topicId = 0L;
     @NotNull
-    private String name;
+    private String name = "";
     @NotNull
-    private String api;
+    private String api = "";
     private Integer timeout = 60;
     private Integer attempts = 3;
 
@@ -62,7 +62,6 @@ public class CreateForm {
         item.setApi(this.api);
         item.setAttempts(this.attempts);
         item.setTimeout(this.timeout);
-        item.setCreateDate((int) (System.currentTimeMillis() / 1000));
         return item;
     }
 }

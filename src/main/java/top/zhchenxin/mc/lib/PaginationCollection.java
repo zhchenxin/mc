@@ -26,8 +26,8 @@ public class PaginationCollection<T extends BaseEntity> {
     private Map<String, Long> getMate() {
         Map<String, Long> mate = new HashMap<>();
         mate.put("total", this.count);
-        mate.put("total_page", this.getTotalPage());
-        mate.put("current_page", this.page);
+        mate.put("totalPage", this.getTotalPage());
+        mate.put("currentPage", this.page);
         mate.put("limit", this.limit);
         return mate;
     }

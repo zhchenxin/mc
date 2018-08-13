@@ -30,7 +30,6 @@ public class CreateForm {
         Topic topic = new Topic();
         topic.setName(this.name);
         topic.setDescription(this.description);
-        topic.setCreateDate((int) (System.currentTimeMillis() / 1000));
         return topic;
     }
 }

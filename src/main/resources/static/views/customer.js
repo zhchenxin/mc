@@ -125,8 +125,8 @@ Vue.component('customer-add', {
           <FormItem label="名称" prop="name">
             <Input v-model="formValidate.name" placeholder="请输入名称"/>
           </FormItem>
-          <FormItem label="Topic" prop="topic_id">
-            <Select v-model="formValidate.topic_id">
+          <FormItem label="Topic" prop="topicId">
+            <Select v-model="formValidate.topicId">
                 <Option v-for="item in topic_list" :value="item.id" :key="item.id">{{ item.name }}</Option>
             </Select>
           </FormItem>
@@ -160,7 +160,7 @@ Vue.component('customer-add', {
         name: [
           {required: true, message: '名称不能为空', trigger: 'blur'}
         ],
-        topic_id: [
+        topicId: [
           {required: true, type: 'number', message: '', trigger: 'change'}
         ],
         api: [
