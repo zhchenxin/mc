@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.zhchenxin.mc.dao.MessageLogDao">
+
+    <insert id="createSuccessLog" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="top.zhchenxin.mc.entity.MessageLog">
+        INSERT INTO message_logs SET
+        message_id=#{messageId},
+        topic_id=#{topicId},
+        customer_id=#{customerId},
+        time=#{time},
+        response=#{response},
+        error='',
+        create_date=unix_timestamp(now())
+    </insert>
+
+    <insert id="createErrorLog" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="top.zhchenxin.mc.entity.MessageLog">
+        INSERT INTO message_logs SET
+        message_id=#{messageId},
+        topic_id=#{topicId},
+        customer_id=#{customerId},
+        time=#{time},
+        response='',
+        error=#{error},
+        create_date=unix_timestamp(now())
+    </insert>
+
+</mapper>

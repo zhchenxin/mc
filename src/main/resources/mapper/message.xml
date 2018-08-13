@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.zhchenxin.mc.dao.MessageDao">
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="top.zhchenxin.mc.entity.Message">
+        INSERT INTO messages SET
+        timeout_date=0,status=1,attempts=0,create_date=unix_timestamp(now()),
+        message_id=#{messageId},
+        topic_id=#{topicId},
+        customer_id=#{customerId},
+        message=#{message},
+        available_date=#{availableDate}
+    </insert>
+
+    <select id="search" resultType="top.zhchenxin.mc.entity.Message">
+        SELECT * FROM messages WHERE 1=1
+        <if test="topicId != null and topicId != 0">AND topic_id = #{topicId}</if>
+        <if test="customerId != null and customerId != 0">AND customer_id = #{customerId}</if>
+        <if test="status != null and status != 0">AND status = #{status}</if>
+        LIMIT #{offset},#{limit}
+    </select>
+    <select id="searchCount" resultType="java.lang.Long">
+        SELECT count(*) FROM messages WHERE 1=1
+        <if test="topicId != null and topicId != 0">AND topic_id = #{topicId}</if>
+        <if test="customerId != null and customerId != 0">AND customer_id = #{customerId}</if>
+        <if test="status != null and status != 0">AND status = #{status}</if>
+    </select>
+</mapper>
