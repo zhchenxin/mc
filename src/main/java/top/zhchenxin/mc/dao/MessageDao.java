@@ -20,11 +20,9 @@ public interface MessageDao {
 
     // 按照特定条件查找
     @Select("select * from messages where id = #{id}")
-    @ResultType(top.zhchenxin.mc.entity.Message.class)
     Message getById(@Param("id") Long id);
 
     @Select("select * from messages where message_id = #{messageId} and customer_id = #{customerId}")
-    @ResultType(top.zhchenxin.mc.entity.Message.class)
     Message getByMessageIdAndCustomerId(@Param("messageId") Long messageId, @Param("customerId") Long customerId);
 
     // 操作
@@ -32,7 +30,6 @@ public interface MessageDao {
     void retryTimeoutMessage();
 
     @Select("SELECT * FROM messages WHERE status = 1 AND available_date < unix_timestamp(now()) limit 1 for update")
-    @ResultType(top.zhchenxin.mc.entity.Message.class)
     Message popMessage();
 
     @Update("UPDATE `messages` SET timeout_date=${timeoutDate},status=2 WHERE id=${id}")

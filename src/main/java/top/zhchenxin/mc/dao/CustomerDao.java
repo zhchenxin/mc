@@ -20,11 +20,9 @@ public interface CustomerDao {
 
     // 根据指定条件查询
     @Select("select * from customers where topic_id = #{topicId}")
-    @ResultType(top.zhchenxin.mc.entity.Customer.class)
     List<Customer> getByTopic(@Param("topicId") Long topicId);
 
     @Select("select * from customers where id = #{id}")
-    @ResultType(top.zhchenxin.mc.entity.Customer.class)
     Customer getById(@Param("id") Long id);
 
     List<Customer> getByIds(@Param("ids") List<Long> ids);

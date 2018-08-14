@@ -20,11 +20,9 @@ public interface TopicDao {
 
     // 按照特定条件查找
     @Select("select * from topics where name = #{name} limit 1")
-    @ResultType(top.zhchenxin.mc.entity.Topic.class)
     Topic getByName(@Param("name") String name);
 
     @Select("select * from topics where id = #{id}")
-    @ResultType(top.zhchenxin.mc.entity.Topic.class)
     Topic getById(@Param("id") Long id);
 
     List<Topic> getByIds(@Param("ids") List<Long> ids);

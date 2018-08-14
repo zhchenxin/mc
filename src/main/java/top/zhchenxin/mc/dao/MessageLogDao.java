@@ -15,6 +15,5 @@ public interface MessageLogDao {
     // 按照特定条件查找
 
     @Select("select * from message_logs where message_id = #{messageId}")
-    @ResultType(top.zhchenxin.mc.entity.MessageLog.class)
     List<MessageLog> getByMessageId(@Param("messageId") Long messageId);
 }
