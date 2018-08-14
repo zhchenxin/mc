@@ -2,8 +2,6 @@ package top.zhchenxin.mc.entity;
 
 import top.zhchenxin.mc.lib.BaseEntity;
 
-import java.util.Date;
-
 public class Customer extends BaseEntity {
     // topic id
     private Long topicId;
