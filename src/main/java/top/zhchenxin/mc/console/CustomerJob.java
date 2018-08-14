@@ -3,7 +3,10 @@ package top.zhchenxin.mc.console;
 import com.squareup.okhttp.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import top.zhchenxin.mc.entity.Customer;
 import top.zhchenxin.mc.entity.Message;
@@ -15,20 +18,23 @@ import java.util.concurrent.TimeUnit;
 
 
 @Component
-public class CustomerJob implements Runnable {
+@Configuration
+public class CustomerJob implements Runnable, InitializingBean {
 
+    @Autowired
     private MessageService messageService;
+
+    @Autowired
     private CustomerService customerService;
+
+    @Value("${customer_count}")
+    private int customerCount = 0;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    public CustomerJob(CustomerService customerService, MessageService messageService) {
-
-        this.customerService = customerService;
-        this.messageService = messageService;
-
-        for (int i = 0; i < 10; i++) {
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        for (int i = 0; i < this.customerCount; i++) {
             Thread thread = new Thread(this, "worker" + i);
             thread.start();
         }

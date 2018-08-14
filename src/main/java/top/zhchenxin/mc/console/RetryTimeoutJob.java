@@ -1,22 +1,21 @@
 package top.zhchenxin.mc.console;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.zhchenxin.mc.service.MessageService;
 
 @Component
-public class RetryTimeoutJob implements Runnable {
-    private Thread thread;
-
-    private MessageService messageService;
+public class RetryTimeoutJob implements Runnable, InitializingBean {
 
     @Autowired
-    public RetryTimeoutJob(MessageService messageService) {
-        this.messageService = messageService;
+    private MessageService messageService;
 
-        this.thread = new Thread(this);
-        this.thread.setName("retry-timeout-job");
-        this.thread.start();
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Thread thread = new Thread(this);
+        thread.setName("retry-timeout-job");
+        thread.start();
     }
 
     @Override
