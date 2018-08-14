@@ -1,26 +1,46 @@
 package top.zhchenxin.mc.console;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.zhchenxin.mc.service.MessageService;
 
 @Component
-public class RetryTimeoutJob implements Runnable, InitializingBean {
+public class RetryTimeoutJob implements Runnable, InitializingBean, DisposableBean {
 
     @Autowired
     private MessageService messageService;
 
+    private Thread thread;
+
+    private volatile boolean running = true;
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     @Override
     public void afterPropertiesSet() throws Exception {
-        Thread thread = new Thread(this);
+        thread = new Thread(this);
         thread.setName("retry-timeout-job");
         thread.start();
     }
 
     @Override
-    public void run() {
+    public void destroy() throws Exception {
+        this.running = false;
         while (true) {
+            Thread.sleep(100);
+            if (thread.getState() == Thread.State.TERMINATED) {
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void run() {
+        while (running) {
             this.messageService.retryTimeoutMessage();
             try {
                 Thread.sleep(3000);
@@ -28,5 +48,6 @@ public class RetryTimeoutJob implements Runnable, InitializingBean {
                 e.printStackTrace();
             }
         }
+        logger.debug("进程停止" + Thread.currentThread().getName());
     }
 }

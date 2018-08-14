@@ -3,6 +3,7 @@ package top.zhchenxin.mc.console;
 import com.squareup.okhttp.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,12 +15,14 @@ import top.zhchenxin.mc.service.CustomerService;
 import top.zhchenxin.mc.service.MessageService;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
 @Component
 @Configuration
-public class CustomerJob implements Runnable, InitializingBean {
+public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
 
     @Autowired
     private MessageService messageService;
@@ -32,17 +35,43 @@ public class CustomerJob implements Runnable, InitializingBean {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
+    private volatile boolean running = true;
+
+    private List<Thread> threadList;
+
     @Override
     public void afterPropertiesSet() throws Exception {
+        this.threadList = new ArrayList<>();
         for (int i = 0; i < this.customerCount; i++) {
             Thread thread = new Thread(this, "worker" + i);
             thread.start();
+            this.threadList.add(thread);
+        }
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        this.running = false;
+        while (true) {
+            Thread.sleep(100);
+            boolean isStop = true;
+
+            for (int i = 0; i < this.threadList.size(); i++) {
+                if (this.threadList.get(i).getState() != Thread.State.TERMINATED) {
+                    isStop = false;
+                    break;
+                }
+            }
+
+            if (isStop) {
+                break;
+            }
         }
     }
 
     @Override
     public void run() {
-        while (true) {
+        while (running) {
             try {
                 boolean res = worker();
                 if (!res) {
@@ -52,6 +81,7 @@ public class CustomerJob implements Runnable, InitializingBean {
                 logger.error("worker error: ", e);
             }
         }
+        logger.debug("进程停止" + Thread.currentThread().getName());
     }
 
     /**
