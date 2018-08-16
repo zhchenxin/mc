@@ -52,20 +52,8 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
     @Override
     public void destroy() throws Exception {
         this.running = false;
-        while (true) {
-            Thread.sleep(100);
-            boolean isStop = true;
-
-            for (int i = 0; i < this.threadList.size(); i++) {
-                if (this.threadList.get(i).getState() != Thread.State.TERMINATED) {
-                    isStop = false;
-                    break;
-                }
-            }
-
-            if (isStop) {
-                break;
-            }
+        for (int i = 0; i < this.threadList.size(); i++) {
+            this.threadList.get(i).join();
         }
     }
 

@@ -30,12 +30,7 @@ public class RetryTimeoutJob implements Runnable, InitializingBean, DisposableBe
     @Override
     public void destroy() throws Exception {
         this.running = false;
-        while (true) {
-            Thread.sleep(100);
-            if (thread.getState() == Thread.State.TERMINATED) {
-                break;
-            }
-        }
+        thread.join();
     }
 
     @Override
