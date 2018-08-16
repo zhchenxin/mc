@@ -13,6 +13,7 @@ import top.zhchenxin.mc.entity.MessageLog;
 import top.zhchenxin.mc.form.message.ListForm;
 import top.zhchenxin.mc.lib.Utils;
 import top.zhchenxin.mc.resource.MessageCollection;
+import top.zhchenxin.mc.resource.MessageDetail;
 import top.zhchenxin.mc.service.MessageService;
 
 import java.util.List;
@@ -54,6 +55,21 @@ public class MessageServiceImpl implements MessageService {
         collection.setTopicList(this.topicDao.getByIds(topicIds));
 
         return collection;
+    }
+
+    @Override
+    public MessageDetail getDetailById(Long id) {
+        MessageDetail detail = new MessageDetail();
+        Message message = this.messageDao.getById(id);
+        if (message == null) {
+            return null;
+        }
+
+        detail.setEntity(message);
+        detail.setCustomer(this.customerDao.getById(message.getCustomerId()));
+        detail.setTopic(this.topicDao.getById(message.getTopicId()));
+        detail.setLogList(this.messageLogDao.getByMessageId(message.getId()));
+        return detail;
     }
 
     @Override

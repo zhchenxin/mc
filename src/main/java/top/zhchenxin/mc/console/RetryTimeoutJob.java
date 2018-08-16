@@ -21,7 +21,7 @@ public class RetryTimeoutJob implements Runnable, InitializingBean, DisposableBe
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         thread = new Thread(this);
         thread.setName("retry-timeout-job");
         thread.start();

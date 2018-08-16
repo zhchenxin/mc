@@ -43,8 +43,7 @@ public class MessageCollection extends PaginationCollection<Message> {
     public void setCustomerList(List<Customer> customerList) {
         this.customerMap = new HashMap<>();
 
-        for (int i = 0; i < customerList.size(); i++) {
-            Customer item = customerList.get(i);
+        for (Customer item : customerList) {
             customerMap.put(item.getId(), item);
         }
     }
@@ -52,8 +51,7 @@ public class MessageCollection extends PaginationCollection<Message> {
     public void setTopicList(List<Topic> topicList) {
         this.topicMap = new HashMap<>();
 
-        for (int i = 0; i < topicList.size(); i++) {
-            Topic item = topicList.get(i);
+        for (Topic item : topicList) {
             topicMap.put(item.getId(), item);
         }
     }

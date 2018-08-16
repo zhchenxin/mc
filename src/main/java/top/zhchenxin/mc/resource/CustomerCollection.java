@@ -40,8 +40,7 @@ public class CustomerCollection extends PaginationCollection<Customer> {
     public void setTopicList(List<Topic> topicList) {
         this.topicMap = new HashMap<>();
 
-        for (int i = 0; i < topicList.size(); i++) {
-            Topic item = topicList.get(i);
+        for (Topic item : topicList) {
             topicMap.put(item.getId(), item);
         }
     }

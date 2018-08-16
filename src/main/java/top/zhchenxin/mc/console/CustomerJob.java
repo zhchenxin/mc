@@ -40,7 +40,7 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
     private List<Thread> threadList;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         this.threadList = new ArrayList<>();
         for (int i = 0; i < this.customerCount; i++) {
             Thread thread = new Thread(this, "worker" + i);
@@ -52,8 +52,8 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
     @Override
     public void destroy() throws Exception {
         this.running = false;
-        for (int i = 0; i < this.threadList.size(); i++) {
-            this.threadList.get(i).join();
+        for (Thread aThreadList : this.threadList) {
+            aThreadList.join();
         }
     }
 

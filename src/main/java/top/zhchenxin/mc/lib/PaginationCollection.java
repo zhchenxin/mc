@@ -5,7 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PaginationCollection<T extends BaseEntity> {
+/**
+ * 分页输出
+ * @param <T>
+ */
+public class PaginationCollection<T extends BaseEntity> implements Resource {
 
     private List<T> list;
     private Long count;
@@ -16,7 +20,7 @@ public class PaginationCollection<T extends BaseEntity> {
         return this.list;
     }
 
-    public Map<String, Object> output() {
+    public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("mate", this.getMate());
         map.put("list", this.formatList());

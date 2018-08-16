@@ -21,7 +21,7 @@ public class CustomerController extends BaseController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public Map<String, Object> list(ListForm form) {
         PaginationCollection collection = this.customerService.search(form);
-        return this.successJson(collection.output());
+        return this.successJson(collection.toMap());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

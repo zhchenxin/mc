@@ -3,8 +3,6 @@ package top.zhchenxin.mc.entity;
 
 import top.zhchenxin.mc.lib.BaseEntity;
 
-import java.util.Date;
-
 public class Topic extends BaseEntity {
     private String name;
     private String description;

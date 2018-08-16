@@ -1,7 +1,5 @@
 package top.zhchenxin.mc.form.topic;
 
-import java.util.Date;
-
 public class PushForm {
     private Long messageId = 0L;
     private String topicName = "";

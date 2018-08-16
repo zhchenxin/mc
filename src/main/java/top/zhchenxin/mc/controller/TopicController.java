@@ -1,7 +1,6 @@
 package top.zhchenxin.mc.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +23,7 @@ public class TopicController extends BaseController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     private Map<String, Object> list(ListForm form) {
         PaginationCollection collection = this.topicService.search(form);
-        return this.successJson(collection.output());
+        return this.successJson(collection.toMap());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
