@@ -1,6 +1,6 @@
 package top.zhchenxin.mc.form.topic;
 
-import top.zhchenxin.mc.form.BaseListForm;
+import top.zhchenxin.mc.lib.BaseListForm;
 
 public class ListForm extends BaseListForm {
     private String name = "";

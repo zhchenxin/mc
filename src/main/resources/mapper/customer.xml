@@ -2,17 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="top.zhchenxin.mc.dao.CustomerDao">
-
-    <insert id="create" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="top.zhchenxin.mc.entity.Customer">
-        INSERT INTO customers SET
-        topic_id=#{topicId},
-        name=#{name},
-        api=#{api},
-        timeout=#{timeout},
-        attempts=#{attempts},
-        create_date=unix_timestamp(now())
-    </insert>
+<mapper namespace="top.zhchenxin.mc.mapper.CustomerMapper">
 
     <select id="search" resultType="top.zhchenxin.mc.entity.Customer">
         SELECT * FROM customers WHERE 1=1

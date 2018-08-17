@@ -3,10 +3,10 @@ package top.zhchenxin.mc.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import top.zhchenxin.mc.dao.CustomerDao;
-import top.zhchenxin.mc.dao.MessageDao;
-import top.zhchenxin.mc.dao.MessageLogDao;
-import top.zhchenxin.mc.dao.TopicDao;
+import top.zhchenxin.mc.mapper.CustomerMapper;
+import top.zhchenxin.mc.mapper.MessageMapper;
+import top.zhchenxin.mc.mapper.MessageLogMapper;
+import top.zhchenxin.mc.mapper.TopicMapper;
 import top.zhchenxin.mc.entity.Customer;
 import top.zhchenxin.mc.entity.Message;
 import top.zhchenxin.mc.entity.MessageLog;
@@ -23,24 +23,24 @@ import java.util.stream.Collectors;
 public class MessageServiceImpl implements MessageService {
 
     @Autowired
-    private MessageDao messageDao;
+    private MessageMapper messageMapper;
 
     @Autowired
-    private TopicDao topicDao;
+    private TopicMapper topicMapper;
 
     @Autowired
-    private CustomerDao customerDao;
+    private CustomerMapper customerMapper;
 
     @Autowired
-    private MessageLogDao messageLogDao;
+    private MessageLogMapper messageLogMapper;
 
     @Override
     public MessageCollection search(ListForm listForm) {
         MessageCollection collection = new MessageCollection();
         collection.setPage(listForm.getPage());
         collection.setLimit(listForm.getLimit());
-        collection.setCount(this.messageDao.searchCount(listForm));
-        collection.setList(this.messageDao.search(listForm));
+        collection.setCount(this.messageMapper.searchCount(listForm));
+        collection.setList(this.messageMapper.search(listForm));
 
         if (collection.getList().size() == 0) {
             return collection;
@@ -51,8 +51,8 @@ public class MessageServiceImpl implements MessageService {
         Utils.removeDuplicate(customerIds);
         Utils.removeDuplicate(topicIds);
 
-        collection.setCustomerList(this.customerDao.getByIds(customerIds));
-        collection.setTopicList(this.topicDao.getByIds(topicIds));
+        collection.setCustomerList(this.customerMapper.getByIds(customerIds));
+        collection.setTopicList(this.topicMapper.getByIds(topicIds));
 
         return collection;
     }
@@ -60,36 +60,33 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public MessageDetail getDetailById(Long id) {
         MessageDetail detail = new MessageDetail();
-        Message message = this.messageDao.getById(id);
+        Message message = this.messageMapper.getById(id);
         if (message == null) {
             return null;
         }
 
         detail.setEntity(message);
-        detail.setCustomer(this.customerDao.getById(message.getCustomerId()));
-        detail.setTopic(this.topicDao.getById(message.getTopicId()));
-        detail.setLogList(this.messageLogDao.getByMessageId(message.getId()));
+        detail.setCustomer(this.customerMapper.getById(message.getCustomerId()));
+        detail.setTopic(this.topicMapper.getById(message.getTopicId()));
+        detail.setLogList(this.messageLogMapper.getByMessageId(message.getId()));
         return detail;
     }
 
     @Override
     @Transactional
-    public Message pop() {
-        Message message = this.messageDao.popMessage();
+    public MessageDetail pop() {
+        Message message = this.messageMapper.popMessage();
         if (message == null) {
             return null;
         }
-        Customer customer = this.customerDao.getById(message.getCustomerId());
-        int time = (int) (System.currentTimeMillis() / 1000);
-        this.messageDao.start(message.getId(), customer.getTimeout() + time);
-        return message;
+        return this.getDetailById(message.getId());
     }
 
     @Override
     @Transactional
     public void messageSuccess(Long id, String response, Integer time) {
         // 生成执行日志
-        Message message = this.messageDao.getById(id);
+        Message message = this.messageMapper.getById(id);
         MessageLog log = new MessageLog();
         log.setCreateDate((int)(System.currentTimeMillis() / 1000));
         log.setResponse(response);
@@ -97,16 +94,16 @@ public class MessageServiceImpl implements MessageService {
         log.setMessageId(message.getId());
         log.setTopicId(message.getTopicId());
         log.setTime(time);
-        this.messageLogDao.createSuccessLog(log);
+        this.messageLogMapper.createSuccessLog(log);
 
         // 修改消息状态
-        this.messageDao.success(id);
+        this.messageMapper.success(id);
     }
 
     @Override
     public void messageFiled(Long id, String error, Integer time) {
         // 生成执行日志
-        Message message = this.messageDao.getById(id);
+        Message message = this.messageMapper.getById(id);
         MessageLog log = new MessageLog();
         log.setCreateDate((int)(System.currentTimeMillis() / 1000));
         log.setError(error);
@@ -114,18 +111,18 @@ public class MessageServiceImpl implements MessageService {
         log.setMessageId(message.getId());
         log.setTopicId(message.getTopicId());
         log.setTime(time);
-        this.messageLogDao.createErrorLog(log);
+        this.messageLogMapper.createErrorLog(log);
 
-        Customer customer = this.customerDao.getById(message.getCustomerId());
+        Customer customer = this.customerMapper.getById(message.getCustomerId());
         if (message.getAttempts() >= customer.getAttempts()) {
             // 如果
-            this.messageDao.failed(id);
+            this.messageMapper.failed(id);
         } else {
-            this.messageDao.retry(id);
+            this.messageMapper.retry(id);
         }
     }
 
     public void retryTimeoutMessage() {
-        this.messageDao.retryTimeoutMessage();
+        this.messageMapper.retryTimeoutMessage();
     }
 }

@@ -1,5 +1,6 @@
-package top.zhchenxin.mc.dao;
+package top.zhchenxin.mc.mapper;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -8,9 +9,12 @@ import top.zhchenxin.mc.form.message.ListForm;
 
 import java.util.List;
 
-public interface MessageDao {
+public interface MessageMapper {
     // 创建数据
-    void create(Message message);
+    @Insert("INSERT INTO messages SET timeout_date=0,status=1,attempts=0,create_date=unix_timestamp(now())," +
+            "message_id=#{messageId},topic_id=#{topicId},customer_id=#{customerId}," +
+            "message=#{message},available_date=#{availableDate}")
+    Long create(Message message);
 
     // 搜索
     List<Message> search(ListForm listForm);

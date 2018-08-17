@@ -1,4 +1,4 @@
-package top.zhchenxin.mc.form;
+package top.zhchenxin.mc.lib;
 
 public class BaseListForm {
 

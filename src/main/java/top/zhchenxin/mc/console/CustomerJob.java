@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import top.zhchenxin.mc.entity.Customer;
 import top.zhchenxin.mc.entity.Message;
+import top.zhchenxin.mc.resource.MessageDetail;
 import top.zhchenxin.mc.service.CustomerService;
 import top.zhchenxin.mc.service.MessageService;
 
@@ -78,33 +79,32 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
      */
     private boolean worker() {
         // 1. 推出消息
-        Message message = this.messageService.pop();
+        MessageDetail message = this.messageService.pop();
         if (message == null) {
             return false;
         }
-        Customer customer = this.customerService.getById(message.getCustomerId());
 
         // 2. 执行消息
         long start = System.currentTimeMillis();
         try {
-            String response = this.runMessage(message, customer);
+            String response = this.runMessage(message);
             // 3. 保存执行结果
-            this.messageService.messageSuccess(message.getId(), response, (int)(System.currentTimeMillis() - start));
+            this.messageService.messageSuccess(message.getEntity().getId(), response, (int)(System.currentTimeMillis() - start));
         } catch (IOException e) {
             // 3. 保存执行结果
-            this.messageService.messageFiled(message.getId(), e.getMessage(), (int)(System.currentTimeMillis() - start));
+            this.messageService.messageFiled(message.getEntity().getId(), e.getMessage(), (int)(System.currentTimeMillis() - start));
         }
         return true;
     }
 
-    private String runMessage(Message message, Customer customer) throws IOException {
+    private String runMessage(MessageDetail message) throws IOException {
         OkHttpClient client = new OkHttpClient();
-        client.setReadTimeout(customer.getTimeout(), TimeUnit.SECONDS);
+        client.setReadTimeout(message.getCustomer().getTimeout(), TimeUnit.SECONDS);
 
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, message.getMessage());
+        RequestBody body = RequestBody.create(mediaType, message.getEntity().getMessage());
         Request request = new Request.Builder()
-                .url(customer.getApi())
+                .url(message.getCustomer().getApi())
                 .post(body)
                 .build();
 

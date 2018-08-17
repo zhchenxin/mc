@@ -3,9 +3,9 @@ package top.zhchenxin.mc.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import top.zhchenxin.mc.dao.CustomerDao;
-import top.zhchenxin.mc.dao.MessageDao;
-import top.zhchenxin.mc.dao.TopicDao;
+import top.zhchenxin.mc.mapper.CustomerMapper;
+import top.zhchenxin.mc.mapper.MessageMapper;
+import top.zhchenxin.mc.mapper.TopicMapper;
 import top.zhchenxin.mc.entity.Customer;
 import top.zhchenxin.mc.entity.Message;
 import top.zhchenxin.mc.entity.Topic;
@@ -21,24 +21,24 @@ import java.util.List;
 public class TopicServiceImpl implements TopicService {
 
     @Autowired
-    private TopicDao topicDao;
+    private TopicMapper topicMapper;
 
     @Autowired
-    private CustomerDao customerDao;
+    private CustomerMapper customerMapper;
 
     @Autowired
-    private MessageDao messageDao;
+    private MessageMapper messageMapper;
 
     @Override
     public void create(CreateForm createForm) {
         if (createForm.getName().length() == 0) {
             throw new RuntimeException("名称不能为空");
         }
-        Topic topic = topicDao.getByName(createForm.getName());
+        Topic topic = topicMapper.getByName(createForm.getName());
         if (topic != null) {
             throw new RuntimeException("Topic 已存在，请使用其他名称");
         }
-        topicDao.create(createForm.toTopic());
+        topicMapper.create(createForm.toTopic());
     }
 
     @Override
@@ -46,24 +46,24 @@ public class TopicServiceImpl implements TopicService {
         TopicCollection collection = new TopicCollection();
         collection.setPage(listForm.getPage());
         collection.setLimit(listForm.getLimit());
-        collection.setCount(topicDao.searchCount(listForm));
-        collection.setList(topicDao.search(listForm));
+        collection.setCount(topicMapper.searchCount(listForm));
+        collection.setList(topicMapper.search(listForm));
         return collection;
     }
 
     @Transactional
     @Override
     public void push(PushForm form) {
-        Topic topic = this.topicDao.getByName(form.getTopicName());
+        Topic topic = this.topicMapper.getByName(form.getTopicName());
         if (topic == null) {
             throw new RuntimeException("未找到topic");
         }
 
-        List<Customer> customers = this.customerDao.getByTopic(topic.getId());
+        List<Customer> customers = this.customerMapper.getByTopic(topic.getId());
 
         for (int i = 0; i < customers.size(); i++) {
             Customer item = customers.get(i);
-            Message msg = this.messageDao.getByMessageIdAndCustomerId(form.getMessageId(), item.getId());
+            Message msg = this.messageMapper.getByMessageIdAndCustomerId(form.getMessageId(), item.getId());
             if (msg != null) {
                 throw new RuntimeException("消息已保存");
             }
@@ -75,7 +75,7 @@ public class TopicServiceImpl implements TopicService {
             msg.setMessage(form.getMessage());
             msg.setAvailableDate(form.getAvailableDate());
             msg.setCreateDate((int)(System.currentTimeMillis() / 1000));
-            this.messageDao.create(msg);
+            this.messageMapper.create(msg);
         }
     }
 }

@@ -5,6 +5,9 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 模型详细数据
+ */
 public abstract class DetailResource<T extends BaseEntity> implements Resource{
     private T entity;
 

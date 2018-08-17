@@ -1,5 +1,6 @@
-package top.zhchenxin.mc.dao;
+package top.zhchenxin.mc.mapper;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import top.zhchenxin.mc.entity.Customer;
@@ -7,10 +8,12 @@ import top.zhchenxin.mc.form.customer.ListForm;
 
 import java.util.List;
 
-public interface CustomerDao {
+public interface CustomerMapper {
 
     // 创建数据
-    void create(Customer customer);
+    @Insert("INSERT INTO customers SET create_date=unix_timestamp(now()),topic_id=#{topicId}," +
+            "name=#{name},api=#{api},timeout=#{timeout},attempts=#{attempts},")
+    Long create(Customer customer);
 
     // 搜索
     List<Customer> search(ListForm listForm);
