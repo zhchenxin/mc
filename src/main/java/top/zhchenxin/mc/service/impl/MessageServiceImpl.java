@@ -79,6 +79,8 @@ public class MessageServiceImpl implements MessageService {
         if (message == null) {
             return null;
         }
+        Customer customer = customerMapper.getById(message.getCustomerId());
+        messageMapper.start(message.getId(), Utils.getCurrentTimestamp() + customer.getTimeout());
         return this.getDetailById(message.getId());
     }
 

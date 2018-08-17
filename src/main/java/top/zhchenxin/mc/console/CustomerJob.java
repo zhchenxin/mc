@@ -90,14 +90,13 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
             String response = this.runMessage(message);
             // 3. 保存执行结果
             this.messageService.messageSuccess(message.getEntity().getId(), response, (int)(System.currentTimeMillis() - start));
-        } catch (IOException e) {
+        } catch (Exception e) {
             // 3. 保存执行结果
-            this.messageService.messageFiled(message.getEntity().getId(), e.getMessage(), (int)(System.currentTimeMillis() - start));
-        }
+            this.messageService.messageFiled(message.getEntity().getId(), e.getMessage(), (int)(System.currentTimeMillis() - start));        }
         return true;
     }
 
-    private String runMessage(MessageDetail message) throws IOException {
+    private String runMessage(MessageDetail message) throws Exception {
         OkHttpClient client = new OkHttpClient();
         client.setReadTimeout(message.getCustomer().getTimeout(), TimeUnit.SECONDS);
 

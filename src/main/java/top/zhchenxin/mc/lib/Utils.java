@@ -15,4 +15,12 @@ public class Utils {
         list.clear();
         list.addAll(set);
     }
+
+    /**
+     * 获取当前时间戳
+     * @return
+     */
+    public static int getCurrentTimestamp() {
+        return (int) (System.currentTimeMillis() / 1000);
+    }
 }
