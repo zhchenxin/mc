@@ -22,14 +22,14 @@ public class TopicController extends BaseController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     private Map<String, Object> list(ListForm form) {
-        PaginationCollection collection = this.topicService.search(form);
-        return this.successJson(collection.toMap());
+        PaginationCollection collection = topicService.search(form);
+        return successJson(collection.toMap());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     private Map<String, Object> create(CreateForm form) {
-        this.topicService.create(form);
-        return this.successJson(null);
+        topicService.create(form);
+        return successJson(null);
     }
 
     @RequestMapping(value = "/push", method = RequestMethod.POST)
@@ -38,7 +38,7 @@ public class TopicController extends BaseController {
             Random random = new Random();
             form.setMessageId(random.nextLong());
         }
-        this.topicService.push(form);
-        return this.successJson(null);
+        topicService.push(form);
+        return successJson(null);
     }
 }

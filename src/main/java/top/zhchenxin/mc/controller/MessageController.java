@@ -22,13 +22,13 @@ public class MessageController extends BaseController {
 
     @RequestMapping(value = "",method = RequestMethod.GET)
     public Map<String,Object> list(ListForm form) {
-        PaginationCollection collection = this.messageService.search(form);
-        return this.successJson(collection.toMap());
+        PaginationCollection collection = messageService.search(form);
+        return successJson(collection.toMap());
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Map<String, Object> detail(@PathVariable("id") Long id) {
-        return this.successJson(this.messageService.getDetailById(id));
+        return successJson(messageService.getDetailById(id));
     }
 
 }

@@ -18,8 +18,8 @@ public class CustomerCollection extends PaginationCollection<Customer> {
     protected List formatList() {
         List<Map<String, Object>> list = new ArrayList<>();
 
-        for (int i = 0 ; i < this.getList().size(); i++) {
-            Customer item = this.getList().get(i);
+        for (int i = 0 ; i < getList().size(); i++) {
+            Customer item = getList().get(i);
 
             Map<String, Object> map = new HashMap<>();
             map.put("id", item.getId());
@@ -29,7 +29,7 @@ public class CustomerCollection extends PaginationCollection<Customer> {
             map.put("attempts", item.getAttempts());
             map.put("createDate", item.getCreateDate());
             map.put("topicId", item.getTopicId());
-            map.put("topicName", this.topicMap.get(item.getTopicId()).getName());
+            map.put("topicName", topicMap.get(item.getTopicId()).getName());
 
             list.add(map);
         }
@@ -38,7 +38,7 @@ public class CustomerCollection extends PaginationCollection<Customer> {
     }
 
     public void setTopicList(List<Topic> topicList) {
-        this.topicMap = new HashMap<>();
+        topicMap = new HashMap<>();
 
         for (Topic item : topicList) {
             topicMap.put(item.getId(), item);

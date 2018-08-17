@@ -22,22 +22,22 @@ public class PaginationCollection<T extends BaseEntity> implements Resource {
 
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("mate", this.getMate());
-        map.put("list", this.formatList());
+        map.put("mate", getMate());
+        map.put("list", formatList());
         return map;
     }
 
     private Map<String, Long> getMate() {
         Map<String, Long> mate = new HashMap<>();
-        mate.put("total", this.count);
-        mate.put("totalPage", this.getTotalPage());
-        mate.put("currentPage", this.page);
-        mate.put("limit", this.limit);
+        mate.put("total", count);
+        mate.put("totalPage", getTotalPage());
+        mate.put("currentPage", page);
+        mate.put("limit", limit);
         return mate;
     }
 
     private Long getTotalPage() {
-        return (long) Math.ceil((double)this.count / (double)this.limit);
+        return (long) Math.ceil((double)count / (double)limit);
     }
 
     public List<T> getList() {

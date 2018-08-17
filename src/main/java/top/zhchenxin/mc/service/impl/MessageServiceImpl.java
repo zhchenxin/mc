@@ -39,8 +39,8 @@ public class MessageServiceImpl implements MessageService {
         MessageCollection collection = new MessageCollection();
         collection.setPage(listForm.getPage());
         collection.setLimit(listForm.getLimit());
-        collection.setCount(this.messageMapper.searchCount(listForm));
-        collection.setList(this.messageMapper.search(listForm));
+        collection.setCount(messageMapper.searchCount(listForm));
+        collection.setList(messageMapper.search(listForm));
 
         if (collection.getList().size() == 0) {
             return collection;
@@ -51,8 +51,8 @@ public class MessageServiceImpl implements MessageService {
         Utils.removeDuplicate(customerIds);
         Utils.removeDuplicate(topicIds);
 
-        collection.setCustomerList(this.customerMapper.getByIds(customerIds));
-        collection.setTopicList(this.topicMapper.getByIds(topicIds));
+        collection.setCustomerList(customerMapper.getByIds(customerIds));
+        collection.setTopicList(topicMapper.getByIds(topicIds));
 
         return collection;
     }
@@ -60,35 +60,35 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public MessageDetail getDetailById(Long id) {
         MessageDetail detail = new MessageDetail();
-        Message message = this.messageMapper.getById(id);
+        Message message = messageMapper.getById(id);
         if (message == null) {
             return null;
         }
 
         detail.setEntity(message);
-        detail.setCustomer(this.customerMapper.getById(message.getCustomerId()));
-        detail.setTopic(this.topicMapper.getById(message.getTopicId()));
-        detail.setLogList(this.messageLogMapper.getByMessageId(message.getId()));
+        detail.setCustomer(customerMapper.getById(message.getCustomerId()));
+        detail.setTopic(topicMapper.getById(message.getTopicId()));
+        detail.setLogList(messageLogMapper.getByMessageId(message.getId()));
         return detail;
     }
 
     @Override
     @Transactional
     public MessageDetail pop() {
-        Message message = this.messageMapper.popMessage();
+        Message message = messageMapper.popMessage();
         if (message == null) {
             return null;
         }
         Customer customer = customerMapper.getById(message.getCustomerId());
         messageMapper.start(message.getId(), Utils.getCurrentTimestamp() + customer.getTimeout());
-        return this.getDetailById(message.getId());
+        return getDetailById(message.getId());
     }
 
     @Override
     @Transactional
     public void messageSuccess(Long id, String response, Integer time) {
         // 生成执行日志
-        Message message = this.messageMapper.getById(id);
+        Message message = messageMapper.getById(id);
         MessageLog log = new MessageLog();
         log.setCreateDate((int)(System.currentTimeMillis() / 1000));
         log.setResponse(response);
@@ -96,16 +96,16 @@ public class MessageServiceImpl implements MessageService {
         log.setMessageId(message.getId());
         log.setTopicId(message.getTopicId());
         log.setTime(time);
-        this.messageLogMapper.createSuccessLog(log);
+        messageLogMapper.createSuccessLog(log);
 
         // 修改消息状态
-        this.messageMapper.success(id);
+        messageMapper.success(id);
     }
 
     @Override
     public void messageFiled(Long id, String error, Integer time) {
         // 生成执行日志
-        Message message = this.messageMapper.getById(id);
+        Message message = messageMapper.getById(id);
         MessageLog log = new MessageLog();
         log.setCreateDate((int)(System.currentTimeMillis() / 1000));
         log.setError(error);
@@ -113,18 +113,18 @@ public class MessageServiceImpl implements MessageService {
         log.setMessageId(message.getId());
         log.setTopicId(message.getTopicId());
         log.setTime(time);
-        this.messageLogMapper.createErrorLog(log);
+        messageLogMapper.createErrorLog(log);
 
-        Customer customer = this.customerMapper.getById(message.getCustomerId());
+        Customer customer = customerMapper.getById(message.getCustomerId());
         if (message.getAttempts() >= customer.getAttempts()) {
             // 如果
-            this.messageMapper.failed(id);
+            messageMapper.failed(id);
         } else {
-            this.messageMapper.retry(id);
+            messageMapper.retry(id);
         }
     }
 
     public void retryTimeoutMessage() {
-        this.messageMapper.retryTimeoutMessage();
+        messageMapper.retryTimeoutMessage();
     }
 }

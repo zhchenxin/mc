@@ -19,20 +19,21 @@ public class MessageCollection extends PaginationCollection<Message> {
     protected List formatList() {
         List<Map<String, Object>> list = new ArrayList<>();
 
-        for (int i = 0 ; i < this.getList().size(); i++) {
-            Message item = this.getList().get(i);
+        for (int i = 0 ; i < getList().size(); i++) {
+            Message item = getList().get(i);
 
             Map<String, Object> map = new HashMap<>();
             map.put("id", item.getId());
             map.put("messageId", item.getMessageId());
+            map.put("message", item.getMessage());
             map.put("attempts", item.getAttempts());
             map.put("status", item.getStatus());
             map.put("availableDate", item.getAvailableDate());
             map.put("createDate", item.getCreateDate());
             map.put("topicId", item.getTopicId());
             map.put("customerId", item.getCustomerId());
-            map.put("topicName", this.topicMap.get(item.getTopicId()).getName());
-            map.put("customerName", this.customerMap.get(item.getCustomerId()).getName());
+            map.put("topicName", topicMap.get(item.getTopicId()).getName());
+            map.put("customerName", customerMap.get(item.getCustomerId()).getName());
 
             list.add(map);
         }
@@ -41,7 +42,7 @@ public class MessageCollection extends PaginationCollection<Message> {
     }
 
     public void setCustomerList(List<Customer> customerList) {
-        this.customerMap = new HashMap<>();
+        customerMap = new HashMap<>();
 
         for (Customer item : customerList) {
             customerMap.put(item.getId(), item);
@@ -49,7 +50,7 @@ public class MessageCollection extends PaginationCollection<Message> {
     }
 
     public void setTopicList(List<Topic> topicList) {
-        this.topicMap = new HashMap<>();
+        topicMap = new HashMap<>();
 
         for (Topic item : topicList) {
             topicMap.put(item.getId(), item);

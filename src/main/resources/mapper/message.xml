@@ -9,6 +9,7 @@
         <if test="topicId != null and topicId != 0">AND topic_id = #{topicId}</if>
         <if test="customerId != null and customerId != 0">AND customer_id = #{customerId}</if>
         <if test="status != null and status != 0">AND status = #{status}</if>
+        order by id desc
         LIMIT #{offset},#{limit}
     </select>
     <select id="searchCount" resultType="java.lang.Long">

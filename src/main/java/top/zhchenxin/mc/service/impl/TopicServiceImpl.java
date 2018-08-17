@@ -54,16 +54,15 @@ public class TopicServiceImpl implements TopicService {
     @Transactional
     @Override
     public void push(PushForm form) {
-        Topic topic = this.topicMapper.getByName(form.getTopicName());
+        Topic topic = topicMapper.getByName(form.getTopicName());
         if (topic == null) {
             throw new RuntimeException("未找到topic");
         }
 
-        List<Customer> customers = this.customerMapper.getByTopic(topic.getId());
+        List<Customer> customers = customerMapper.getByTopic(topic.getId());
 
-        for (int i = 0; i < customers.size(); i++) {
-            Customer item = customers.get(i);
-            Message msg = this.messageMapper.getByMessageIdAndCustomerId(form.getMessageId(), item.getId());
+        for (Customer item : customers) {
+            Message msg = messageMapper.getByMessageIdAndCustomerId(form.getMessageId(), item.getId());
             if (msg != null) {
                 throw new RuntimeException("消息已保存");
             }
@@ -74,8 +73,8 @@ public class TopicServiceImpl implements TopicService {
             msg.setCustomerId(item.getId());
             msg.setMessage(form.getMessage());
             msg.setAvailableDate(form.getAvailableDate());
-            msg.setCreateDate((int)(System.currentTimeMillis() / 1000));
-            this.messageMapper.create(msg);
+            msg.setCreateDate((int) (System.currentTimeMillis() / 1000));
+            messageMapper.create(msg);
         }
     }
 }

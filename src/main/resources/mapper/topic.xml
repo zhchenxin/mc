@@ -8,6 +8,7 @@
         SELECT * FROM topics WHERE 1=1
         <if test="name != null and name != ''">AND name = #{name}</if>
         <if test="topicId != null and topicId != 0">AND id = #{topicId}</if>
+        order by id desc
         LIMIT #{offset},#{limit}
     </select>
     <select id="searchCount" resultType="java.lang.Long">

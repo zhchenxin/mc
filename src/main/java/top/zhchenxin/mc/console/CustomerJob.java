@@ -9,13 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-import top.zhchenxin.mc.entity.Customer;
-import top.zhchenxin.mc.entity.Message;
 import top.zhchenxin.mc.resource.MessageDetail;
 import top.zhchenxin.mc.service.CustomerService;
 import top.zhchenxin.mc.service.MessageService;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -42,18 +39,18 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
 
     @Override
     public void afterPropertiesSet() {
-        this.threadList = new ArrayList<>();
-        for (int i = 0; i < this.customerCount; i++) {
+        threadList = new ArrayList<>();
+        for (int i = 0; i < customerCount; i++) {
             Thread thread = new Thread(this, "worker" + i);
             thread.start();
-            this.threadList.add(thread);
+            threadList.add(thread);
         }
     }
 
     @Override
     public void destroy() throws Exception {
-        this.running = false;
-        for (Thread aThreadList : this.threadList) {
+        running = false;
+        for (Thread aThreadList : threadList) {
             aThreadList.join();
         }
     }
@@ -79,7 +76,7 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
      */
     private boolean worker() {
         // 1. 推出消息
-        MessageDetail message = this.messageService.pop();
+        MessageDetail message = messageService.pop();
         if (message == null) {
             return false;
         }
@@ -87,12 +84,12 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
         // 2. 执行消息
         long start = System.currentTimeMillis();
         try {
-            String response = this.runMessage(message);
+            String response = runMessage(message);
             // 3. 保存执行结果
-            this.messageService.messageSuccess(message.getEntity().getId(), response, (int)(System.currentTimeMillis() - start));
+            messageService.messageSuccess(message.getEntity().getId(), response, (int)(System.currentTimeMillis() - start));
         } catch (Exception e) {
             // 3. 保存执行结果
-            this.messageService.messageFiled(message.getEntity().getId(), e.getMessage(), (int)(System.currentTimeMillis() - start));        }
+            messageService.messageFiled(message.getEntity().getId(), e.getMessage(), (int)(System.currentTimeMillis() - start));        }
         return true;
     }
 

@@ -7,6 +7,7 @@
     <select id="search" resultType="top.zhchenxin.mc.entity.Customer">
         SELECT * FROM customers WHERE 1=1
         <if test="topicId != null and topicId != 0">AND topic_id = #{topicId}</if>
+        order by id desc
         LIMIT #{offset},#{limit}
     </select>
     <select id="searchCount" resultType="java.lang.Long">

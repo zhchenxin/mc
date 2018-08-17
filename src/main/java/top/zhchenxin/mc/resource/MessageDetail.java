@@ -20,12 +20,13 @@ public class MessageDetail extends DetailResource<Message> {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("id", this.getEntity().getId());
-        map.put("message_id", this.getEntity().getMessageId());
-        map.put("attempts", this.getEntity().getAttempts());
-        map.put("status", this.getEntity().getStatus());
-        map.put("available_date", this.getEntity().getAvailableDate());
-        map.put("create_date", this.getEntity().getCreateDate());
+        map.put("id", getEntity().getId());
+        map.put("message_id", getEntity().getMessageId());
+        map.put("message", getEntity().getMessage());
+        map.put("attempts", getEntity().getAttempts());
+        map.put("status", getEntity().getStatus());
+        map.put("available_date", getEntity().getAvailableDate());
+        map.put("create_date", getEntity().getCreateDate());
 
         // topic
         Map<String, Object> topic = new HashMap<>();

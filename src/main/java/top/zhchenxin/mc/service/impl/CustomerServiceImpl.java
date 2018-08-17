@@ -25,7 +25,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void create(CreateForm form) {
-        this.customerMapper.create(form.toCustomer());
+        customerMapper.create(form.toCustomer());
     }
 
     @Override
@@ -33,8 +33,8 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerCollection collection = new CustomerCollection();
         collection.setPage(listForm.getPage());
         collection.setLimit(listForm.getLimit());
-        collection.setCount(this.customerMapper.searchCount(listForm));
-        collection.setList(this.customerMapper.search(listForm));
+        collection.setCount(customerMapper.searchCount(listForm));
+        collection.setList(customerMapper.search(listForm));
 
         if (collection.getList().size() == 0) {
             return collection;
@@ -43,7 +43,7 @@ public class CustomerServiceImpl implements CustomerService {
         List<Long> topicIds = collection.getList().stream().map(Customer::getTopicId).collect(Collectors.toList());
         Utils.removeDuplicate(topicIds);
 
-        collection.setTopicList(this.topicMapper.getByIds(topicIds));
+        collection.setTopicList(topicMapper.getByIds(topicIds));
 
         return collection;
     }

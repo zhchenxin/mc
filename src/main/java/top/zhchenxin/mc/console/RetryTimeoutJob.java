@@ -29,14 +29,14 @@ public class RetryTimeoutJob implements Runnable, InitializingBean, DisposableBe
 
     @Override
     public void destroy() throws Exception {
-        this.running = false;
+        running = false;
         thread.join();
     }
 
     @Override
     public void run() {
         while (running) {
-            this.messageService.retryTimeoutMessage();
+            messageService.retryTimeoutMessage();
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
