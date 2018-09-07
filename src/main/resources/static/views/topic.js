@@ -25,7 +25,8 @@ Vue.component('topic', {
       <Row>
         <Button type="info"  icon="refresh" @click="refresh"></Button>
         <router-link to="/topic/add"><Button type="primary"  icon="plus-round">添加</Button></router-link>
-      </Row><br>
+      </Row>
+      <br>
       <Row>
         <Table :border="false" :stripe="true" :show-header="true" :data="tableData" :columns="tableColumns"></Table>
         <div style="margin: 10px;overflow: hidden">
