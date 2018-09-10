@@ -2,28 +2,26 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="top.zhchenxin.mc.mapper.MessageLogMapper">
+<mapper namespace="top.chenxin.mc.mapper.MessageLogMapper">
 
-    <insert id="createSuccessLog" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="top.zhchenxin.mc.entity.MessageLog">
-        INSERT INTO message_logs SET
-        message_id=#{messageId},
-        topic_id=#{topicId},
-        customer_id=#{customerId},
-        time=#{time},
-        response=#{response},
-        error='',
-        create_date=unix_timestamp(now())
+    <insert id="create">
+
+        <selectKey order="AFTER" resultType="java.lang.Long">
+            select LAST_INSERT_ID()
+        </selectKey>
+
+        INSERT INTO message_log SET
+            message_id=#{messageId},
+            topic_id=#{topicId},
+            customer_id=#{customerId},
+            time=#{time},
+            response=#{response},
+            error=#{error},
+            create_date=unix_timestamp(now())
     </insert>
 
-    <insert id="createErrorLog" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="top.zhchenxin.mc.entity.MessageLog">
-        INSERT INTO message_logs SET
-        message_id=#{messageId},
-        topic_id=#{topicId},
-        customer_id=#{customerId},
-        time=#{time},
-        response='',
-        error=#{error},
-        create_date=unix_timestamp(now())
-    </insert>
+    <select id="getByMessageId" resultType="top.chenxin.mc.entity.MessageLog">
+        select * from message_log where message_id = #{messageId}
+    </select>
 
 </mapper>

@@ -2,20 +2,68 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="top.zhchenxin.mc.mapper.MessageMapper">
+<mapper namespace="top.chenxin.mc.mapper.MessageMapper">
 
-    <select id="search" resultType="top.zhchenxin.mc.entity.Message">
-        SELECT * FROM messages WHERE 1=1
+    <insert id="create">
+
+        <selectKey order="AFTER" resultType="java.lang.Long">
+            select LAST_INSERT_ID()
+        </selectKey>
+
+        INSERT INTO message SET
+            timeout_date=0,status=1,attempts=0,create_date=unix_timestamp(now()),
+            message_id=#{messageId},
+            topic_id=#{topicId},
+            customer_id=#{customerId},
+            message=#{message},
+            available_date=#{availableDate}
+    </insert>
+
+    <select id="search" resultType="top.chenxin.mc.entity.Message">
+        SELECT * FROM message WHERE 1=1
         <if test="topicId != null and topicId != 0">AND topic_id = #{topicId}</if>
         <if test="customerId != null and customerId != 0">AND customer_id = #{customerId}</if>
         <if test="status != null and status != 0">AND status = #{status}</if>
         order by id desc
         LIMIT #{offset},#{limit}
     </select>
+
     <select id="searchCount" resultType="java.lang.Long">
-        SELECT count(*) FROM messages WHERE 1=1
+        SELECT count(*) FROM message WHERE 1=1
         <if test="topicId != null and topicId != 0">AND topic_id = #{topicId}</if>
         <if test="customerId != null and customerId != 0">AND customer_id = #{customerId}</if>
         <if test="status != null and status != 0">AND status = #{status}</if>
     </select>
+
+    <select id="getById" resultType="top.chenxin.mc.entity.Message">
+        select * from message where id = #{id};
+    </select>
+
+    <select id="getByMessageIdAndCustomerId" resultType="top.chenxin.mc.entity.Message">
+        select * from message where message_id = #{messageId} and customer_id = #{customerId};
+    </select>
+
+    <select id="popMessage" resultType="top.chenxin.mc.entity.Message">
+        SELECT * FROM message WHERE status = 1 AND available_date 	&lt; unix_timestamp(now()) limit 1 for update;
+    </select>
+
+    <update id="retryTimeoutMessage">
+        UPDATE `message` SET status=1, attempts = attempts + 1 where timeout_date 	&lt; unix_timestamp(now()) and status=2;
+    </update>
+
+    <update id="start">
+        UPDATE `message` SET timeout_date=#{timeoutDate},status=2 WHERE id=#{id}
+    </update>
+
+    <update id="failed">
+        UPDATE `message` SET status=4 WHERE id=#{id}
+    </update>
+
+    <update id="retry">
+        UPDATE `message` SET status=1, attempts = attempts + 1 WHERE id=#{id}
+    </update>
+
+    <update id="success">
+        UPDATE `message` SET status=3 WHERE id=#{id}
+    </update>
 </mapper>

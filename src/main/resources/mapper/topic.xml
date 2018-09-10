@@ -2,25 +2,41 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="top.zhchenxin.mc.mapper.TopicMapper">
+<mapper namespace="top.chenxin.mc.mapper.TopicMapper">
 
-    <select id="search" resultType="top.zhchenxin.mc.entity.Topic">
-        SELECT * FROM topics WHERE 1=1
+    <insert id="create">
+        <selectKey order="AFTER" resultType="java.lang.Long">
+            select LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO topic SET name=#{name},description=#{description},create_date=unix_timestamp(now())
+    </insert>
+
+    <select id="search" resultType="top.chenxin.mc.entity.Topic">
+        SELECT * FROM topic WHERE 1=1
         <if test="name != null and name != ''">AND name = #{name}</if>
         <if test="topicId != null and topicId != 0">AND id = #{topicId}</if>
         order by id desc
         LIMIT #{offset},#{limit}
     </select>
     <select id="searchCount" resultType="java.lang.Long">
-        SELECT count(*) FROM topics WHERE 1=1
+        SELECT count(*) FROM topic WHERE 1=1
         <if test="name != null and name != ''">AND name = #{name}</if>
         <if test="topicId != null and topicId != 0">AND id = #{topicId}</if>
     </select>
 
-    <select id="getByIds" resultType="top.zhchenxin.mc.entity.Topic">
-        SELECT * FROM topics WHERE id in
+    <select id="getByIds" resultType="top.chenxin.mc.entity.Topic">
+        SELECT * FROM topic WHERE id in
         <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
             #{item}
         </foreach>
     </select>
+
+    <select id="getByName" resultType="top.chenxin.mc.entity.Topic">
+        select * from topic where name = #{name} limit 1
+    </select>
+
+    <select id="getById" resultType="top.chenxin.mc.entity.Topic">
+        select * from topic where id = #{id}
+    </select>
+
 </mapper>
