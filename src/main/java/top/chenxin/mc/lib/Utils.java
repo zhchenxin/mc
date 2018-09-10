@@ -1,5 +1,8 @@
 package top.chenxin.mc.lib;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,9 +21,19 @@ public class Utils {
 
     /**
      * 获取当前时间戳
-     * @return
+     * @return 当前时间戳
      */
     public static int getCurrentTimestamp() {
         return (int) (System.currentTimeMillis() / 1000);
+    }
+
+    /**
+     * 将时间戳转换成时间
+     * @return 时间字符串
+     */
+    public static String simpleDate(int timestamp) {
+        Date date = new Date((long)timestamp * 1000);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(date);
     }
 }

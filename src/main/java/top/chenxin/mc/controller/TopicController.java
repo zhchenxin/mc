@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import top.chenxin.mc.form.topic.CreateForm;
 import top.chenxin.mc.form.topic.ListForm;
 import top.chenxin.mc.form.topic.PushForm;
-import top.chenxin.mc.lib.PaginationCollection;
+import top.chenxin.mc.response.PaginationResponse;
 import top.chenxin.mc.lib.BaseController;
 import top.chenxin.mc.service.TopicService;
 
@@ -22,7 +22,7 @@ public class TopicController extends BaseController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     private Map<String, Object> list(ListForm form) {
-        PaginationCollection collection = topicService.search(form);
+        PaginationResponse collection = topicService.search(form);
         return successJson(collection.toMap());
     }
 

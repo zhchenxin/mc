@@ -2,9 +2,10 @@ package top.chenxin.mc.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import top.chenxin.mc.lib.PaginationCollection;
+import top.chenxin.mc.response.PaginationResponse;
 import top.chenxin.mc.form.message.ListForm;
 import top.chenxin.mc.lib.BaseController;
+import top.chenxin.mc.response.Response;
 import top.chenxin.mc.service.MessageService;
 import top.chenxin.mc.service.TopicService;
 
@@ -22,8 +23,7 @@ public class MessageController extends BaseController {
 
     @RequestMapping(value = "",method = RequestMethod.GET)
     public Map<String,Object> list(ListForm form) {
-        PaginationCollection collection = messageService.search(form);
-        return successJson(collection.toMap());
+        return successJson(messageService.search(form).toMap());
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

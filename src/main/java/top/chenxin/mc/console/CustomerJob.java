@@ -9,9 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-import top.chenxin.mc.service.CustomerService;
-import top.chenxin.mc.service.MessageService;
-import top.chenxin.mc.resource.MessageDetail;
+import org.springframework.transaction.annotation.Transactional;
+import top.chenxin.mc.entity.Customer;
+import top.chenxin.mc.entity.Message;
+import top.chenxin.mc.entity.MessageLog;
+import top.chenxin.mc.lib.Utils;
+import top.chenxin.mc.mapper.CustomerMapper;
+import top.chenxin.mc.mapper.MessageLogMapper;
+import top.chenxin.mc.mapper.MessageMapper;
+import top.chenxin.mc.response.message.DetailResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +28,15 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
 
-    @Autowired
-    private MessageService messageService;
 
     @Autowired
-    private CustomerService customerService;
+    private MessageMapper messageMapper;
+
+    @Autowired
+    private CustomerMapper customerMapper;
+
+    @Autowired
+    private MessageLogMapper messageLogMapper;
 
     @Value("${customer_count}")
     private int customerCount = 0;
@@ -76,7 +86,7 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
      */
     private boolean worker() {
         // 1. 推出消息
-        MessageDetail message = messageService.pop();
+        Message message = pop();
         if (message == null) {
             return false;
         }
@@ -86,25 +96,80 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
         try {
             String response = runMessage(message);
             // 3. 保存执行结果
-            messageService.messageSuccess(message.getEntity().getId(), response, (int)(System.currentTimeMillis() - start));
+            messageSuccess(message, response, (int)(System.currentTimeMillis() - start));
         } catch (Exception e) {
             // 3. 保存执行结果
-            messageService.messageFiled(message.getEntity().getId(), e.getMessage(), (int)(System.currentTimeMillis() - start));        }
+            messageFiled(message, e.getMessage(), (int)(System.currentTimeMillis() - start));
+        }
         return true;
     }
 
-    private String runMessage(MessageDetail message) throws Exception {
+    private String runMessage(Message message) throws Exception {
+
+        Customer customer = customerMapper.getById(message.getCustomerId());
+
         OkHttpClient client = new OkHttpClient.Builder()
-                .readTimeout(message.getCustomer().getTimeout(), TimeUnit.SECONDS)
+                .readTimeout(customer.getTimeout(), TimeUnit.SECONDS)
                 .build();
 
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), message.getEntity().getMessage());
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), message.getMessage());
         Request request = new Request.Builder()
-                .url(message.getCustomer().getApi())
+                .url(customer.getApi())
                 .post(body)
                 .build();
 
         Response response = client.newCall(request).execute();
         return response.body().string();
     }
+
+    @Transactional
+    private Message pop() {
+        Message message = messageMapper.popMessage();
+        if (message == null) {
+            return null;
+        }
+        Customer customer = customerMapper.getById(message.getCustomerId());
+        messageMapper.start(message.getId(), Utils.getCurrentTimestamp() + customer.getTimeout());
+        return message;
+    }
+
+    @Transactional
+    private void messageSuccess(Message message, String response, Integer time) {
+        // 生成执行日志
+        MessageLog log = new MessageLog();
+        log.setCreateDate((int)(System.currentTimeMillis() / 1000));
+        log.setResponse(response);
+        log.setCustomerId(message.getCustomerId());
+        log.setMessageId(message.getId());
+        log.setTopicId(message.getTopicId());
+        log.setTime(time);
+        log.setError("");
+        messageLogMapper.create(log);
+
+        // 修改消息状态
+        messageMapper.success(message.getId());
+    }
+
+    @Transactional
+    private void messageFiled(Message message, String error, Integer time) {
+        // 生成执行日志
+        MessageLog log = new MessageLog();
+        log.setCreateDate((int)(System.currentTimeMillis() / 1000));
+        log.setError(error);
+        log.setCustomerId(message.getCustomerId());
+        log.setMessageId(message.getId());
+        log.setTopicId(message.getTopicId());
+        log.setTime(time);
+        log.setResponse("");
+        messageLogMapper.create(log);
+
+        Customer customer = customerMapper.getById(message.getCustomerId());
+        if (message.getAttempts() >= customer.getAttempts()) {
+            // 如果
+            messageMapper.failed(message.getId());
+        } else {
+            messageMapper.retry(message.getId());
+        }
+    }
+
 }

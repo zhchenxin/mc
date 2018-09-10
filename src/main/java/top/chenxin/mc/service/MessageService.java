@@ -1,16 +1,18 @@
 package top.chenxin.mc.service;
 
-import top.chenxin.mc.resource.MessageCollection;
+import top.chenxin.mc.entity.Message;
+import top.chenxin.mc.response.Response;
+import top.chenxin.mc.response.message.ListResponse;
 import top.chenxin.mc.form.message.ListForm;
-import top.chenxin.mc.resource.MessageDetail;
+import top.chenxin.mc.response.message.DetailResponse;
 
 public interface MessageService {
-    MessageCollection search(ListForm listForm);
+    Response search(ListForm listForm);
 
-    MessageDetail getDetailById(Long id);
+    Response getDetailById(Long id);
 
     // 从消息中推出一条消息
-    MessageDetail pop();
+    Message pop();
 
     // 消息执行成功
     void messageSuccess(Long id, String response, Integer time);

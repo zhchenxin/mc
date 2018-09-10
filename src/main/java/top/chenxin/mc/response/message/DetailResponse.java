@@ -1,32 +1,40 @@
-package top.chenxin.mc.resource;
+package top.chenxin.mc.response.message;
 
 import top.chenxin.mc.entity.Customer;
 import top.chenxin.mc.entity.Message;
 import top.chenxin.mc.entity.MessageLog;
 import top.chenxin.mc.entity.Topic;
-import top.chenxin.mc.lib.DetailResource;
+import top.chenxin.mc.response.Response;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MessageDetail extends DetailResource<Message> {
+public class DetailResponse implements Response {
 
+    private Message message;
     private Topic topic;
     private Customer customer;
     private List<MessageLog> logList;
 
+    public DetailResponse(Message message, Topic topic, Customer customer, List<MessageLog> logList) {
+        this.message = message;
+        this.topic = topic;
+        this.customer = customer;
+        this.logList = logList;
+    }
+
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("id", getEntity().getId());
-        map.put("message_id", getEntity().getMessageId());
-        map.put("message", getEntity().getMessage());
-        map.put("attempts", getEntity().getAttempts());
-        map.put("status", getEntity().getStatus());
-        map.put("available_date", getEntity().getAvailableDate());
-        map.put("create_date", getEntity().getCreateDate());
+        map.put("id", message.getId());
+        map.put("message_id", message.getMessageId());
+        map.put("message", message.getMessage());
+        map.put("attempts", message.getAttempts());
+        map.put("status", message.getStatus());
+        map.put("available_date", message.getAvailableDate());
+        map.put("create_date", message.getCreateDate());
 
         // topic
         Map<String, Object> topic = new HashMap<>();
@@ -54,30 +62,6 @@ public class MessageDetail extends DetailResource<Message> {
             logs.add(item);
         }
         map.put("logs", logs);
-        return super.toMap();
-    }
-
-    public Topic getTopic() {
-        return topic;
-    }
-
-    public void setTopic(Topic topic) {
-        this.topic = topic;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    public List<MessageLog> getLogList() {
-        return logList;
-    }
-
-    public void setLogList(List<MessageLog> logList) {
-        this.logList = logList;
+        return map;
     }
 }

@@ -11,7 +11,7 @@ import top.chenxin.mc.form.topic.PushForm;
 import top.chenxin.mc.mapper.CustomerMapper;
 import top.chenxin.mc.mapper.MessageMapper;
 import top.chenxin.mc.mapper.TopicMapper;
-import top.chenxin.mc.resource.TopicCollection;
+import top.chenxin.mc.response.topic.ListResponse;
 import top.chenxin.mc.entity.Topic;
 import top.chenxin.mc.service.TopicService;
 
@@ -42,13 +42,15 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public TopicCollection search(ListForm listForm) {
-        TopicCollection collection = new TopicCollection();
-        collection.setPage(listForm.getPage());
-        collection.setLimit(listForm.getLimit());
-        collection.setCount(topicMapper.searchCount(listForm));
-        collection.setList(topicMapper.search(listForm));
-        return collection;
+    public ListResponse search(ListForm listForm) {
+
+        List<Topic> topicList = topicMapper.search(listForm);
+
+        ListResponse response = new ListResponse(topicList);
+        response.setPage(listForm.getPage());
+        response.setLimit(listForm.getLimit());
+        response.setCount(topicMapper.searchCount(listForm));
+        return response;
     }
 
     @Transactional

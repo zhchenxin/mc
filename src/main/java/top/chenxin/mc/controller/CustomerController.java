@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import top.chenxin.mc.form.customer.ListForm;
 import top.chenxin.mc.form.customer.CreateForm;
 import top.chenxin.mc.lib.BaseController;
-import top.chenxin.mc.lib.PaginationCollection;
+import top.chenxin.mc.response.PaginationResponse;
 import top.chenxin.mc.service.CustomerService;
 import java.util.Map;
 
@@ -20,8 +20,7 @@ public class CustomerController extends BaseController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public Map<String, Object> list(ListForm form) {
-        PaginationCollection collection = customerService.search(form);
-        return successJson(collection.toMap());
+        return successJson(customerService.search(form).toMap());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

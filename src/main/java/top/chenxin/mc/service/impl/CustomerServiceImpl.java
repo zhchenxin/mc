@@ -2,14 +2,17 @@ package top.chenxin.mc.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.chenxin.mc.entity.Topic;
 import top.chenxin.mc.form.customer.CreateForm;
+import top.chenxin.mc.response.EmptyPaginationResponse;
+import top.chenxin.mc.response.Response;
 import top.chenxin.mc.service.CustomerService;
 import top.chenxin.mc.mapper.CustomerMapper;
 import top.chenxin.mc.mapper.TopicMapper;
 import top.chenxin.mc.entity.Customer;
 import top.chenxin.mc.form.customer.ListForm;
 import top.chenxin.mc.lib.Utils;
-import top.chenxin.mc.resource.CustomerCollection;
+import top.chenxin.mc.response.customer.ListResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,22 +32,23 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerCollection search(ListForm listForm) {
-        CustomerCollection collection = new CustomerCollection();
-        collection.setPage(listForm.getPage());
-        collection.setLimit(listForm.getLimit());
-        collection.setCount(customerMapper.searchCount(listForm));
-        collection.setList(customerMapper.search(listForm));
+    public Response search(ListForm listForm) {
 
-        if (collection.getList().size() == 0) {
-            return collection;
+        List<Customer> customerList = customerMapper.search(listForm);
+
+        if (customerList.size() == 0) {
+            return new EmptyPaginationResponse();
         }
 
-        List<Long> topicIds = collection.getList().stream().map(Customer::getTopicId).collect(Collectors.toList());
+        List<Long> topicIds = customerList.stream().map(Customer::getTopicId).collect(Collectors.toList());
         Utils.removeDuplicate(topicIds);
 
-        collection.setTopicList(topicMapper.getByIds(topicIds));
+        List<Topic> topicList = topicMapper.getByIds(topicIds);
 
-        return collection;
+        ListResponse response = new ListResponse(customerList, topicList);
+        response.setPage(listForm.getPage());
+        response.setLimit(listForm.getLimit());
+        response.setCount(customerMapper.searchCount(listForm));
+        return response;
     }
 }

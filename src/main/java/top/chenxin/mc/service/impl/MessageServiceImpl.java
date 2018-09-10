@@ -3,8 +3,11 @@ package top.chenxin.mc.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import top.chenxin.mc.entity.Topic;
 import top.chenxin.mc.lib.Utils;
-import top.chenxin.mc.resource.MessageCollection;
+import top.chenxin.mc.response.EmptyPaginationResponse;
+import top.chenxin.mc.response.Response;
+import top.chenxin.mc.response.message.ListResponse;
 import top.chenxin.mc.mapper.CustomerMapper;
 import top.chenxin.mc.mapper.MessageMapper;
 import top.chenxin.mc.mapper.MessageLogMapper;
@@ -13,7 +16,7 @@ import top.chenxin.mc.entity.Customer;
 import top.chenxin.mc.entity.Message;
 import top.chenxin.mc.entity.MessageLog;
 import top.chenxin.mc.form.message.ListForm;
-import top.chenxin.mc.resource.MessageDetail;
+import top.chenxin.mc.response.message.DetailResponse;
 import top.chenxin.mc.service.MessageService;
 
 import java.util.List;
@@ -35,53 +38,52 @@ public class MessageServiceImpl implements MessageService {
     private MessageLogMapper messageLogMapper;
 
     @Override
-    public MessageCollection search(ListForm listForm) {
-        MessageCollection collection = new MessageCollection();
-        collection.setPage(listForm.getPage());
-        collection.setLimit(listForm.getLimit());
-        collection.setCount(messageMapper.searchCount(listForm));
-        collection.setList(messageMapper.search(listForm));
+    public Response search(ListForm listForm) {
 
-        if (collection.getList().size() == 0) {
-            return collection;
+        List<Message> messageList = messageMapper.search(listForm);
+        if (messageList.size() == 0) {
+            return new EmptyPaginationResponse();
         }
 
-        List<Long> customerIds = collection.getList().stream().map(Message::getCustomerId).collect(Collectors.toList());
-        List<Long> topicIds = collection.getList().stream().map(Message::getTopicId).collect(Collectors.toList());
+        List<Long> customerIds = messageList.stream().map(Message::getCustomerId).collect(Collectors.toList());
+        List<Long> topicIds = messageList.stream().map(Message::getTopicId).collect(Collectors.toList());
         Utils.removeDuplicate(customerIds);
         Utils.removeDuplicate(topicIds);
 
-        collection.setCustomerList(customerMapper.getByIds(customerIds));
-        collection.setTopicList(topicMapper.getByIds(topicIds));
+        List<Customer> customerList = customerMapper.getByIds(customerIds);
+        List<Topic> topicList = topicMapper.getByIds(topicIds);
 
-        return collection;
+        ListResponse response = new ListResponse(messageList, customerList, topicList);
+        response.setPage(listForm.getPage());
+        response.setLimit(listForm.getLimit());
+        response.setCount(messageMapper.searchCount(listForm));
+        return response;
     }
 
     @Override
-    public MessageDetail getDetailById(Long id) {
-        MessageDetail detail = new MessageDetail();
+    public Response getDetailById(Long id) {
+
         Message message = messageMapper.getById(id);
         if (message == null) {
-            return null;
+            throw new RuntimeException("Not Found");
         }
 
-        detail.setEntity(message);
-        detail.setCustomer(customerMapper.getById(message.getCustomerId()));
-        detail.setTopic(topicMapper.getById(message.getTopicId()));
-        detail.setLogList(messageLogMapper.getByMessageId(message.getId()));
-        return detail;
+        Customer customer = customerMapper.getById(message.getCustomerId());
+        Topic topic =topicMapper.getById(message.getTopicId());
+        List<MessageLog> logs = messageLogMapper.getByMessageId(message.getId());
+        return new DetailResponse(message, topic, customer, logs);
     }
 
     @Override
     @Transactional
-    public MessageDetail pop() {
+    public Message pop() {
         Message message = messageMapper.popMessage();
         if (message == null) {
             return null;
         }
         Customer customer = customerMapper.getById(message.getCustomerId());
         messageMapper.start(message.getId(), Utils.getCurrentTimestamp() + customer.getTimeout());
-        return getDetailById(message.getId());
+        return message;
     }
 
     @Override
