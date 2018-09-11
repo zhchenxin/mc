@@ -6,13 +6,14 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import top.chenxin.mc.mapper.MessageMapper;
 import top.chenxin.mc.service.MessageService;
 
 @Component
 public class RetryTimeoutJob implements Runnable, InitializingBean, DisposableBean {
 
     @Autowired
-    private MessageService messageService;
+    private MessageMapper messageMapper;
 
     private Thread thread;
 
@@ -36,7 +37,7 @@ public class RetryTimeoutJob implements Runnable, InitializingBean, DisposableBe
     @Override
     public void run() {
         while (running) {
-            messageService.retryTimeoutMessage();
+            messageMapper.retryTimeoutMessage();
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
