@@ -2,29 +2,29 @@ package top.chenxin.mc.lib;
 
 public class BaseListForm {
 
-    private Long page = 1L;
-    private Long limit = 10L;
-    private Long offset = 0L;
+    private Integer page = 1;
+    private Integer limit = 10;
+    private Integer offset = 0;
 
-    public Long getPage() {
+    public Integer getPage() {
         return page;
     }
 
-    public void setPage(Long page) {
+    public void setPage(Integer page) {
         this.page = page;
         this.offset = (this.page - 1) * this.limit;
     }
 
-    public Long getLimit() {
+    public Integer getLimit() {
         return limit;
     }
 
-    public void setLimit(Long limit) {
+    public void setLimit(Integer limit) {
         this.limit = limit;
         this.offset = (this.page - 1) * this.limit;
     }
 
-    public Long getOffset() {
+    public Integer getOffset() {
         return offset;
     }
 }

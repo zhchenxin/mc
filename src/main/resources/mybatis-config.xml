@@ -7,4 +7,13 @@
         <setting name="mapUnderscoreToCamelCase" value="true"/>
         <setting name="jdbcTypeForNull" value="NULL" />
     </settings>
+    <plugins>
+        <!-- com.github.pagehelper为PageHelper类所在包名 -->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!-- 使用下面的方式配置参数，后面会有所有的参数介绍 -->
+            <property name="offsetAsPageNum" value="true"/>
+            <property name="supportMethodsArguments" value="true"/>
+            <property name="params" value="pageNum=page;pageSize=limit;"/>
+        </plugin>
+    </plugins>
 </configuration>

@@ -17,7 +17,6 @@ import top.chenxin.mc.lib.Utils;
 import top.chenxin.mc.mapper.CustomerMapper;
 import top.chenxin.mc.mapper.MessageLogMapper;
 import top.chenxin.mc.mapper.MessageMapper;
-import top.chenxin.mc.response.message.DetailResponse;
 
 import java.util.ArrayList;
 import java.util.List;

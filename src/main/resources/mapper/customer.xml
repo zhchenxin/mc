@@ -19,14 +19,8 @@
 
     <select id="search" resultType="top.chenxin.mc.entity.Customer">
         SELECT * FROM customer WHERE 1=1
-        <if test="topicId != null and topicId != 0">AND topic_id = #{topicId}</if>
+        <if test="search.topicId != null and search.topicId != 0">AND topic_id = #{search.topicId}</if>
         order by id desc
-        LIMIT #{offset},#{limit}
-    </select>
-
-    <select id="searchCount" resultType="java.lang.Long">
-        SELECT count(*) FROM customer WHERE 1=1
-        <if test="topicId != null and topicId != 0">AND topic_id = #{topicId}</if>
     </select>
 
     <select id="getByIds" resultType="top.chenxin.mc.entity.Customer">

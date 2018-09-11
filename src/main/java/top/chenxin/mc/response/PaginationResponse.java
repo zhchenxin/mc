@@ -1,5 +1,7 @@
 package top.chenxin.mc.response;
 
+import com.github.pagehelper.Page;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +11,7 @@ import java.util.Map;
  */
 public abstract class PaginationResponse implements Response {
 
-    private Long count;
-    private Long page;
-    private Long limit;
+    private Page page;
 
     protected abstract List formatList();
 
@@ -22,28 +22,17 @@ public abstract class PaginationResponse implements Response {
         return map;
     }
 
-    private Map<String, Long> getMate() {
-        Map<String, Long> mate = new HashMap<>();
-        mate.put("total", count);
-        mate.put("totalPage", getTotalPage());
-        mate.put("currentPage", page);
-        mate.put("limit", limit);
+    private Map<String, Object> getMate() {
+        Map<String, Object> mate = new HashMap<>();
+        // 总个数
+        mate.put("total", page.getTotal());
+        mate.put("totalPage", page.getPages());
+        mate.put("currentPage", page.getPageNum());
+        mate.put("limit", page.getPageSize());
         return mate;
     }
 
-    private Long getTotalPage() {
-        return (long) Math.ceil((double)count / (double)limit);
-    }
-
-    public void setCount(Long count) {
-        this.count = count;
-    }
-
-    public void setPage(Long page) {
+    public void setPage(Page page) {
         this.page = page;
-    }
-
-    public void setLimit(Long limit) {
-        this.limit = limit;
     }
 }

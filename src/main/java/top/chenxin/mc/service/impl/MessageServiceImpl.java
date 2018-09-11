@@ -1,5 +1,8 @@
 package top.chenxin.mc.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,9 +43,9 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Response search(ListForm listForm) {
 
-        List<Message> messageList = messageMapper.search(listForm);
+        Page<Message> messageList = messageMapper.search(listForm, listForm.getPage(), listForm.getLimit());
         if (messageList.size() == 0) {
-            return new EmptyPaginationResponse();
+            return new EmptyPaginationResponse(messageList);
         }
 
         List<Long> customerIds = messageList.stream().map(Message::getCustomerId).collect(Collectors.toList());
@@ -54,9 +57,7 @@ public class MessageServiceImpl implements MessageService {
         List<Topic> topicList = topicMapper.getByIds(topicIds);
 
         ListResponse response = new ListResponse(messageList, customerList, topicList);
-        response.setPage(listForm.getPage());
-        response.setLimit(listForm.getLimit());
-        response.setCount(messageMapper.searchCount(listForm));
+        response.setPage(messageList);
         return response;
     }
 

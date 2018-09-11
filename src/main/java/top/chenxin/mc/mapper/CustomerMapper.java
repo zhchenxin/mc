@@ -1,5 +1,6 @@
 package top.chenxin.mc.mapper;
 
+import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Param;
 import top.chenxin.mc.entity.Customer;
 import top.chenxin.mc.form.customer.ListForm;
@@ -12,9 +13,7 @@ public interface CustomerMapper {
     Long create(Customer customer);
 
     // 搜索
-    List<Customer> search(ListForm listForm);
-
-    Long searchCount(ListForm listForm);
+    Page<Customer> search(@Param("search") ListForm listForm, @Param("page") int page, @Param("limit") int limit);
 
     // 根据指定条件查询
     List<Customer> getByTopicId(@Param("topicId") Long topicId);

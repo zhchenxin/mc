@@ -21,18 +21,10 @@
 
     <select id="search" resultType="top.chenxin.mc.entity.Message">
         SELECT * FROM message WHERE 1=1
-        <if test="topicId != null and topicId != 0">AND topic_id = #{topicId}</if>
-        <if test="customerId != null and customerId != 0">AND customer_id = #{customerId}</if>
-        <if test="status != null and status != 0">AND status = #{status}</if>
+        <if test="search.topicId != null and search.topicId != 0">AND topic_id = #{search.topicId}</if>
+        <if test="search.customerId != null and search.customerId != 0">AND customer_id = #{search.customerId}</if>
+        <if test="search.status != null and search.status != 0">AND status = #{search.status}</if>
         order by id desc
-        LIMIT #{offset},#{limit}
-    </select>
-
-    <select id="searchCount" resultType="java.lang.Long">
-        SELECT count(*) FROM message WHERE 1=1
-        <if test="topicId != null and topicId != 0">AND topic_id = #{topicId}</if>
-        <if test="customerId != null and customerId != 0">AND customer_id = #{customerId}</if>
-        <if test="status != null and status != 0">AND status = #{status}</if>
     </select>
 
     <select id="getById" resultType="top.chenxin.mc.entity.Message">

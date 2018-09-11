@@ -1,5 +1,6 @@
 package top.chenxin.mc.service.impl;
 
+import com.github.pagehelper.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,12 +45,10 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public ListResponse search(ListForm listForm) {
 
-        List<Topic> topicList = topicMapper.search(listForm);
+        Page<Topic> topicList = topicMapper.search(listForm, listForm.getPage(), listForm.getLimit());
 
         ListResponse response = new ListResponse(topicList);
-        response.setPage(listForm.getPage());
-        response.setLimit(listForm.getLimit());
-        response.setCount(topicMapper.searchCount(listForm));
+        response.setPage(topicList);
         return response;
     }
 

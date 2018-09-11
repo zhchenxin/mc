@@ -1,5 +1,6 @@
 package top.chenxin.mc.service.impl;
 
+import com.github.pagehelper.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.chenxin.mc.entity.Topic;
@@ -34,10 +35,10 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Response search(ListForm listForm) {
 
-        List<Customer> customerList = customerMapper.search(listForm);
+        Page<Customer> customerList = customerMapper.search(listForm, listForm.getPage(), listForm.getLimit());
 
         if (customerList.size() == 0) {
-            return new EmptyPaginationResponse();
+            return new EmptyPaginationResponse(customerList);
         }
 
         List<Long> topicIds = customerList.stream().map(Customer::getTopicId).collect(Collectors.toList());
@@ -46,9 +47,7 @@ public class CustomerServiceImpl implements CustomerService {
         List<Topic> topicList = topicMapper.getByIds(topicIds);
 
         ListResponse response = new ListResponse(customerList, topicList);
-        response.setPage(listForm.getPage());
-        response.setLimit(listForm.getLimit());
-        response.setCount(customerMapper.searchCount(listForm));
+        response.setPage(customerList);
         return response;
     }
 }

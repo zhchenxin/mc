@@ -13,15 +13,9 @@
 
     <select id="search" resultType="top.chenxin.mc.entity.Topic">
         SELECT * FROM topic WHERE 1=1
-        <if test="name != null and name != ''">AND name = #{name}</if>
-        <if test="topicId != null and topicId != 0">AND id = #{topicId}</if>
+        <if test="search.name != null and search.name != ''">AND name = #{search.name}</if>
+        <if test="search.topicId != null and search.topicId != 0">AND id = #{search.topicId}</if>
         order by id desc
-        LIMIT #{offset},#{limit}
-    </select>
-    <select id="searchCount" resultType="java.lang.Long">
-        SELECT count(*) FROM topic WHERE 1=1
-        <if test="name != null and name != ''">AND name = #{name}</if>
-        <if test="topicId != null and topicId != 0">AND id = #{topicId}</if>
     </select>
 
     <select id="getByIds" resultType="top.chenxin.mc.entity.Topic">
