@@ -24,7 +24,7 @@ public class ListResponse extends PaginationResponse {
     }
 
     @Override
-    protected List formatList() {
+    protected List getList() {
         List<Map<String, Object>> list = new ArrayList<>();
 
         for (Customer item : customerList) {
@@ -35,7 +35,6 @@ public class ListResponse extends PaginationResponse {
             map.put("timeout", item.getTimeout());
             map.put("attempts", item.getAttempts());
             map.put("createDate", Utils.simpleDate(item.getCreateDate()));
-
             map.put("topicName", topicMap.get(item.getTopicId()).getName());
 
             list.add(map);

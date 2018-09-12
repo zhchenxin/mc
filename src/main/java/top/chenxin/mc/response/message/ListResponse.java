@@ -33,13 +33,12 @@ public class ListResponse extends PaginationResponse {
     }
 
     @Override
-    protected List formatList() {
+    protected List getList() {
         List<Map<String, Object>> list = new ArrayList<>();
 
         for (Message item : messageList) {
             Map<String, Object> map = new HashMap<>();
             map.put("id", item.getId());
-            map.put("messageId", item.getMessageId());
             map.put("message", item.getMessage());
             map.put("attempts", item.getAttempts());
             map.put("status", item.getStatus());

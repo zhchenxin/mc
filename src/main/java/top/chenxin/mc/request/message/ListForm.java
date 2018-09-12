@@ -1,4 +1,4 @@
-package top.chenxin.mc.form.message;
+package top.chenxin.mc.request.message;
 
 import top.chenxin.mc.lib.BaseListForm;
 

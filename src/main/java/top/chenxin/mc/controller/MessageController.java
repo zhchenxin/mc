@@ -2,10 +2,8 @@ package top.chenxin.mc.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import top.chenxin.mc.response.PaginationResponse;
-import top.chenxin.mc.form.message.ListForm;
+import top.chenxin.mc.request.message.ListForm;
 import top.chenxin.mc.lib.BaseController;
-import top.chenxin.mc.response.Response;
 import top.chenxin.mc.service.MessageService;
 import top.chenxin.mc.service.TopicService;
 

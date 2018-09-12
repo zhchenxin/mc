@@ -3,7 +3,7 @@ package top.chenxin.mc.mapper;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Param;
 import top.chenxin.mc.entity.Topic;
-import top.chenxin.mc.form.topic.ListForm;
+import top.chenxin.mc.request.topic.ListForm;
 
 import java.util.List;
 

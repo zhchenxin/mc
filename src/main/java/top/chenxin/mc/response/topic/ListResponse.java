@@ -17,7 +17,7 @@ public class ListResponse extends PaginationResponse {
         this.topicList = topicList;
     }
 
-    protected List formatList() {
+    protected List getList() {
         List<Map<String, Object>> list = new ArrayList<>();
 
         for (Topic topic : topicList) {

@@ -1,4 +1,4 @@
-package top.chenxin.mc.form.topic;
+package top.chenxin.mc.request.topic;
 
 import top.chenxin.mc.entity.Topic;
 

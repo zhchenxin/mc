@@ -1,4 +1,4 @@
-package top.chenxin.mc.form.customer;
+package top.chenxin.mc.request.customer;
 
 import top.chenxin.mc.entity.Customer;
 

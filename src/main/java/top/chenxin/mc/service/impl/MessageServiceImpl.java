@@ -1,11 +1,8 @@
 package top.chenxin.mc.service.impl;
 
 import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import top.chenxin.mc.entity.Topic;
 import top.chenxin.mc.lib.Utils;
 import top.chenxin.mc.response.EmptyPaginationResponse;
@@ -18,7 +15,7 @@ import top.chenxin.mc.mapper.TopicMapper;
 import top.chenxin.mc.entity.Customer;
 import top.chenxin.mc.entity.Message;
 import top.chenxin.mc.entity.MessageLog;
-import top.chenxin.mc.form.message.ListForm;
+import top.chenxin.mc.request.message.ListForm;
 import top.chenxin.mc.response.message.DetailResponse;
 import top.chenxin.mc.service.MessageService;
 

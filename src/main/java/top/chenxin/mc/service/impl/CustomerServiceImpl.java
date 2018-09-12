@@ -4,14 +4,14 @@ import com.github.pagehelper.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.chenxin.mc.entity.Topic;
-import top.chenxin.mc.form.customer.CreateForm;
+import top.chenxin.mc.request.customer.CreateForm;
 import top.chenxin.mc.response.EmptyPaginationResponse;
 import top.chenxin.mc.response.Response;
 import top.chenxin.mc.service.CustomerService;
 import top.chenxin.mc.mapper.CustomerMapper;
 import top.chenxin.mc.mapper.TopicMapper;
 import top.chenxin.mc.entity.Customer;
-import top.chenxin.mc.form.customer.ListForm;
+import top.chenxin.mc.request.customer.ListForm;
 import top.chenxin.mc.lib.Utils;
 import top.chenxin.mc.response.customer.ListResponse;
 

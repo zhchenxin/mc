@@ -13,12 +13,12 @@ public abstract class PaginationResponse implements Response {
 
     private Page page;
 
-    protected abstract List formatList();
+    protected abstract List getList();
 
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("mate", getMate());
-        map.put("list", formatList());
+        map.put("list", getList());
         return map;
     }
 

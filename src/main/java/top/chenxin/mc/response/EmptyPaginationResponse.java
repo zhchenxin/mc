@@ -10,7 +10,7 @@ public class EmptyPaginationResponse extends PaginationResponse {
         this.setPage(page);
     }
 
-    protected List formatList() {
+    protected List getList() {
         return null;
     }
 }

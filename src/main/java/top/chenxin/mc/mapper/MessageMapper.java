@@ -2,7 +2,7 @@ package top.chenxin.mc.mapper;
 
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Param;
-import top.chenxin.mc.form.message.ListForm;
+import top.chenxin.mc.request.message.ListForm;
 import top.chenxin.mc.entity.Message;
 
 public interface MessageMapper {

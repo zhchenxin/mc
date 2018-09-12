@@ -1,4 +1,4 @@
-package top.chenxin.mc.form.topic;
+package top.chenxin.mc.request.topic;
 
 public class PushForm {
     private Long messageId = 0L;

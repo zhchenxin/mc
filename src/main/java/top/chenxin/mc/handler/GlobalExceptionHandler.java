@@ -12,7 +12,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public Map<String, Object> exceptionHandler(HttpServletRequest req, Exception e) throws Exception {
+    public Map<String, Object> exceptionHandler(HttpServletRequest req, Exception e) {
         e.printStackTrace();
         Map<String, Object> modelMap = new HashMap<>();
         modelMap.put("code", 1);
