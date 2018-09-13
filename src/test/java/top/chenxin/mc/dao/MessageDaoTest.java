@@ -1,6 +1,5 @@
-package top.chenxin.mc.mapper;
+package top.chenxin.mc.dao;
 
-import org.apache.ibatis.annotations.Param;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,39 +10,39 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class MessageMapperTest {
+public class MessageDaoTest {
 
     @Autowired
-    private MessageMapper messageMapper;
+    private MessageDao messageDao;
 
     @Test
     public void popMessage() {
-        messageMapper.popMessage();
+        messageDao.popMessage();
     }
 
     @Test
     public void retryTimeoutMessage() {
-        messageMapper.retryTimeoutMessage();
+        messageDao.retryTimeoutMessage();
     }
 
     @Test
     public void start() {
-        messageMapper.start(1L, 1536571633);
+        messageDao.start(1L, 1536571633);
     }
 
     @Test
     public void failed() {
-        messageMapper.failed(1L);
+        messageDao.failed(1L);
     }
 
     @Test
     public void retry() {
-        messageMapper.failed(1L);
+        messageDao.failed(1L);
     }
 
     @Test
     public void success() {
-        messageMapper.failed(1L);
+        messageDao.failed(1L);
     }
 
 }

@@ -1,6 +1,6 @@
-package top.chenxin.mc.lib;
+package top.chenxin.mc.entity;
 
-public class BaseEntity {
+public abstract class BaseEntity {
     private Long id;
 
     public Long getId() {

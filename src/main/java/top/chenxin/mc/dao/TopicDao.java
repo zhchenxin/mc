@@ -1,4 +1,4 @@
-package top.chenxin.mc.mapper;
+package top.chenxin.mc.dao;
 
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Param;
@@ -7,7 +7,7 @@ import top.chenxin.mc.request.topic.ListForm;
 
 import java.util.List;
 
-public interface TopicMapper {
+public interface TopicDao {
 
     // 创建数据
     Long create(Topic topic);

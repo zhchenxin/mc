@@ -14,9 +14,9 @@ import top.chenxin.mc.entity.Customer;
 import top.chenxin.mc.entity.Message;
 import top.chenxin.mc.entity.MessageLog;
 import top.chenxin.mc.lib.Utils;
-import top.chenxin.mc.mapper.CustomerMapper;
-import top.chenxin.mc.mapper.MessageLogMapper;
-import top.chenxin.mc.mapper.MessageMapper;
+import top.chenxin.mc.dao.CustomerDao;
+import top.chenxin.mc.dao.MessageLogDao;
+import top.chenxin.mc.dao.MessageDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,13 +29,13 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
 
 
     @Autowired
-    private MessageMapper messageMapper;
+    private MessageDao messageDao;
 
     @Autowired
-    private CustomerMapper customerMapper;
+    private CustomerDao customerDao;
 
     @Autowired
-    private MessageLogMapper messageLogMapper;
+    private MessageLogDao messageLogDao;
 
     @Value("${customer_count}")
     private int customerCount = 0;
@@ -105,7 +105,7 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
 
     private String runMessage(Message message) throws Exception {
 
-        Customer customer = customerMapper.getById(message.getCustomerId());
+        Customer customer = customerDao.getById(message.getCustomerId());
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .readTimeout(customer.getTimeout(), TimeUnit.SECONDS)
@@ -123,12 +123,12 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
 
     @Transactional
     private Message pop() {
-        Message message = messageMapper.popMessage();
+        Message message = messageDao.popMessage();
         if (message == null) {
             return null;
         }
-        Customer customer = customerMapper.getById(message.getCustomerId());
-        messageMapper.start(message.getId(), Utils.getCurrentTimestamp() + customer.getTimeout());
+        Customer customer = customerDao.getById(message.getCustomerId());
+        messageDao.start(message.getId(), Utils.getCurrentTimestamp() + customer.getTimeout());
         return message;
     }
 
@@ -143,10 +143,10 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
         log.setTopicId(message.getTopicId());
         log.setTime(time);
         log.setError("");
-        messageLogMapper.create(log);
+        messageLogDao.create(log);
 
         // 修改消息状态
-        messageMapper.success(message.getId());
+        messageDao.success(message.getId());
     }
 
     @Transactional
@@ -160,14 +160,14 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
         log.setTopicId(message.getTopicId());
         log.setTime(time);
         log.setResponse("");
-        messageLogMapper.create(log);
+        messageLogDao.create(log);
 
-        Customer customer = customerMapper.getById(message.getCustomerId());
+        Customer customer = customerDao.getById(message.getCustomerId());
         if (message.getAttempts() >= customer.getAttempts()) {
             // 如果
-            messageMapper.failed(message.getId());
+            messageDao.failed(message.getId());
         } else {
-            messageMapper.retry(message.getId());
+            messageDao.retry(message.getId());
         }
     }
 

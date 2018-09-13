@@ -1,4 +1,4 @@
-package top.chenxin.mc.mapper;
+package top.chenxin.mc.dao;
 
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Param;
@@ -7,7 +7,7 @@ import top.chenxin.mc.request.customer.ListForm;
 
 import java.util.List;
 
-public interface CustomerMapper {
+public interface CustomerDao {
 
     // 创建数据
     Long create(Customer customer);

@@ -1,4 +1,4 @@
-package top.chenxin.mc.lib;
+package top.chenxin.mc.request;
 
 public class BaseListForm {
 

@@ -9,7 +9,6 @@ import top.chenxin.mc.request.topic.CreateForm;
 import top.chenxin.mc.request.topic.ListForm;
 import top.chenxin.mc.request.topic.PushForm;
 import top.chenxin.mc.response.PaginationResponse;
-import top.chenxin.mc.lib.BaseController;
 import top.chenxin.mc.response.SuccessResponse;
 import top.chenxin.mc.service.TopicService;
 

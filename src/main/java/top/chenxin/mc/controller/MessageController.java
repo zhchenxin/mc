@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import top.chenxin.mc.request.message.ListForm;
-import top.chenxin.mc.lib.BaseController;
 import top.chenxin.mc.service.MessageService;
 import top.chenxin.mc.service.TopicService;
 

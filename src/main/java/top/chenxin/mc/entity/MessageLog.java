@@ -1,7 +1,5 @@
 package top.chenxin.mc.entity;
 
-import top.chenxin.mc.lib.BaseEntity;
-
 public class MessageLog extends BaseEntity {
     private Long messageId;
     private Long topicId;

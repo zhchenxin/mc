@@ -1,11 +1,11 @@
-package top.chenxin.mc.mapper;
+package top.chenxin.mc.dao;
 
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Param;
 import top.chenxin.mc.request.message.ListForm;
 import top.chenxin.mc.entity.Message;
 
-public interface MessageMapper {
+public interface MessageDao {
     // 创建数据
     Long create(Message message);
 

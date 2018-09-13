@@ -1,8 +1,6 @@
 package top.chenxin.mc.entity;
 
 
-import top.chenxin.mc.lib.BaseEntity;
-
 public class Topic extends BaseEntity {
     private String name;
     private String description;

@@ -1,4 +1,4 @@
-package top.chenxin.mc.mapper;
+package top.chenxin.mc.dao;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,34 +14,34 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class TopicMapperTest {
+public class TopicDaoTest {
 
     @Autowired
-    private TopicMapper topicMapper;
+    private TopicDao topicDao;
 
     @Test
     public void create() {
         Topic topic = new Topic();
         topic.setName("test");
         topic.setDescription("test");
-        topicMapper.create(topic);
+        topicDao.create(topic);
     }
 
     @Test
     public void getByName() {
-        topicMapper.getByName("test");
+        topicDao.getByName("test");
     }
 
     @Test
     public void getById() {
-        topicMapper.getById(1L);
+        topicDao.getById(1L);
     }
 
     @Test
     public void getByIds() {
         List<Long> ids = new ArrayList<>();
         ids.add(1L);
-        topicMapper.getByIds(ids);
+        topicDao.getByIds(ids);
     }
 
 }

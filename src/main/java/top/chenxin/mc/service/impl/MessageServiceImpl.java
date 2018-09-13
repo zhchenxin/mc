@@ -8,10 +8,10 @@ import top.chenxin.mc.lib.Utils;
 import top.chenxin.mc.response.EmptyPaginationResponse;
 import top.chenxin.mc.response.Response;
 import top.chenxin.mc.response.message.ListResponse;
-import top.chenxin.mc.mapper.CustomerMapper;
-import top.chenxin.mc.mapper.MessageMapper;
-import top.chenxin.mc.mapper.MessageLogMapper;
-import top.chenxin.mc.mapper.TopicMapper;
+import top.chenxin.mc.dao.CustomerDao;
+import top.chenxin.mc.dao.MessageDao;
+import top.chenxin.mc.dao.MessageLogDao;
+import top.chenxin.mc.dao.TopicDao;
 import top.chenxin.mc.entity.Customer;
 import top.chenxin.mc.entity.Message;
 import top.chenxin.mc.entity.MessageLog;
@@ -26,21 +26,21 @@ import java.util.stream.Collectors;
 public class MessageServiceImpl implements MessageService {
 
     @Autowired
-    private MessageMapper messageMapper;
+    private MessageDao messageDao;
 
     @Autowired
-    private TopicMapper topicMapper;
+    private TopicDao topicDao;
 
     @Autowired
-    private CustomerMapper customerMapper;
+    private CustomerDao customerDao;
 
     @Autowired
-    private MessageLogMapper messageLogMapper;
+    private MessageLogDao messageLogDao;
 
     @Override
     public Response search(ListForm listForm) {
 
-        Page<Message> messageList = messageMapper.search(listForm, listForm.getPage(), listForm.getLimit());
+        Page<Message> messageList = messageDao.search(listForm, listForm.getPage(), listForm.getLimit());
         if (messageList.size() == 0) {
             return new EmptyPaginationResponse(messageList);
         }
@@ -50,8 +50,8 @@ public class MessageServiceImpl implements MessageService {
         Utils.removeDuplicate(customerIds);
         Utils.removeDuplicate(topicIds);
 
-        List<Customer> customerList = customerMapper.getByIds(customerIds);
-        List<Topic> topicList = topicMapper.getByIds(topicIds);
+        List<Customer> customerList = customerDao.getByIds(customerIds);
+        List<Topic> topicList = topicDao.getByIds(topicIds);
 
         ListResponse response = new ListResponse(messageList, customerList, topicList);
         response.setPage(messageList);
@@ -61,14 +61,14 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Response getDetailById(Long id) {
 
-        Message message = messageMapper.getById(id);
+        Message message = messageDao.getById(id);
         if (message == null) {
             throw new RuntimeException("Not Found");
         }
 
-        Customer customer = customerMapper.getById(message.getCustomerId());
-        Topic topic =topicMapper.getById(message.getTopicId());
-        List<MessageLog> logs = messageLogMapper.getByMessageId(message.getId());
+        Customer customer = customerDao.getById(message.getCustomerId());
+        Topic topic = topicDao.getById(message.getTopicId());
+        List<MessageLog> logs = messageLogDao.getByMessageId(message.getId());
         return new DetailResponse(message, topic, customer, logs);
     }
 

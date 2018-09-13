@@ -1,6 +1,6 @@
 package top.chenxin.mc.request.message;
 
-import top.chenxin.mc.lib.BaseListForm;
+import top.chenxin.mc.request.BaseListForm;
 
 public class ListForm extends BaseListForm {
     private Long topicId = 0L;
