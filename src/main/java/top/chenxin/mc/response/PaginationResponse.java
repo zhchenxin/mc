@@ -9,13 +9,13 @@ import java.util.Map;
 /**
  * 分页输出
  */
-public abstract class PaginationResponse implements Response {
+public abstract class PaginationResponse extends AbstractResponse {
 
     private Page page;
 
     protected abstract List getList();
 
-    public Map<String, Object> toMap() {
+    public Map getData() {
         Map<String, Object> map = new HashMap<>();
         map.put("mate", getMate());
         map.put("list", getList());

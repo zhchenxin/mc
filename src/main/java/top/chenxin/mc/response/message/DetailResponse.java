@@ -4,14 +4,14 @@ import top.chenxin.mc.entity.Customer;
 import top.chenxin.mc.entity.Message;
 import top.chenxin.mc.entity.MessageLog;
 import top.chenxin.mc.entity.Topic;
-import top.chenxin.mc.response.Response;
+import top.chenxin.mc.response.AbstractResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DetailResponse implements Response {
+public class DetailResponse extends AbstractResponse {
 
     private Message message;
     private Topic topic;
@@ -26,7 +26,7 @@ public class DetailResponse implements Response {
     }
 
     @Override
-    public Map<String, Object> toMap() {
+    public Map getData() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", message.getId());
         map.put("message_id", message.getMessageId());

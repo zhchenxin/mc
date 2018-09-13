@@ -1,6 +1,7 @@
 package top.chenxin.mc.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import top.chenxin.mc.request.message.ListForm;
 import top.chenxin.mc.lib.BaseController;
@@ -20,13 +21,13 @@ public class MessageController extends BaseController {
     private TopicService topicService;
 
     @RequestMapping(value = "",method = RequestMethod.GET)
-    public Map<String,Object> list(ListForm form) {
-        return successJson(messageService.search(form).toMap());
+    public Map list(@Validated ListForm form) {
+        return messageService.search(form).toMap();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Map<String, Object> detail(@PathVariable("id") Long id) {
-        return successJson(messageService.getDetailById(id));
+    public Map detail(@PathVariable("id") Long id) {
+        return messageService.getDetailById(id).toMap();
     }
 
 }
