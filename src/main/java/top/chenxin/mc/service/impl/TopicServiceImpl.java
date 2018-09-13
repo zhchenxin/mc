@@ -4,16 +4,13 @@ import com.github.pagehelper.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import top.chenxin.mc.entity.Customer;
-import top.chenxin.mc.entity.Message;
-import top.chenxin.mc.request.topic.CreateForm;
-import top.chenxin.mc.request.topic.ListForm;
-import top.chenxin.mc.request.topic.PushForm;
+import top.chenxin.mc.common.utils.Utils;
+import top.chenxin.mc.dao.po.Customer;
+import top.chenxin.mc.dao.po.Message;
 import top.chenxin.mc.dao.CustomerDao;
 import top.chenxin.mc.dao.MessageDao;
 import top.chenxin.mc.dao.TopicDao;
-import top.chenxin.mc.response.topic.ListResponse;
-import top.chenxin.mc.entity.Topic;
+import top.chenxin.mc.dao.po.Topic;
 import top.chenxin.mc.service.TopicService;
 
 import java.util.List;
@@ -31,31 +28,27 @@ public class TopicServiceImpl implements TopicService {
     private MessageDao messageDao;
 
     @Override
-    public void create(CreateForm createForm) {
-        if (createForm.getName().length() == 0) {
-            throw new RuntimeException("名称不能为空");
-        }
-        Topic topic = topicDao.getByName(createForm.getName());
+    public void insert(String name, String description) {
+        Topic topic = topicDao.getByName(name);
         if (topic != null) {
             throw new RuntimeException("Topic 已存在，请使用其他名称");
         }
-        topicDao.create(createForm.toTopic());
+
+        topic = new Topic();
+        topic.setName(name);
+        topic.setDescription(description);
+        topicDao.insert(topic);
     }
 
     @Override
-    public ListResponse search(ListForm listForm) {
-
-        Page<Topic> topicList = topicDao.search(listForm, listForm.getPage(), listForm.getLimit());
-
-        ListResponse response = new ListResponse(topicList);
-        response.setPage(topicList);
-        return response;
+    public Page<Topic> search(Long topicId, Integer page, Integer limit) {
+        return topicDao.search(topicId, page, limit);
     }
 
     @Transactional
     @Override
-    public void push(PushForm form) {
-        Topic topic = topicDao.getByName(form.getTopicName());
+    public void push(Long messageId, String topicName, String message, Integer delay) {
+        Topic topic = topicDao.getByName(topicName);
         if (topic == null) {
             throw new RuntimeException("未找到topic");
         }
@@ -63,19 +56,19 @@ public class TopicServiceImpl implements TopicService {
         List<Customer> customers = customerDao.getByTopicId(topic.getId());
 
         for (Customer item : customers) {
-            Message msg = messageDao.getByMessageIdAndCustomerId(form.getMessageId(), item.getId());
+            Message msg = messageDao.getByMessageIdAndCustomerId(messageId, item.getId());
             if (msg != null) {
                 throw new RuntimeException("消息已保存");
             }
 
             msg = new Message();
-            msg.setMessageId(form.getMessageId());
+            msg.setMessageId(messageId);
             msg.setTopicId(topic.getId());
             msg.setCustomerId(item.getId());
-            msg.setMessage(form.getMessage());
-            msg.setAvailableDate(form.getAvailableDate());
-            msg.setCreateDate((int) (System.currentTimeMillis() / 1000));
-            messageDao.create(msg);
+            msg.setMessage(message);
+            msg.setAvailableDate(Utils.getCurrentTimestamp() + delay);
+            msg.setCreateDate(Utils.getCurrentTimestamp());
+            messageDao.insert(msg);
         }
     }
 }

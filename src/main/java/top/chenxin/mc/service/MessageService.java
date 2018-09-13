@@ -1,10 +1,16 @@
 package top.chenxin.mc.service;
 
-import top.chenxin.mc.response.Response;
-import top.chenxin.mc.request.message.ListForm;
+
+import top.chenxin.mc.service.dto.MessageDetail;
+import top.chenxin.mc.service.dto.MessageSearchList;
 
 public interface MessageService {
-    Response search(ListForm listForm);
+    /**
+     * 按照条件搜索
+     * @param customerId 默认值0
+     * @param status 默认值0
+     */
+    MessageSearchList search(Long customerId, Integer status, Integer page, Integer limit);
 
-    Response getDetailById(Long id);
+    MessageDetail getDetailById(Long id);
 }

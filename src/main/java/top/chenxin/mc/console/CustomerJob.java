@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import top.chenxin.mc.entity.Customer;
-import top.chenxin.mc.entity.Message;
-import top.chenxin.mc.entity.MessageLog;
-import top.chenxin.mc.lib.Utils;
+import top.chenxin.mc.dao.po.Customer;
+import top.chenxin.mc.dao.po.Message;
+import top.chenxin.mc.dao.po.MessageLog;
+import top.chenxin.mc.common.utils.Utils;
 import top.chenxin.mc.dao.CustomerDao;
 import top.chenxin.mc.dao.MessageLogDao;
 import top.chenxin.mc.dao.MessageDao;
@@ -143,7 +143,7 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
         log.setTopicId(message.getTopicId());
         log.setTime(time);
         log.setError("");
-        messageLogDao.create(log);
+        messageLogDao.insert(log);
 
         // 修改消息状态
         messageDao.success(message.getId());
@@ -160,7 +160,7 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
         log.setTopicId(message.getTopicId());
         log.setTime(time);
         log.setResponse("");
-        messageLogDao.create(log);
+        messageLogDao.insert(log);
 
         Customer customer = customerDao.getById(message.getCustomerId());
         if (message.getAttempts() >= customer.getAttempts()) {

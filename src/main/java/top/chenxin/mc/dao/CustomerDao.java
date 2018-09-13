@@ -2,18 +2,17 @@ package top.chenxin.mc.dao;
 
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Param;
-import top.chenxin.mc.entity.Customer;
-import top.chenxin.mc.request.customer.ListForm;
+import top.chenxin.mc.dao.po.Customer;
 
 import java.util.List;
 
 public interface CustomerDao {
 
     // 创建数据
-    Long create(Customer customer);
+    Long insert(Customer customer);
 
     // 搜索
-    Page<Customer> search(@Param("search") ListForm listForm, @Param("page") int page, @Param("limit") int limit);
+    Page<Customer> search(@Param("topicId") Long topicId, @Param("page") int page, @Param("limit") int limit);
 
     // 根据指定条件查询
     List<Customer> getByTopicId(@Param("topicId") Long topicId);

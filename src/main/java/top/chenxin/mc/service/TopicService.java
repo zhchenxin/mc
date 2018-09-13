@@ -1,15 +1,25 @@
 package top.chenxin.mc.service;
 
-import top.chenxin.mc.request.topic.CreateForm;
-import top.chenxin.mc.request.topic.ListForm;
-import top.chenxin.mc.request.topic.PushForm;
-import top.chenxin.mc.response.topic.ListResponse;
+
+import com.github.pagehelper.Page;
+import top.chenxin.mc.dao.po.Topic;
 
 public interface TopicService {
 
-    void create(CreateForm createForm);
+    void insert(String name, String description);
 
-    ListResponse search(ListForm listForm);
+    /**
+     * 搜索
+     * @param topicId 默认值 0
+     */
+    Page<Topic> search(Long topicId, Integer page, Integer limit);
 
-    void push(PushForm form);
+    /**
+     * 向指定的 topic 中发送消息
+     * @param messageId 消息id, 每一条消息的id唯一, 如果重复, 则插入失败
+     * @param topicName topic 名称
+     * @param message 消息内容
+     * @param delay 消息延迟时间, 单位秒
+     */
+    void push(Long messageId, String topicName, String message, Integer delay);
 }
