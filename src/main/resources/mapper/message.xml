@@ -19,22 +19,22 @@
             available_date=#{availableDate}
     </insert>
 
-    <select id="search" resultType="top.chenxin.mc.dao.po.Message">
+    <select id="search" resultType="top.chenxin.mc.entity.Message">
         SELECT * FROM message WHERE 1=1
         <if test="customerId != null and customerId != 0">AND customer_id = #{customerId}</if>
         <if test="status != null and status != 0">AND status = #{status}</if>
         order by id desc
     </select>
 
-    <select id="getById" resultType="top.chenxin.mc.dao.po.Message">
+    <select id="getById" resultType="top.chenxin.mc.entity.Message">
         select * from message where id = #{id};
     </select>
 
-    <select id="getByMessageIdAndCustomerId" resultType="top.chenxin.mc.dao.po.Message">
+    <select id="getByMessageIdAndCustomerId" resultType="top.chenxin.mc.entity.Message">
         select * from message where message_id = #{messageId} and customer_id = #{customerId};
     </select>
 
-    <select id="popMessage" resultType="top.chenxin.mc.dao.po.Message">
+    <select id="popMessage" resultType="top.chenxin.mc.entity.Message">
         SELECT * FROM message WHERE status = 1 AND available_date 	&lt; unix_timestamp(now()) limit 1 for update;
     </select>
 

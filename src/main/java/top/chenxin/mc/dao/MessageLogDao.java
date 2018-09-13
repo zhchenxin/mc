@@ -1,7 +1,7 @@
 package top.chenxin.mc.dao;
 
 import org.apache.ibatis.annotations.Param;
-import top.chenxin.mc.dao.po.MessageLog;
+import top.chenxin.mc.entity.MessageLog;
 
 import java.util.List;
 

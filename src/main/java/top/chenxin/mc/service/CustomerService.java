@@ -1,6 +1,9 @@
 package top.chenxin.mc.service;
 
-import top.chenxin.mc.service.dto.CustomerSearchList;
+import com.github.pagehelper.Page;
+import top.chenxin.mc.entity.Customer;
+
+import java.util.List;
 
 public interface CustomerService {
 
@@ -10,5 +13,9 @@ public interface CustomerService {
      * 按照指定参数进行筛选, 如果参数为默认值, 则不筛选此参数
      * @param topicId 默认值为 0
      */
-    CustomerSearchList search(Long topicId, Integer page, Integer limit);
+    Page<Customer> search(Long topicId, Integer page, Integer limit);
+
+    List<Customer> getByIds(List<Long> ids);
+
+    Customer getById(Long id);
 }

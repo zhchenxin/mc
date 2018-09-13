@@ -1,10 +1,9 @@
 package top.chenxin.mc.web.response.customer;
 
-import top.chenxin.mc.dao.po.Customer;
-import top.chenxin.mc.dao.po.Message;
-import top.chenxin.mc.dao.po.Topic;
+import com.github.pagehelper.Page;
+import top.chenxin.mc.entity.Customer;
+import top.chenxin.mc.entity.Topic;
 import top.chenxin.mc.common.utils.Utils;
-import top.chenxin.mc.service.dto.CustomerSearchList;
 import top.chenxin.mc.web.response.PaginationResponse;
 
 import java.util.ArrayList;
@@ -14,18 +13,26 @@ import java.util.Map;
 
 public class ListResponse extends PaginationResponse {
 
-    private CustomerSearchList customerSearchList;
+    private Map<Long, Topic> topicMap;
+    private Page<Customer> customerList;
 
-    public ListResponse(CustomerSearchList customerSearchList) {
-        this.customerSearchList = customerSearchList;
-        this.setPage(customerSearchList.getCustomerList());
+    public ListResponse(Page<Customer> customerList, List<Topic> topicList) {
+        this.customerList = customerList;
+        this.setPage(customerList);
+
+        this.topicMap = new HashMap<>();
+        if (topicList != null ) {
+            for (Topic item : topicList) {
+                this.topicMap.put(item.getId(), item);
+            }
+        }
     }
 
     @Override
     protected List getList() {
         List<Map<String, Object>> list = new ArrayList<>();
 
-        for (Customer item :customerSearchList.getCustomerList()) {
+        for (Customer item : customerList) {
             Map<String, Object> map = new HashMap<>();
             map.put("id", item.getId());
             map.put("name", item.getName());
@@ -42,7 +49,7 @@ public class ListResponse extends PaginationResponse {
     }
 
     private Topic getTopic(Customer customer) {
-        return this.customerSearchList.getTopicMap().get(customer.getTopicId());
+        return topicMap.get(customer.getTopicId());
     }
 
 }

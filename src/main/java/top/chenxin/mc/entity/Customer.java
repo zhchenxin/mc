@@ -1,4 +1,4 @@
-package top.chenxin.mc.dao.po;
+package top.chenxin.mc.entity;
 
 public class Customer extends BaseEntity {
     // topic id
@@ -13,6 +13,8 @@ public class Customer extends BaseEntity {
     private Integer attempts;
     // 创建时间
     private Integer createDate;
+
+    private Topic topic;
 
     public Long getTopicId() {
         return topicId;

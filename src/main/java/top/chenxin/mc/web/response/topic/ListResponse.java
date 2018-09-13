@@ -3,7 +3,7 @@ package top.chenxin.mc.web.response.topic;
 import com.github.pagehelper.Page;
 import top.chenxin.mc.common.utils.Utils;
 import top.chenxin.mc.web.response.PaginationResponse;
-import top.chenxin.mc.dao.po.Topic;
+import top.chenxin.mc.entity.Topic;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,10 +1,10 @@
 package top.chenxin.mc.web.response.message;
 
-import top.chenxin.mc.dao.po.Customer;
-import top.chenxin.mc.dao.po.Message;
-import top.chenxin.mc.dao.po.Topic;
+import com.github.pagehelper.Page;
+import top.chenxin.mc.entity.Customer;
+import top.chenxin.mc.entity.Message;
+import top.chenxin.mc.entity.Topic;
 import top.chenxin.mc.common.utils.Utils;
-import top.chenxin.mc.service.dto.MessageSearchList;
 import top.chenxin.mc.web.response.PaginationResponse;
 
 import java.util.ArrayList;
@@ -13,18 +13,35 @@ import java.util.List;
 import java.util.Map;
 
 public class ListResponse extends PaginationResponse {
-    private MessageSearchList messageSearchList;
 
-    public ListResponse(MessageSearchList messageSearchList) {
-        this.messageSearchList = messageSearchList;
-        this.setPage(messageSearchList.getMessageList());
+    private Map<Long, Customer> customerMap;
+    private Map<Long, Topic> topicMap;
+    private Page<Message> messageList;
+
+    public ListResponse(Page<Message> messageList, List<Customer> customerList, List<Topic> topicList) {
+        this.messageList = messageList;
+        this.setPage(messageList);
+
+        this.customerMap = new HashMap<>();
+        if (customerList != null) {
+            for (Customer item : customerList) {
+                this.customerMap.put(item.getId(), item);
+            }
+        }
+
+        this.topicMap = new HashMap<>();
+        if (topicList != null) {
+            for (Topic item : topicList) {
+                this.topicMap.put(item.getId(), item);
+            }
+        }
     }
 
     @Override
     protected List getList() {
         List<Map<String, Object>> list = new ArrayList<>();
 
-        for (Message item : this.messageSearchList.getMessageList()) {
+        for (Message item : messageList) {
             Map<String, Object> map = new HashMap<>();
             map.put("id", item.getId());
             map.put("message", item.getMessage());
@@ -42,10 +59,10 @@ public class ListResponse extends PaginationResponse {
     }
 
     private Topic getTopic(Message message) {
-        return this.messageSearchList.getTopicMap().get(message.getTopicId());
+        return topicMap.get(message.getTopicId());
     }
 
     private Customer getCustomer(Message message) {
-        return this.messageSearchList.getCustomerMap().get(message.getCustomerId());
+        return customerMap.get(message.getCustomerId());
     }
 }

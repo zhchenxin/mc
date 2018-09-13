@@ -11,24 +11,24 @@
         INSERT INTO topic SET name=#{name},description=#{description},create_date=unix_timestamp(now())
     </insert>
 
-    <select id="search" resultType="top.chenxin.mc.dao.po.Topic">
+    <select id="search" resultType="top.chenxin.mc.entity.Topic">
         SELECT * FROM topic WHERE 1=1
         <if test="topicId != null and topicId != 0">AND id = #{topicId}</if>
         order by id desc
     </select>
 
-    <select id="getByIds" resultType="top.chenxin.mc.dao.po.Topic">
+    <select id="getByIds" resultType="top.chenxin.mc.entity.Topic">
         SELECT * FROM topic WHERE id in
         <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
             #{item}
         </foreach>
     </select>
 
-    <select id="getByName" resultType="top.chenxin.mc.dao.po.Topic">
+    <select id="getByName" resultType="top.chenxin.mc.entity.Topic">
         select * from topic where name = #{name} limit 1
     </select>
 
-    <select id="getById" resultType="top.chenxin.mc.dao.po.Topic">
+    <select id="getById" resultType="top.chenxin.mc.entity.Topic">
         select * from topic where id = #{id}
     </select>
 

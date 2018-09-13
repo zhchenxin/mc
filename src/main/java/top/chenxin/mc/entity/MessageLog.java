@@ -1,4 +1,4 @@
-package top.chenxin.mc.dao.po;
+package top.chenxin.mc.entity;
 
 public class MessageLog extends BaseEntity {
     private Long messageId;

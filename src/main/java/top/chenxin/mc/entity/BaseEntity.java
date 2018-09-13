@@ -1,4 +1,4 @@
-package top.chenxin.mc.dao.po;
+package top.chenxin.mc.entity;
 
 public abstract class BaseEntity {
     private Long id;

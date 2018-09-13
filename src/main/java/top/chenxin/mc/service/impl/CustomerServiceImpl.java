@@ -3,16 +3,12 @@ package top.chenxin.mc.service.impl;
 import com.github.pagehelper.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import top.chenxin.mc.dao.po.Topic;
-import top.chenxin.mc.service.dto.CustomerSearchList;
 import top.chenxin.mc.service.CustomerService;
 import top.chenxin.mc.dao.CustomerDao;
 import top.chenxin.mc.dao.TopicDao;
-import top.chenxin.mc.dao.po.Customer;
-import top.chenxin.mc.common.utils.Utils;
+import top.chenxin.mc.entity.Customer;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -35,19 +31,17 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerSearchList search(Long topicId, Integer page, Integer limit) {
+    public Page<Customer> search(Long topicId, Integer page, Integer limit) {
+        return customerDao.search(topicId, page, limit);
+    }
 
-        Page<Customer> customerList = customerDao.search(topicId, page, limit);
+    @Override
+    public List<Customer> getByIds(List<Long> ids) {
+        return customerDao.getByIds(ids);
+    }
 
-        if (customerList.size() == 0) {
-            return new CustomerSearchList(customerList, null);
-        }
-
-        List<Long> topicIds = customerList.stream().map(Customer::getTopicId).collect(Collectors.toList());
-        Utils.removeDuplicate(topicIds);
-
-        List<Topic> topicList = topicDao.getByIds(topicIds);
-
-        return new CustomerSearchList(customerList, topicList);
+    @Override
+    public Customer getById(Long id) {
+        return customerDao.getById(id);
     }
 }

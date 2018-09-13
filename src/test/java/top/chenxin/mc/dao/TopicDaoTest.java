@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import top.chenxin.mc.dao.po.Topic;
+import top.chenxin.mc.entity.Topic;
 
 import java.util.ArrayList;
 import java.util.List;

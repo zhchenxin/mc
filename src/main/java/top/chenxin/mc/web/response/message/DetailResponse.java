@@ -1,7 +1,9 @@
 package top.chenxin.mc.web.response.message;
 
-import top.chenxin.mc.dao.po.MessageLog;
-import top.chenxin.mc.service.dto.MessageDetail;
+import top.chenxin.mc.entity.Customer;
+import top.chenxin.mc.entity.Message;
+import top.chenxin.mc.entity.MessageLog;
+import top.chenxin.mc.entity.Topic;
 import top.chenxin.mc.web.response.AbstractResponse;
 
 import java.util.ArrayList;
@@ -11,40 +13,46 @@ import java.util.Map;
 
 public class DetailResponse extends AbstractResponse {
 
-    private MessageDetail messageDetail;
+    private Message message;
+    private Topic topic;
+    private Customer customer;
+    private List<MessageLog> logList;
 
-    public DetailResponse(MessageDetail messageDetail) {
-        this.messageDetail = messageDetail;
+    public DetailResponse(Message message, Topic topic, Customer customer, List<MessageLog> logList) {
+        this.message = message;
+        this.topic = topic;
+        this.customer = customer;
+        this.logList = logList;
     }
 
     @Override
     public Map getData() {
         Map<String, Object> map = new HashMap<>();
-        map.put("id", messageDetail.getMessage().getId());
-        map.put("message_id", messageDetail.getMessage().getMessageId());
-        map.put("message", messageDetail.getMessage().getMessage());
-        map.put("attempts", messageDetail.getMessage().getAttempts());
-        map.put("status", messageDetail.getMessage().getStatus());
-        map.put("available_date", messageDetail.getMessage().getAvailableDate());
-        map.put("create_date", messageDetail.getMessage().getCreateDate());
+        map.put("id", message.getId());
+        map.put("message_id", message.getMessageId());
+        map.put("message", message.getMessage());
+        map.put("attempts", message.getAttempts());
+        map.put("status", message.getStatus());
+        map.put("available_date", message.getAvailableDate());
+        map.put("create_date", message.getCreateDate());
 
         // topic
         Map<String, Object> topic = new HashMap<>();
-        topic.put("id", messageDetail.getTopic().getId());
-        topic.put("name", messageDetail.getTopic().getName());
-        topic.put("description", messageDetail.getTopic().getDescription());
+        topic.put("id", this.topic.getId());
+        topic.put("name", this.topic.getName());
+        topic.put("description", this.topic.getDescription());
         map.put("topic", topic);
 
         // customer
         Map<String, Object> customer = new HashMap<>();
-        customer.put("id", messageDetail.getCustomer().getId());
-        customer.put("name", messageDetail.getCustomer().getName());
-        customer.put("api", messageDetail.getCustomer().getApi());
+        customer.put("id", this.customer.getId());
+        customer.put("name", this.customer.getName());
+        customer.put("api", this.customer.getApi());
         map.put("customer", customer);
 
         // logs
         List<Map<String, Object>> logs = new ArrayList<>();
-        for (MessageLog log : messageDetail.getLogList()) {
+        for (MessageLog log : this.logList) {
             Map<String, Object> item = new HashMap<>();
             item.put("id", log.getId());
             item.put("response", log.getResponse());

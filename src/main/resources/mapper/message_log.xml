@@ -20,7 +20,7 @@
             create_date=unix_timestamp(now())
     </insert>
 
-    <select id="getByMessageId" resultType="top.chenxin.mc.dao.po.MessageLog">
+    <select id="getByMessageId" resultType="top.chenxin.mc.entity.MessageLog">
         select * from message_log where message_id = #{messageId}
     </select>
 

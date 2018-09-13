@@ -6,7 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import top.chenxin.mc.dao.po.Topic;
+import top.chenxin.mc.entity.Topic;
 import top.chenxin.mc.web.request.topic.CreateForm;
 import top.chenxin.mc.web.request.topic.ListForm;
 import top.chenxin.mc.web.request.topic.PushForm;

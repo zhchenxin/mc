@@ -2,7 +2,9 @@ package top.chenxin.mc.service;
 
 
 import com.github.pagehelper.Page;
-import top.chenxin.mc.dao.po.Topic;
+import top.chenxin.mc.entity.Topic;
+
+import java.util.List;
 
 public interface TopicService {
 
@@ -13,6 +15,10 @@ public interface TopicService {
      * @param topicId 默认值 0
      */
     Page<Topic> search(Long topicId, Integer page, Integer limit);
+
+    List<Topic> getByIds(List<Long> ids);
+
+    Topic getById(Long id);
 
     /**
      * 向指定的 topic 中发送消息

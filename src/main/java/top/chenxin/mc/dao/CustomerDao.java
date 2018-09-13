@@ -2,7 +2,7 @@ package top.chenxin.mc.dao;
 
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Param;
-import top.chenxin.mc.dao.po.Customer;
+import top.chenxin.mc.entity.Customer;
 
 import java.util.List;
 

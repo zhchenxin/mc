@@ -5,12 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.chenxin.mc.common.utils.Utils;
-import top.chenxin.mc.dao.po.Customer;
-import top.chenxin.mc.dao.po.Message;
+import top.chenxin.mc.entity.Customer;
+import top.chenxin.mc.entity.Message;
 import top.chenxin.mc.dao.CustomerDao;
 import top.chenxin.mc.dao.MessageDao;
 import top.chenxin.mc.dao.TopicDao;
-import top.chenxin.mc.dao.po.Topic;
+import top.chenxin.mc.entity.Topic;
 import top.chenxin.mc.service.TopicService;
 
 import java.util.List;
@@ -43,6 +43,16 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public Page<Topic> search(Long topicId, Integer page, Integer limit) {
         return topicDao.search(topicId, page, limit);
+    }
+
+    @Override
+    public List<Topic> getByIds(List<Long> ids) {
+        return topicDao.getByIds(ids);
+    }
+
+    @Override
+    public Topic getById(Long id) {
+        return topicDao.getById(id);
     }
 
     @Transactional

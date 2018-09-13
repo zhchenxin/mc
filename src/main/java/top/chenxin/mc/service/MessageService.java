@@ -1,8 +1,11 @@
 package top.chenxin.mc.service;
 
 
-import top.chenxin.mc.service.dto.MessageDetail;
-import top.chenxin.mc.service.dto.MessageSearchList;
+import com.github.pagehelper.Page;
+import top.chenxin.mc.entity.Message;
+import top.chenxin.mc.entity.MessageLog;
+
+import java.util.List;
 
 public interface MessageService {
     /**
@@ -10,7 +13,17 @@ public interface MessageService {
      * @param customerId 默认值0
      * @param status 默认值0
      */
-    MessageSearchList search(Long customerId, Integer status, Integer page, Integer limit);
+    Page<Message> search(Long customerId, Integer status, Integer page, Integer limit);
 
-    MessageDetail getDetailById(Long id);
+    /**
+     * 根据消息id获取消息内容
+     * @param id 消息id
+     */
+    Message getById(Long id);
+
+    /**
+     * 获取消息的请求日志
+     * @param id 消息id
+     */
+    List<MessageLog> getMessageLogs(Long id);
 }

@@ -1,4 +1,6 @@
-package top.chenxin.mc.dao.po;
+package top.chenxin.mc.entity;
+
+import java.util.List;
 
 public class Message extends BaseEntity {
 
@@ -22,6 +24,12 @@ public class Message extends BaseEntity {
     private Integer createDate;
     // 超时时间
     private Integer timeoutDate;
+
+    private Topic topic;
+
+    private Customer customer;
+
+    private List<MessageLog> messageLogList;
 
     public Long getMessageId() {
         return messageId;
