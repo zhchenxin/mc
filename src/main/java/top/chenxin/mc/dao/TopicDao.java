@@ -11,6 +11,10 @@ public interface TopicDao {
     // 创建数据
     Long insert(Topic topic);
 
+    void update(Topic topic);
+
+    void delete(Long id);
+
     // 搜索
     Page<Topic> search(@Param("topicId") Long topicId, @Param("page") int page, @Param("limit") int limit);
 
@@ -20,4 +24,6 @@ public interface TopicDao {
     Topic getById(@Param("id") Long id);
 
     List<Topic> getByIds(@Param("ids") List<Long> ids);
+
+    List<Topic> getAll();
 }

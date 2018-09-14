@@ -8,28 +8,45 @@
         <selectKey order="AFTER" resultType="java.lang.Long">
             select LAST_INSERT_ID()
         </selectKey>
-        INSERT INTO topic SET name=#{name},description=#{description},create_date=unix_timestamp(now())
+        INSERT INTO topic SET name=#{name},description=#{description},create_date=unix_timestamp(now()),update_date=unix_timestamp(now())
     </insert>
 
+    <update id="update">
+        UPDATE topic SET
+        <if test="name != null">name = #{name},</if>
+        <if test="description != null">description = #{description},</if>
+        id = #{id},
+        update_date=unix_timestamp(now())
+        WHERE id=#{id}
+    </update>
+
+    <update id="delete">
+        UPDATE topic SET delete_date=unix_timestamp(now()) WHERE id=#{id}
+    </update>
+
     <select id="search" resultType="top.chenxin.mc.entity.Topic">
-        SELECT * FROM topic WHERE 1=1
+        SELECT * FROM topic WHERE delete_date = 0
         <if test="topicId != null and topicId != 0">AND id = #{topicId}</if>
         order by id desc
     </select>
 
     <select id="getByIds" resultType="top.chenxin.mc.entity.Topic">
-        SELECT * FROM topic WHERE id in
+        SELECT * FROM topic WHERE delete_date = 0 AND id in
         <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
             #{item}
         </foreach>
     </select>
 
+    <select id="getAll" resultType="top.chenxin.mc.entity.Topic">
+        SELECT * FROM topic WHERE delete_date = 0 AND
+    </select>
+
     <select id="getByName" resultType="top.chenxin.mc.entity.Topic">
-        select * from topic where name = #{name} limit 1
+        select * from topic where delete_date = 0 AND name = #{name} limit 1
     </select>
 
     <select id="getById" resultType="top.chenxin.mc.entity.Topic">
-        select * from topic where id = #{id}
+        select * from topic where delete_date = 0 AND id = #{id}
     </select>
 
 </mapper>

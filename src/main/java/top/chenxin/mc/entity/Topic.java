@@ -7,8 +7,7 @@ public class Topic extends BaseEntity {
     private String name;
     private String description;
     private Integer createDate;
-
-    private List<Message> messageList;
+    private Integer updateDate;
 
     public String getName() {
         return name;
@@ -32,5 +31,13 @@ public class Topic extends BaseEntity {
 
     public void setCreateDate(Integer createDate) {
         this.createDate = createDate;
+    }
+
+    public Integer getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Integer updateDate) {
+        this.updateDate = updateDate;
     }
 }

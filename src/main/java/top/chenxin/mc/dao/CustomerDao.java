@@ -11,6 +11,11 @@ public interface CustomerDao {
     // 创建数据
     Long insert(Customer customer);
 
+    // 创建数据
+    void update(Customer customer);
+
+    void delete(Long id);
+
     // 搜索
     Page<Customer> search(@Param("topicId") Long topicId, @Param("page") int page, @Param("limit") int limit);
 

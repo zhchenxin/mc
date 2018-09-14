@@ -31,6 +31,22 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public void update(Long id, String name, String api, Integer timeout, Integer attempts) {
+        Customer item = new Customer();
+        item.setId(id);
+        item.setName(name);
+        item.setApi(api);
+        item.setAttempts(attempts);
+        item.setTimeout(timeout);
+        customerDao.update(item);
+    }
+
+    @Override
+    public void delete(Long id) {
+        customerDao.delete(id);
+    }
+
+    @Override
     public Page<Customer> search(Long topicId, Integer page, Integer limit) {
         return customerDao.search(topicId, page, limit);
     }

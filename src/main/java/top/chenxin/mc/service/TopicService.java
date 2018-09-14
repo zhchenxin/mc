@@ -10,6 +10,10 @@ public interface TopicService {
 
     void insert(String name, String description);
 
+    void update(Long id, String name, String description);
+
+    void delete(Long id);
+
     /**
      * 搜索
      * @param topicId 默认值 0
@@ -19,6 +23,8 @@ public interface TopicService {
     List<Topic> getByIds(List<Long> ids);
 
     Topic getById(Long id);
+
+    List<Topic> getAll();
 
     /**
      * 向指定的 topic 中发送消息

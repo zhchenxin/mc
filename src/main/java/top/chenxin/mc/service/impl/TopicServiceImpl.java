@@ -43,6 +43,20 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
+    public void update(Long id, String name, String description) {
+        Topic topic = new Topic();
+        topic.setId(id);
+        topic.setName(name);
+        topic.setDescription(description);
+        topicDao.update(topic);
+    }
+
+    @Override
+    public void delete(Long id) {
+        topicDao.delete(id);
+    }
+
+    @Override
     public Page<Topic> search(Long topicId, Integer page, Integer limit) {
         return topicDao.search(topicId, page, limit);
     }
@@ -55,6 +69,10 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public Topic getById(Long id) {
         return topicDao.getById(id);
+    }
+
+    public List<Topic> getAll() {
+        return topicDao.getAll();
     }
 
     @Transactional

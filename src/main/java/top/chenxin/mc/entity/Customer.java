@@ -14,7 +14,7 @@ public class Customer extends BaseEntity {
     // 创建时间
     private Integer createDate;
 
-    private Topic topic;
+    private Integer updateDate;
 
     public Long getTopicId() {
         return topicId;
@@ -62,5 +62,13 @@ public class Customer extends BaseEntity {
 
     public void setCreateDate(Integer createDate) {
         this.createDate = createDate;
+    }
+
+    public Integer getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Integer updateDate) {
+        this.updateDate = updateDate;
     }
 }
