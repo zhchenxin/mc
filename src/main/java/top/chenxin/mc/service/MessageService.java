@@ -26,4 +26,24 @@ public interface MessageService {
      * @param id 消息id
      */
     List<MessageLog> getMessageLogs(Long id);
+
+    /**
+     * 从所有消息中推出一条消息用于执行, 如果没有消息, 则返回 null
+     */
+    Message popMessage();
+
+    /**
+     * 消息执行成功的时候调用
+     */
+    void messageSuccess(Long messageId, String response, Integer time);
+
+    /**
+     * 消息执行失败的时候调用
+     */
+    void messageFiled(Long messageId, String error, Integer time);
+
+    /**
+     * 重试超时的消息
+     */
+    void retryTimeoutMessage();
 }

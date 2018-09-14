@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import top.chenxin.mc.common.constant.ErrorCode;
 import top.chenxin.mc.common.utils.Utils;
 import top.chenxin.mc.entity.Customer;
 import top.chenxin.mc.entity.Message;
@@ -12,6 +13,7 @@ import top.chenxin.mc.dao.MessageDao;
 import top.chenxin.mc.dao.TopicDao;
 import top.chenxin.mc.entity.Topic;
 import top.chenxin.mc.service.TopicService;
+import top.chenxin.mc.service.exception.ServiceException;
 
 import java.util.List;
 
@@ -31,7 +33,7 @@ public class TopicServiceImpl implements TopicService {
     public void insert(String name, String description) {
         Topic topic = topicDao.getByName(name);
         if (topic != null) {
-            throw new RuntimeException("Topic 已存在，请使用其他名称");
+            throw new ServiceException("topic name 重复");
         }
 
         topic = new Topic();
@@ -60,7 +62,7 @@ public class TopicServiceImpl implements TopicService {
     public void push(Long messageId, String topicName, String message, Integer delay) {
         Topic topic = topicDao.getByName(topicName);
         if (topic == null) {
-            throw new RuntimeException("未找到topic");
+            throw new ServiceException("topic 不存在", ErrorCode.OBJECT_NOT_DOUND);
         }
 
         List<Customer> customers = customerDao.getByTopicId(topic.getId());
@@ -68,7 +70,7 @@ public class TopicServiceImpl implements TopicService {
         for (Customer item : customers) {
             Message msg = messageDao.getByMessageIdAndCustomerId(messageId, item.getId());
             if (msg != null) {
-                throw new RuntimeException("消息已保存");
+                throw new ServiceException("message id 重复");
             }
 
             msg = new Message();

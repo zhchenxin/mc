@@ -6,7 +6,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import top.chenxin.mc.dao.MessageDao;
+import top.chenxin.mc.service.MessageService;
 
 /**
  * 将超时的消息设置为等待中状态
@@ -15,7 +15,7 @@ import top.chenxin.mc.dao.MessageDao;
 public class RetryTimeoutJob implements Runnable, InitializingBean, DisposableBean {
 
     @Autowired
-    private MessageDao messageDao;
+    private MessageService messageService;
 
     private Thread thread;
 
@@ -39,7 +39,7 @@ public class RetryTimeoutJob implements Runnable, InitializingBean, DisposableBe
     @Override
     public void run() {
         while (running) {
-            messageDao.retryTimeoutMessage();
+            messageService.retryTimeoutMessage();
             try {
                 Thread.sleep(10000);
             } catch (InterruptedException e) {

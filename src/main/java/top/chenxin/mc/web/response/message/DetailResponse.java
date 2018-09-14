@@ -36,21 +36,30 @@ public class DetailResponse extends AbstractResponse {
         map.put("available_date", message.getAvailableDate());
         map.put("create_date", message.getCreateDate());
 
-        // topic
+        // 嵌套信息
+        map.put("topic", getTopic());
+        map.put("customer", getCustomer());
+        map.put("logs", getLogs());
+        return map;
+    }
+
+    private Map getTopic() {
         Map<String, Object> topic = new HashMap<>();
         topic.put("id", this.topic.getId());
         topic.put("name", this.topic.getName());
         topic.put("description", this.topic.getDescription());
-        map.put("topic", topic);
+        return topic;
+    }
 
-        // customer
+    private Map getCustomer() {
         Map<String, Object> customer = new HashMap<>();
         customer.put("id", this.customer.getId());
         customer.put("name", this.customer.getName());
         customer.put("api", this.customer.getApi());
-        map.put("customer", customer);
+        return customer;
+    }
 
-        // logs
+    private List getLogs() {
         List<Map<String, Object>> logs = new ArrayList<>();
         for (MessageLog log : this.logList) {
             Map<String, Object> item = new HashMap<>();
@@ -61,7 +70,6 @@ public class DetailResponse extends AbstractResponse {
             item.put("create_date", log.getCreateDate());
             logs.add(item);
         }
-        map.put("logs", logs);
-        return map;
+        return logs;
     }
 }

@@ -9,14 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import top.chenxin.mc.entity.Customer;
 import top.chenxin.mc.entity.Message;
-import top.chenxin.mc.entity.MessageLog;
-import top.chenxin.mc.common.utils.Utils;
-import top.chenxin.mc.dao.CustomerDao;
-import top.chenxin.mc.dao.MessageLogDao;
-import top.chenxin.mc.dao.MessageDao;
+import top.chenxin.mc.service.CustomerService;
+import top.chenxin.mc.service.MessageService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,15 +23,11 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
 
+    @Autowired
+    private MessageService messageService;
 
     @Autowired
-    private MessageDao messageDao;
-
-    @Autowired
-    private CustomerDao customerDao;
-
-    @Autowired
-    private MessageLogDao messageLogDao;
+    private CustomerService customerService;
 
     @Value("${customer_count}")
     private int customerCount = 0;
@@ -85,7 +77,7 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
      */
     private boolean worker() {
         // 1. 推出消息
-        Message message = pop();
+        Message message = messageService.popMessage();
         if (message == null) {
             return false;
         }
@@ -95,17 +87,17 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
         try {
             String response = runMessage(message);
             // 3. 保存执行结果
-            messageSuccess(message, response, (int)(System.currentTimeMillis() - start));
+            messageService.messageSuccess(message.getMessageId(), response, (int)(System.currentTimeMillis() - start));
         } catch (Exception e) {
             // 3. 保存执行结果
-            messageFiled(message, e.getMessage(), (int)(System.currentTimeMillis() - start));
+            messageService.messageFiled(message.getMessageId(), e.getMessage(), (int)(System.currentTimeMillis() - start));
         }
         return true;
     }
 
     private String runMessage(Message message) throws Exception {
 
-        Customer customer = customerDao.getById(message.getCustomerId());
+        Customer customer = customerService.getById(message.getCustomerId());
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .readTimeout(customer.getTimeout(), TimeUnit.SECONDS)
@@ -119,56 +111,6 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
 
         Response response = client.newCall(request).execute();
         return response.body().string();
-    }
-
-    @Transactional
-    private Message pop() {
-        Message message = messageDao.popMessage();
-        if (message == null) {
-            return null;
-        }
-        Customer customer = customerDao.getById(message.getCustomerId());
-        messageDao.start(message.getId(), Utils.getCurrentTimestamp() + customer.getTimeout());
-        return message;
-    }
-
-    @Transactional
-    private void messageSuccess(Message message, String response, Integer time) {
-        // 生成执行日志
-        MessageLog log = new MessageLog();
-        log.setCreateDate((int)(System.currentTimeMillis() / 1000));
-        log.setResponse(response);
-        log.setCustomerId(message.getCustomerId());
-        log.setMessageId(message.getId());
-        log.setTopicId(message.getTopicId());
-        log.setTime(time);
-        log.setError("");
-        messageLogDao.insert(log);
-
-        // 修改消息状态
-        messageDao.success(message.getId());
-    }
-
-    @Transactional
-    private void messageFiled(Message message, String error, Integer time) {
-        // 生成执行日志
-        MessageLog log = new MessageLog();
-        log.setCreateDate((int)(System.currentTimeMillis() / 1000));
-        log.setError(error);
-        log.setCustomerId(message.getCustomerId());
-        log.setMessageId(message.getId());
-        log.setTopicId(message.getTopicId());
-        log.setTime(time);
-        log.setResponse("");
-        messageLogDao.insert(log);
-
-        Customer customer = customerDao.getById(message.getCustomerId());
-        if (message.getAttempts() >= customer.getAttempts()) {
-            // 如果
-            messageDao.failed(message.getId());
-        } else {
-            messageDao.retry(message.getId());
-        }
     }
 
 }
