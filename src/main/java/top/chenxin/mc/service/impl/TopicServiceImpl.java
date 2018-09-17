@@ -82,7 +82,21 @@ public class TopicServiceImpl implements TopicService {
         if (topic == null) {
             throw new ServiceException("topic 不存在", ErrorCode.OBJECT_NOT_DOUND);
         }
+        this.push(messageId, topic, message, delay);
+    }
 
+    @Override
+    public void push(Long messageId, Long topicId, String message, Integer delay) {
+        Topic topic = topicDao.getById(topicId);
+        if (topic == null) {
+            throw new ServiceException("topic 不存在", ErrorCode.OBJECT_NOT_DOUND);
+        }
+
+        this.push(messageId, topic, message, delay);
+    }
+
+    @Transactional
+    private void push(Long messageId, Topic topic, String message, Integer delay) {
         List<Customer> customers = customerDao.getByTopicId(topic.getId());
 
         for (Customer item : customers) {

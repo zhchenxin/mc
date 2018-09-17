@@ -25,8 +25,9 @@ public class RetryTimeoutJob implements Runnable, InitializingBean, DisposableBe
 
     @Override
     public void afterPropertiesSet() {
+        logger.info("start");
         thread = new Thread(this);
-        thread.setName("retry-timeout-job");
+        thread.setName("retry_timeout_job");
         thread.start();
     }
 
@@ -39,10 +40,9 @@ public class RetryTimeoutJob implements Runnable, InitializingBean, DisposableBe
     @Override
     public void run() {
         while (running) {
-            messageService.retryTimeoutMessage();
             try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
+                messageService.retryTimeoutMessage();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

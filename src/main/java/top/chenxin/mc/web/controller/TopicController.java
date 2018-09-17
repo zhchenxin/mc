@@ -32,7 +32,7 @@ public class TopicController extends BaseController {
         return new ListResponse(topics).toMap();
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "create", method = RequestMethod.POST)
     private Map create(@Validated CreateForm form) {
         topicService.insert(form.getName(), form.getDescription());
         return new SuccessResponse().toMap();

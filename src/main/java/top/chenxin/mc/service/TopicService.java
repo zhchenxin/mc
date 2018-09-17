@@ -34,4 +34,6 @@ public interface TopicService {
      * @param delay 消息延迟时间, 单位秒
      */
     void push(Long messageId, String topicName, String message, Integer delay);
+
+    void push(Long messageId, Long topicId, String message, Integer delay);
 }

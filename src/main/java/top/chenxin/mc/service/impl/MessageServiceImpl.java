@@ -67,7 +67,7 @@ public class MessageServiceImpl implements MessageService {
     public void messageSuccess(Long messageId, String response, Integer time) {
         Message message = messageDao.getById(messageId);
 
-        if (message.getStatus() != Message.StatusRunning) {
+        if (!message.getStatus().equals(Message.StatusRunning)) {
             throw new ServiceException("消息状态异常");
         }
 
@@ -91,7 +91,7 @@ public class MessageServiceImpl implements MessageService {
     public void messageFiled(Long messageId, String error, Integer time) {
         Message message = messageDao.getById(messageId);
 
-        if (message.getStatus() != Message.StatusRunning) {
+        if (!message.getStatus().equals(Message.StatusRunning)) {
             throw new ServiceException("消息状态异常");
         }
 

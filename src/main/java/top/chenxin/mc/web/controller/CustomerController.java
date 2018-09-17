@@ -64,9 +64,8 @@ public class CustomerController extends BaseController {
 
     @RequestMapping(value = "update/{id}", method = RequestMethod.GET)
     private Map update(@PathVariable("id") Long id) {
-        List<Topic> topicList = topicService.getAll();
         Customer customer = customerService.getById(id);
-        return new UpdateResponse(topicList, customer).toMap();
+        return new UpdateResponse(customer).toMap();
     }
 
     @RequestMapping(value = "update/{id}", method = RequestMethod.POST)

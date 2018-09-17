@@ -87,10 +87,10 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
         try {
             String response = runMessage(message);
             // 3. 保存执行结果
-            messageService.messageSuccess(message.getMessageId(), response, (int)(System.currentTimeMillis() - start));
+            messageService.messageSuccess(message.getId(), response, (int)(System.currentTimeMillis() - start));
         } catch (Exception e) {
             // 3. 保存执行结果
-            messageService.messageFiled(message.getMessageId(), e.getMessage(), (int)(System.currentTimeMillis() - start));
+            messageService.messageFiled(message.getId(), e.getMessage(), (int)(System.currentTimeMillis() - start));
         }
         return true;
     }
