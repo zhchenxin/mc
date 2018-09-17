@@ -25,24 +25,4 @@ public class MessageDaoTest {
         messageDao.retryTimeoutMessage();
     }
 
-    @Test
-    public void start() {
-        messageDao.start(1L, 1536571633);
-    }
-
-    @Test
-    public void failed() {
-        messageDao.failed(1L);
-    }
-
-    @Test
-    public void retry() {
-        messageDao.failed(1L);
-    }
-
-    @Test
-    public void success() {
-        messageDao.failed(1L);
-    }
-
 }

@@ -111,7 +111,8 @@ public class TopicServiceImpl implements TopicService {
             msg.setCustomerId(item.getId());
             msg.setMessage(message);
             msg.setAvailableDate(Utils.getCurrentTimestamp() + delay);
-            msg.setCreateDate(Utils.getCurrentTimestamp());
+            msg.setStatus(Message.StatusWatting);
+            msg.setAttempts(0);
             messageDao.insert(msg);
         }
     }

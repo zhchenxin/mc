@@ -43,7 +43,7 @@ public class RetryTimeoutJob implements Runnable, InitializingBean, DisposableBe
             try {
                 messageService.retryTimeoutMessage();
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
             }
         }
         logger.debug("进程停止" + Thread.currentThread().getName());

@@ -11,13 +11,24 @@
         </selectKey>
 
         INSERT INTO message SET
-            timeout_date=0,status=1,attempts=0,create_date=unix_timestamp(now()),
-            message_id=#{messageId},
-            topic_id=#{topicId},
-            customer_id=#{customerId},
-            message=#{message},
-            available_date=#{availableDate}
+        status=#{status},
+        attempts=#{attempts},
+        message_id=#{messageId},
+        topic_id=#{topicId},
+        customer_id=#{customerId},
+        message=#{message},
+        available_date=#{availableDate},
+        create_date=unix_timestamp(now())
     </insert>
+
+    <update id="update">
+        UPDATE message SET
+        <if test="timeoutDate != null">timeout_date = #{timeoutDate},</if>
+        <if test="status != null">status = #{status},</if>
+        <if test="attempts != null">attempts = #{attempts},</if>
+        id=id
+        WHERE id=#{id}
+    </update>
 
     <select id="search" resultType="top.chenxin.mc.entity.Message">
         SELECT * FROM message WHERE 1=1

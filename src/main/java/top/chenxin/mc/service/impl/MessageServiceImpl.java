@@ -58,7 +58,12 @@ public class MessageServiceImpl implements MessageService {
 
         // 修改消息的状态和超时时间
         Customer customer = customerDao.getById(message.getCustomerId());
-        messageDao.start(message.getId(), Utils.getCurrentTimestamp() + customer.getTimeout());
+
+        Message update = new Message();
+        update.setId(message.getId());
+        update.setTimeoutDate(Utils.getCurrentTimestamp() + customer.getTimeout());
+        update.setStatus(Message.StatusRunning);
+        messageDao.update(update);
         return message;
     }
 
@@ -83,7 +88,10 @@ public class MessageServiceImpl implements MessageService {
         messageLogDao.insert(log);
 
         // 修改消息状态
-        messageDao.success(message.getId());
+        Message update = new Message();
+        update.setId(message.getId());
+        update.setStatus(Message.StatusSuccess);
+        messageDao.update(update);
     }
 
     @Override
@@ -109,9 +117,16 @@ public class MessageServiceImpl implements MessageService {
         // 判断消息是否需要重试
         Customer customer = customerDao.getById(message.getCustomerId());
         if (message.getAttempts() >= customer.getAttempts()) {
-            messageDao.failed(message.getId());
+            Message update = new Message();
+            update.setId(message.getId());
+            update.setStatus(Message.StatusFailed);
+            messageDao.update(update);
         } else {
-            messageDao.retry(message.getId());
+            Message update = new Message();
+            update.setId(message.getId());
+            update.setStatus(Message.StatusWatting);
+            update.setAttempts(message.getAttempts() + 1);
+            messageDao.update(update);
         }
     }
 
