@@ -42,6 +42,7 @@ public class RetryTimeoutJob implements Runnable, InitializingBean, DisposableBe
         while (running) {
             try {
                 messageService.retryTimeoutMessage();
+                Thread.sleep(5 * 60 * 1000);
             } catch (Exception e) {
                 logger.error(e.getMessage());
             }
