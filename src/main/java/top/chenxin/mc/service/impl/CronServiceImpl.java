@@ -47,6 +47,22 @@ public class CronServiceImpl implements CronService {
     }
 
     @Override
+    public void start(Long id) {
+        Cron cron = new Cron();
+        cron.setId(id);
+        cron.setStatus(Cron.StatusNormal);
+        cronDao.update(cron);
+    }
+
+    @Override
+    public void stop(Long id) {
+        Cron cron = new Cron();
+        cron.setId(id);
+        cron.setStatus(Cron.StatusStop);
+        cronDao.update(cron);
+    }
+
+    @Override
     public Page<Cron> search(Long topicId, Integer page, Integer limit) {
         return cronDao.search(topicId, page, limit);
     }

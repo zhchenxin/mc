@@ -1,12 +1,10 @@
 package top.chenxin.mc.web.controller;
 
 import com.github.pagehelper.Page;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.chenxin.mc.entity.Topic;
 import top.chenxin.mc.web.request.topic.CreateForm;
 import top.chenxin.mc.web.request.topic.ListForm;
@@ -38,20 +36,20 @@ public class TopicController extends BaseController {
         return new SuccessResponse().toMap();
     }
 
-    @RequestMapping(value = "update/{id}", method = RequestMethod.GET)
-    private Map update(@PathVariable("id") Long id) {
+    @RequestMapping(value = "update", method = RequestMethod.GET)
+    private Map update(@RequestParam("id") Long id) {
         Topic topic = topicService.getById(id);
         return new UpdateResponse(topic).toMap();
     }
 
-    @RequestMapping(value = "update/{id}", method = RequestMethod.POST)
-    private Map update(@PathVariable("id") Long id, @Validated UpdateForm form) {
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    private Map update(@RequestParam("id") Long id, @Validated UpdateForm form) {
         topicService.update(id, form.getName(), form.getDescription());
         return new SuccessResponse().toMap();
     }
 
-    @RequestMapping(value = "delete/{id}", method = RequestMethod.POST)
-    private Map delete(@PathVariable("id") Long id) {
+    @RequestMapping(value = "delete", method = RequestMethod.POST)
+    private Map delete(@RequestParam("id") Long id) {
         topicService.delete(id);
         return new SuccessResponse().toMap();
     }

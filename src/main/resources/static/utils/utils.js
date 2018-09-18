@@ -1,6 +1,16 @@
 var client = axios.create({
-  baseURL: 'http://localhost:8080/',
-  timeout: 60000,
+  baseURL: 'http://localhost:8080',
+  timeout: 2500,
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  },
+  transformRequest: function (data) {
+    let ret = ''
+    for (let it in data) {
+      ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+    }
+    return ret
+  }
 });
 
 client.interceptors.response.use(function (response) {

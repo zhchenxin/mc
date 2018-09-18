@@ -19,8 +19,6 @@ import java.util.Random;
 @Component
 public class CronJob {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
-
     @Autowired
     private CronService cronService;
 
@@ -31,7 +29,7 @@ public class CronJob {
     protected void runEverySecond() {
         List<Cron> cronList = cronService.getAll();
         for (Cron cron : cronList) {
-            if (specRun(cron.getSpec())) {
+            if (cron.getStatus().equals(Cron.StatusNormal) && specRun(cron.getSpec())) {
                 topicService.push((new Random()).nextLong(), cron.getTopicId(), "", 0);
             }
         }

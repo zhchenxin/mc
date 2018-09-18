@@ -15,6 +15,16 @@ public interface CronService {
     void delete(Long id);
 
     /**
+     * 重启定时任务
+     */
+    void start(Long id);
+
+    /**
+     * 暂停定时任务
+     */
+    void stop(Long id);
+
+    /**
      * 搜索
      * @param topicId 默认值 0
      */

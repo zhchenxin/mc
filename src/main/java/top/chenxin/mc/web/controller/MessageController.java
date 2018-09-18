@@ -52,8 +52,8 @@ public class MessageController extends BaseController {
         return new ListResponse(messageList, customerList, topicList).toMap();
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Map detail(@PathVariable("id") Long id) {
+    @RequestMapping(value = "detail", method = RequestMethod.GET)
+    public Map detail(@RequestParam("id") Long id) {
         Message message = messageService.getById(id);
         Topic topic = topicService.getById(message.getTopicId());
         Customer customer = customerService.getById(message.getCustomerId());

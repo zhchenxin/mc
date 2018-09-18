@@ -3,10 +3,7 @@ package top.chenxin.mc.web.controller;
 import com.github.pagehelper.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.chenxin.mc.common.utils.Utils;
 import top.chenxin.mc.entity.Cron;
 import top.chenxin.mc.entity.Topic;
@@ -49,20 +46,32 @@ public class CronController extends BaseController {
         return new SuccessResponse().toMap();
     }
 
-    @RequestMapping(value = "update/{id}", method = RequestMethod.GET)
-    private Map update(@PathVariable("id") Long id) {
+    @RequestMapping(value = "update", method = RequestMethod.GET)
+    private Map update(@RequestParam("id") Long id) {
         Cron cron = cronService.getById(id);
         return new UpdateResponse(cron).toMap();
     }
 
-    @RequestMapping(value = "update/{id}", method = RequestMethod.POST)
-    private Map update(@PathVariable("id") Long id, @Validated UpdateForm form) {
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    private Map update(@RequestParam("id") Long id, @Validated UpdateForm form) {
         cronService.update(id, form.getName(), form.getDescription(), form.getSpce());
         return new SuccessResponse().toMap();
     }
 
-    @RequestMapping(value = "delete/{id}", method = RequestMethod.POST)
-    private Map delete(@PathVariable("id") Long id) {
+    @RequestMapping(value = "start", method = RequestMethod.POST)
+    private Map start(@RequestParam("id") Long id) {
+        cronService.start(id);
+        return new SuccessResponse().toMap();
+    }
+
+    @RequestMapping(value = "stop", method = RequestMethod.POST)
+    private Map stop(@RequestParam("id") Long id) {
+        cronService.stop(id);
+        return new SuccessResponse().toMap();
+    }
+
+    @RequestMapping(value = "delete", method = RequestMethod.POST)
+    private Map delete(@RequestParam("id") Long id) {
         cronService.delete(id);
         return new SuccessResponse().toMap();
     }

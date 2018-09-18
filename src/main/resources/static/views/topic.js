@@ -62,7 +62,7 @@ Vue.component('topic', {
               <Input v-model="updateModel_formData.description" placeholder="请输入 Topic 描述"/>
             </FormItem>
             <FormItem>
-              <Button type="success" :loading="updateModel_doing" @click="add('updateModel_formData')">提交</Button>
+              <Button type="success" :loading="updateModel_doing" @click="update('updateModel_formData')">提交</Button>
             </FormItem>
           </Form>
         </div>
@@ -88,33 +88,38 @@ Vue.component('topic', {
           width: 150,
           align: 'center',
           render: (h, params) => {
-              return h('div', [
-                  h('Button', {
-                      props: {
-                          type: 'primary',
-                          size: 'small'
-                      },
-                      style: {
-                          marginRight: '5px'
-                      },
-                      on: {
-                          click: () => {
-                              this.show(params.index)
-                          }
-                      }
-                  }, '编辑'),
-                  h('Button', {
-                      props: {
-                          type: 'error',
-                          size: 'small'
-                      },
-                      on: {
-                          click: () => {
-                              this.remove(params.index)
-                          }
-                      }
-                  }, '删除')
-              ]);
+            return h('div', [
+              h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                style: {
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    topic = tableData(params.index)
+                    updateModel_formData.id = topic.id
+                    updateModel_formData.name = topic.name
+                    updateModel_formData.description = topic.description
+                    updateModel_show=true
+                  }
+                }
+              }, '编辑'),
+              h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small'
+                },
+                on: {
+                  click: () => {
+                    topic = tableData(params.index)
+                    this.delete(topic.id)
+                  }
+                }
+              }, '删除')
+            ]);
           }
         }
       ],
@@ -137,6 +142,7 @@ Vue.component('topic', {
       addModel_show: false,
       addModel_doing: false,
       addModel_formData: {
+        id: 0,
         name: '',
         description: '',
       },
@@ -210,15 +216,37 @@ Vue.component('topic', {
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.addModel_doing = true
-          client.post('/topic', this.addModel_formData).then(() => {
+          client.post('/topic/create', this.addModel_formData).then(() => {
             this.addModel_show = false
             this.addModel_doing = false
             this.featchTableData()
           }).catch((error) => {
             this.addModel_doing = false
-            this.$Notice.error({title: error})
+            this.$Message.error({title: error})
           })
         }
+      })
+    },
+    update: function(name) {
+      this.$refs[name].validate((valid) => {
+        if (valid) {
+          this.updateModel_doing = true
+          client.post('/topic/update/' + this.updateModel_formData.id, this.updateModel_formData).then(() => {
+            this.updateModel_show = false
+            this.updateModel_doing = false
+            this.featchTableData()
+          }).catch((error) => {
+            this.updateModel_doing = false
+            this.$Message.error({title: error})
+          })
+        }
+      })
+    },
+    delete: function(id) {
+      client.post('/topic/delete/' + id, null).then(() => {
+        this.featchTableData()
+      }).catch((error) => {
+        this.$Message.error({title: error})
       })
     },
   },
