@@ -1,7 +1,5 @@
 package top.chenxin.mc.console;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.support.CronTrigger;
@@ -25,7 +23,7 @@ public class CronJob {
     @Autowired
     private TopicService topicService;
 
-    @Scheduled(cron = "* * * * * *")
+    @Scheduled(cron = "0 * * * * *")
     protected void runEverySecond() {
         List<Cron> cronList = cronService.getAll();
         for (Cron cron : cronList) {
@@ -42,7 +40,7 @@ public class CronJob {
 
         int currentTimestamp = Utils.getCurrentTimestamp();
 
-        CronTrigger trigger = new CronTrigger(spec);
+        CronTrigger trigger = new CronTrigger("0" + spec);
         SimpleTriggerContext context = new SimpleTriggerContext();
         context.update(null, null, new Date(((long)currentTimestamp - 1)*1000));
         Date date = trigger.nextExecutionTime(context);
