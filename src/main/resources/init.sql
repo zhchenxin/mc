@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `message` (
   PRIMARY KEY (`id`),
   KEY `idx_customer_id` (`customer_id`),
   KEY `idx_status_available_date` (`status`,`available_date`) USING BTREE,
-  KEY `idx_timeout_date` (`timeout_date`) USING BTREE
+  KEY `idx_status_timeout_date` (`status`,`timeout_date`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_german2_ci COMMENT='消息';
 
 -- 数据导出被取消选择。

@@ -49,7 +49,7 @@
     </select>
 
     <update id="retryTimeoutMessage">
-        UPDATE `message` SET status=1, attempts = attempts + 1 where timeout_date 	&lt; unix_timestamp(now()) and status=2;
+        UPDATE `message` use index (idx_status_timeout_date)  SET status=1, attempts = attempts + 1 where timeout_date 	&lt; unix_timestamp(now()) and status=2;
     </update>
 
 </mapper>
