@@ -15,6 +15,7 @@
             topic_id=#{topicId},
             customer_id=#{customerId},
             time=#{time},
+            request=#{request},
             response=#{response},
             error=#{error},
             create_date=unix_timestamp(now())

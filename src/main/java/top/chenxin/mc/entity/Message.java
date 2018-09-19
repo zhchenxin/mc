@@ -4,10 +4,7 @@ public class Message extends BaseEntity {
 
     public static final int StatusWatting = 1; // 等待中
     public static final int StatusRunning = 2; // 执行中
-    public static final int StatusSuccess = 3; // 成功
-    public static final int StatusFailed = 4; // 失败
 
-    private Long messageId;
     private Long topicId;
     private Long customerId;
     // 消息内容
@@ -22,14 +19,6 @@ public class Message extends BaseEntity {
     private Integer createDate;
     // 超时时间
     private Integer timeoutDate;
-
-    public Long getMessageId() {
-        return messageId;
-    }
-
-    public void setMessageId(Long messageId) {
-        this.messageId = messageId;
-    }
 
     public Long getTopicId() {
         return topicId;
@@ -69,22 +58,6 @@ public class Message extends BaseEntity {
 
     public void setStatus(Integer status) {
         this.status = status;
-    }
-
-    public static int getStatusWatting() {
-        return StatusWatting;
-    }
-
-    public static int getStatusRunning() {
-        return StatusRunning;
-    }
-
-    public static int getStatusSuccess() {
-        return StatusSuccess;
-    }
-
-    public static int getStatusFailed() {
-        return StatusFailed;
     }
 
     public Integer getAvailableDate() {

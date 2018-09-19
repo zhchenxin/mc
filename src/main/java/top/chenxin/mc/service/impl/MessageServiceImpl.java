@@ -5,11 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.chenxin.mc.common.utils.Utils;
-import top.chenxin.mc.dao.CustomerDao;
-import top.chenxin.mc.dao.MessageDao;
-import top.chenxin.mc.dao.MessageLogDao;
-import top.chenxin.mc.dao.TopicDao;
+import top.chenxin.mc.dao.*;
 import top.chenxin.mc.entity.Customer;
+import top.chenxin.mc.entity.FailedMessage;
 import top.chenxin.mc.entity.Message;
 import top.chenxin.mc.entity.MessageLog;
 import top.chenxin.mc.service.MessageService;
@@ -31,6 +29,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Autowired
     private MessageLogDao messageLogDao;
+
+    @Autowired
+    private FailedMessageDao failedMessageDao;
 
     @Override
     public Page<Message> search(Long customerId, Integer status, Integer page, Integer limit) {
@@ -78,7 +79,7 @@ public class MessageServiceImpl implements MessageService {
 
         // 生成执行日志
         MessageLog log = new MessageLog();
-        log.setCreateDate(Utils.getCurrentTimestamp());
+        log.setRequest(message.getMessage());
         log.setResponse(response);
         log.setCustomerId(message.getCustomerId());
         log.setMessageId(message.getId());
@@ -87,11 +88,8 @@ public class MessageServiceImpl implements MessageService {
         log.setError("");
         messageLogDao.insert(log);
 
-        // 修改消息状态
-        Message update = new Message();
-        update.setId(message.getId());
-        update.setStatus(Message.StatusSuccess);
-        messageDao.update(update);
+        // 移除消息
+        messageDao.delete(messageId);
     }
 
     @Override
@@ -105,22 +103,29 @@ public class MessageServiceImpl implements MessageService {
 
         // 生成执行日志
         MessageLog log = new MessageLog();
-        log.setCreateDate(Utils.getCurrentTimestamp());
         log.setError(error);
         log.setCustomerId(message.getCustomerId());
         log.setMessageId(message.getId());
         log.setTopicId(message.getTopicId());
         log.setTime(time);
+        log.setRequest(message.getMessage());
         log.setResponse("");
         messageLogDao.insert(log);
 
         // 判断消息是否需要重试
         Customer customer = customerDao.getById(message.getCustomerId());
         if (message.getAttempts() >= customer.getAttempts()) {
-            Message update = new Message();
-            update.setId(message.getId());
-            update.setStatus(Message.StatusFailed);
-            messageDao.update(update);
+            // 记录到失败表数据
+            FailedMessage failedMessage = new FailedMessage();
+            failedMessage.setTopicId(message.getTopicId());
+            failedMessage.setCustomerId(message.getCustomerId());
+            failedMessage.setMessage(message.getMessage());
+            failedMessage.setError(error);
+            failedMessage.setAttempts(message.getAttempts());
+            failedMessageDao.insert(failedMessage);
+
+            // 删除消息
+            messageDao.delete(messageId);
         } else {
             Message update = new Message();
             update.setId(message.getId());

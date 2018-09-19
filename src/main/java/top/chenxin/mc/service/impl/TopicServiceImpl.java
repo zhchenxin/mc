@@ -77,36 +77,30 @@ public class TopicServiceImpl implements TopicService {
 
     @Transactional
     @Override
-    public void push(Long messageId, String topicName, String message, Integer delay) {
+    public void push(String topicName, String message, Integer delay) {
         Topic topic = topicDao.getByName(topicName);
         if (topic == null) {
             throw new ServiceException("topic 不存在", ErrorCode.OBJECT_NOT_DOUND);
         }
-        this.push(messageId, topic, message, delay);
+        this.push(topic, message, delay);
     }
 
     @Override
-    public void push(Long messageId, Long topicId, String message, Integer delay) {
+    public void push(Long topicId, String message, Integer delay) {
         Topic topic = topicDao.getById(topicId);
         if (topic == null) {
             throw new ServiceException("topic 不存在", ErrorCode.OBJECT_NOT_DOUND);
         }
 
-        this.push(messageId, topic, message, delay);
+        this.push(topic, message, delay);
     }
 
     @Transactional
-    private void push(Long messageId, Topic topic, String message, Integer delay) {
+    private void push(Topic topic, String message, Integer delay) {
         List<Customer> customers = customerDao.getByTopicId(topic.getId());
 
         for (Customer item : customers) {
-            Message msg = messageDao.getByMessageIdAndCustomerId(messageId, item.getId());
-            if (msg != null) {
-                throw new ServiceException("message id 重复");
-            }
-
-            msg = new Message();
-            msg.setMessageId(messageId);
+            Message msg = new Message();
             msg.setTopicId(topic.getId());
             msg.setCustomerId(item.getId());
             msg.setMessage(message);

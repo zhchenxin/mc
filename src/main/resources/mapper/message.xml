@@ -13,7 +13,6 @@
         INSERT INTO message SET
         status=#{status},
         attempts=#{attempts},
-        message_id=#{messageId},
         topic_id=#{topicId},
         customer_id=#{customerId},
         message=#{message},
@@ -30,6 +29,10 @@
         WHERE id=#{id}
     </update>
 
+    <delete id="delete">
+        DELETE FROM message WHERE id=#{id}
+    </delete>
+
     <select id="search" resultType="top.chenxin.mc.entity.Message">
         SELECT * FROM message WHERE 1=1
         <if test="customerId != null and customerId != 0">AND customer_id = #{customerId}</if>
@@ -41,10 +44,6 @@
         select * from message where id = #{id};
     </select>
 
-    <select id="getByMessageIdAndCustomerId" resultType="top.chenxin.mc.entity.Message">
-        select * from message where message_id = #{messageId} and customer_id = #{customerId};
-    </select>
-
     <select id="popMessage" resultType="top.chenxin.mc.entity.Message">
         SELECT * FROM message WHERE status = 1 AND available_date 	&lt; unix_timestamp(now()) limit 1 for update;
     </select>
@@ -53,19 +52,4 @@
         UPDATE `message` SET status=1, attempts = attempts + 1 where timeout_date 	&lt; unix_timestamp(now()) and status=2;
     </update>
 
-    <update id="start">
-        UPDATE `message` SET timeout_date=#{timeoutDate},status=2 WHERE id=#{id}
-    </update>
-
-    <update id="failed">
-        UPDATE `message` SET status=4 WHERE id=#{id}
-    </update>
-
-    <update id="retry">
-        UPDATE `message` SET status=1, attempts = attempts + 1 WHERE id=#{id}
-    </update>
-
-    <update id="success">
-        UPDATE `message` SET status=3 WHERE id=#{id}
-    </update>
 </mapper>

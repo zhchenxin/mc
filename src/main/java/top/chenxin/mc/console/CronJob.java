@@ -28,7 +28,7 @@ public class CronJob {
         List<Cron> cronList = cronService.getAll();
         for (Cron cron : cronList) {
             if (cron.getStatus().equals(Cron.StatusNormal) && specRun(cron.getSpec())) {
-                topicService.push((new Random()).nextLong(), cron.getTopicId(), "", 0);
+                topicService.push(cron.getTopicId(), "", 0);
             }
         }
     }
@@ -40,7 +40,7 @@ public class CronJob {
 
         int currentTimestamp = Utils.getCurrentTimestamp();
 
-        CronTrigger trigger = new CronTrigger("0" + spec);
+        CronTrigger trigger = new CronTrigger("0 " + spec);
         SimpleTriggerContext context = new SimpleTriggerContext();
         context.update(null, null, new Date(((long)currentTimestamp - 1)*1000));
         Date date = trigger.nextExecutionTime(context);

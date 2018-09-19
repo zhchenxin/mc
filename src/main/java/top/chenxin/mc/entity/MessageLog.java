@@ -4,6 +4,9 @@ public class MessageLog extends BaseEntity {
     private Long messageId;
     private Long topicId;
     private Long customerId;
+
+    // 请求内容
+    private String request;
     // 接口返回内容
     private String response;
     // 错误信息
@@ -35,6 +38,14 @@ public class MessageLog extends BaseEntity {
 
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
+    }
+
+    public String getRequest() {
+        return request;
+    }
+
+    public void setRequest(String request) {
+        this.request = request;
     }
 
     public String getResponse() {

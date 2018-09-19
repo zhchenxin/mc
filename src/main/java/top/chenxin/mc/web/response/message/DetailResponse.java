@@ -29,7 +29,6 @@ public class DetailResponse extends AbstractResponse {
     public Map getData() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", message.getId());
-        map.put("message_id", message.getMessageId());
         map.put("message", message.getMessage());
         map.put("attempts", message.getAttempts());
         map.put("status", message.getStatus());

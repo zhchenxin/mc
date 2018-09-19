@@ -55,11 +55,7 @@ public class TopicController extends BaseController {
 
     @RequestMapping(value = "/push", method = RequestMethod.POST)
     private Map push(@Validated PushForm form) {
-        if (form.getMessageId() == 0) {
-            Random random = new Random();
-            form.setMessageId(random.nextLong());
-        }
-        topicService.push(form.getMessageId(), form.getTopicName(), form.getMessage(), form.getDelay());
+        topicService.push(form.getTopicName(), form.getMessage(), form.getDelay());
         return new SuccessResponse().toMap();
     }
 }

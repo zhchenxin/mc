@@ -28,12 +28,11 @@ public interface TopicService {
 
     /**
      * 向指定的 topic 中发送消息
-     * @param messageId 消息id, 每一条消息的id唯一, 如果重复, 则插入失败
      * @param topicName topic 名称
      * @param message 消息内容
      * @param delay 消息延迟时间, 单位秒
      */
-    void push(Long messageId, String topicName, String message, Integer delay);
+    void push(String topicName, String message, Integer delay);
 
-    void push(Long messageId, Long topicId, String message, Integer delay);
+    void push(Long topicId, String message, Integer delay);
 }
