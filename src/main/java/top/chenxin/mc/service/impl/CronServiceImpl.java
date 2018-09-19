@@ -79,7 +79,7 @@ public class CronServiceImpl implements CronService {
 
     private void checkSpec(String spec) {
         try {
-            new CronTrigger("0" + spec);
+            new CronTrigger("0 " + spec);
         } catch (Exception exception) {
             throw new ServiceException("spce 参数格式错误");
         }
