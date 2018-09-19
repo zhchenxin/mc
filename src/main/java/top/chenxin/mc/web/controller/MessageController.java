@@ -34,7 +34,7 @@ public class MessageController extends BaseController {
     private CustomerService customerService;
 
     @RequestMapping(value = "",method = RequestMethod.GET)
-    public Map list(@Validated ListForm form) {
+    public Map index(@Validated ListForm form) {
         Page<Message> messageList = messageService.search(form.getCustomerId(), form.getStatus(), form.getPage(), form.getLimit());
 
         if (messageList.isEmpty()) {

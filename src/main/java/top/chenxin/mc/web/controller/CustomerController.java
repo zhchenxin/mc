@@ -32,7 +32,7 @@ public class CustomerController extends BaseController {
     private TopicService topicService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public Map list(@Validated ListForm form) {
+    public Map index(@Validated ListForm form) {
         Page<Customer> customerList = customerService.search(form.getTopicId(), form.getPage(), form.getLimit());
 
         if (customerList.isEmpty()) {

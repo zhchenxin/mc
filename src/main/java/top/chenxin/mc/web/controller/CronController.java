@@ -30,7 +30,7 @@ public class CronController extends BaseController {
     private TopicService topicService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    private Map list(@Validated ListForm form) {
+    private Map index(@Validated ListForm form) {
         Page<Cron> cronPage = cronService.search(form.getTopicId(), form.getPage(), form.getLimit());
 
         List<Long> topicIds = cronPage.stream().map(Cron::getTopicId).collect(Collectors.toList());

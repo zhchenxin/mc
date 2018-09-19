@@ -1,7 +1,6 @@
 package top.chenxin.mc.web.controller;
 
 import com.github.pagehelper.Page;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +24,7 @@ public class TopicController extends BaseController {
     private TopicService topicService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    private Map list(@Validated ListForm form) {
+    private Map index(@Validated ListForm form) {
         Page<Topic> topics = topicService.search(form.getTopicId(), form.getPage(), form.getLimit());
         return new ListResponse(topics).toMap();
     }
