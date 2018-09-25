@@ -11,7 +11,6 @@
         </selectKey>
 
         INSERT INTO message_log SET
-            message_id=#{messageId},
             topic_id=#{topicId},
             customer_id=#{customerId},
             time=#{time},
@@ -23,6 +22,12 @@
 
     <select id="getByMessageId" resultType="top.chenxin.mc.entity.MessageLog">
         select * from message_log where message_id = #{messageId}
+    </select>
+
+    <select id="search" resultType="top.chenxin.mc.entity.MessageLog">
+        SELECT * FROM message_log WHERE 1=1
+        <if test="customerId != null and customerId != 0">AND customer_id = #{customerId}</if>
+        order by id desc
     </select>
 
 </mapper>

@@ -1,31 +1,27 @@
 package top.chenxin.mc.service;
 
-
 import com.github.pagehelper.Page;
+import top.chenxin.mc.entity.FailedMessage;
 import top.chenxin.mc.entity.Message;
 import top.chenxin.mc.entity.MessageLog;
 
-import java.util.List;
-
 public interface MessageService {
-    /**
-     * 按照条件搜索
-     * @param customerId 默认值0
-     * @param status 默认值0
-     */
-    Page<Message> search(Long customerId, Integer status, Integer page, Integer limit);
 
     /**
-     * 根据消息id获取消息内容
-     * @param id 消息id
+     * 搜索消息执行的历史记录
      */
-    Message getById(Long id);
+    Page<MessageLog> searchLog(Long customerId, Integer page, Integer limit);
 
     /**
-     * 获取消息的请求日志
-     * @param id 消息id
+     * 搜索失败的消息
      */
-    List<MessageLog> getMessageLogs(Long id);
+    Page<FailedMessage> searchFailed(Long customerId, Integer page, Integer limit);
+
+    /**
+     * 重试消息
+     * @param id FailedMessage中的id
+     */
+    void retryMessage(Long id);
 
     /**
      * 从所有消息中推出一条消息用于执行, 如果没有消息, 则返回 null

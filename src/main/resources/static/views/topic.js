@@ -99,11 +99,11 @@ Vue.component('topic', {
                 },
                 on: {
                   click: () => {
-                    topic = tableData(params.index)
-                    updateModel_formData.id = topic.id
-                    updateModel_formData.name = topic.name
-                    updateModel_formData.description = topic.description
-                    updateModel_show=true
+                    var topic = this.tableData[params.index]
+                    this.updateModel_formData.id = topic.id
+                    this.updateModel_formData.name = topic.name
+                    this.updateModel_formData.description = topic.description
+                    this.updateModel_show=true
                   }
                 }
               }, '编辑'),
@@ -114,7 +114,7 @@ Vue.component('topic', {
                 },
                 on: {
                   click: () => {
-                    topic = tableData(params.index)
+                    var topic = this.tableData[params.index]
                     this.delete(topic.id)
                   }
                 }
@@ -142,7 +142,6 @@ Vue.component('topic', {
       addModel_show: false,
       addModel_doing: false,
       addModel_formData: {
-        id: 0,
         name: '',
         description: '',
       },
@@ -159,6 +158,7 @@ Vue.component('topic', {
       updateModel_show: false,
       updateModel_doing: false,
       updateModel_formData: {
+        id: 0,
         name: '',
         description: '',
       },

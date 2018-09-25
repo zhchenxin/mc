@@ -40,7 +40,7 @@ public class CronController extends BaseController {
         return new ListResponse(cronPage, topicList).toMap();
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "create", method = RequestMethod.POST)
     private Map create(@Validated CreateForm form) {
         cronService.insert(form.getName(), form.getDescription(), form.getSpec(), form.getTopicId());
         return new SuccessResponse().toMap();

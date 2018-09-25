@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import top.chenxin.mc.common.constant.ErrorCode;
 import top.chenxin.mc.common.utils.Utils;
 import top.chenxin.mc.dao.*;
 import top.chenxin.mc.entity.Customer;
@@ -33,19 +34,42 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private FailedMessageDao failedMessageDao;
 
+    /**
+     * 搜索消息执行的历史记录
+     */
     @Override
-    public Page<Message> search(Long customerId, Integer status, Integer page, Integer limit) {
-        return  messageDao.search(customerId, status, page, limit);
+    public Page<MessageLog> searchLog(Long customerId, Integer page, Integer limit) {
+        return messageLogDao.search(customerId, page, limit);
+    }
+
+    /**
+     * 搜索失败的消息
+     */
+    @Override
+    public Page<FailedMessage> searchFailed(Long customerId, Integer page, Integer limit) {
+        return failedMessageDao.search(customerId, page, limit);
     }
 
     @Override
-    public Message getById(Long id) {
-        return messageDao.getById(id);
-    }
+    @Transactional
+    public void retryMessage(Long id) {
+        FailedMessage message = failedMessageDao.getById(id);
+        if (message == null) {
+            throw new ServiceException("消息未找到", ErrorCode.OBJECT_NOT_DOUND);
+        }
 
-    @Override
-    public List<MessageLog> getMessageLogs(Long id) {
-        return messageLogDao.getByMessageId(id);
+        // 从失败表中删除
+        failedMessageDao.delete(id);
+
+        // 添加消息到 message 表中
+        Message msg = new Message();
+        msg.setTopicId(message.getTopicId());
+        msg.setCustomerId(message.getCustomerId());
+        msg.setMessage(message.getMessage());
+        msg.setAvailableDate(Utils.getCurrentTimestamp());
+        msg.setStatus(Message.StatusWatting);
+        msg.setAttempts(0);
+        messageDao.insert(msg);
     }
 
     @Override
@@ -82,7 +106,6 @@ public class MessageServiceImpl implements MessageService {
         log.setRequest(message.getMessage());
         log.setResponse(response);
         log.setCustomerId(message.getCustomerId());
-        log.setMessageId(message.getId());
         log.setTopicId(message.getTopicId());
         log.setTime(time);
         log.setError("");
@@ -105,7 +128,6 @@ public class MessageServiceImpl implements MessageService {
         MessageLog log = new MessageLog();
         log.setError(error);
         log.setCustomerId(message.getCustomerId());
-        log.setMessageId(message.getId());
         log.setTopicId(message.getTopicId());
         log.setTime(time);
         log.setRequest(message.getMessage());

@@ -15,7 +15,6 @@ import top.chenxin.mc.web.response.topic.ListResponse;
 import top.chenxin.mc.web.response.topic.UpdateResponse;
 
 import java.util.Map;
-import java.util.Random;
 
 @RestController
 @RequestMapping("/topic")

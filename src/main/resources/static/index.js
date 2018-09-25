@@ -17,7 +17,7 @@ const router = new VueRouter({
     {path: '/topic/add', component: {template: '<topic-add />'}},
     {path: '/customer', component: {template: '<customer/>'}},
     {path: '/customer/add', component: {template: '<customer-add/>'}},
-    {path: '/message', component: {template: '<message />'}},
+    {path: '/message', component: {template: '<message />'}}
   ]
 })
 

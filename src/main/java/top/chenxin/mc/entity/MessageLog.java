@@ -1,7 +1,6 @@
 package top.chenxin.mc.entity;
 
 public class MessageLog extends BaseEntity {
-    private Long messageId;
     private Long topicId;
     private Long customerId;
 
@@ -15,14 +14,6 @@ public class MessageLog extends BaseEntity {
     private Integer time;
     // 创建时间
     private Integer createDate;
-
-    public Long getMessageId() {
-        return messageId;
-    }
-
-    public void setMessageId(Long messageId) {
-        this.messageId = messageId;
-    }
 
     public Long getTopicId() {
         return topicId;

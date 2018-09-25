@@ -5,16 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import top.chenxin.mc.common.utils.Utils;
-import top.chenxin.mc.entity.Customer;
-import top.chenxin.mc.entity.Message;
-import top.chenxin.mc.entity.MessageLog;
-import top.chenxin.mc.entity.Topic;
+import top.chenxin.mc.entity.*;
 import top.chenxin.mc.service.CustomerService;
-import top.chenxin.mc.web.request.message.ListForm;
 import top.chenxin.mc.service.MessageService;
 import top.chenxin.mc.service.TopicService;
-import top.chenxin.mc.web.response.message.DetailResponse;
-import top.chenxin.mc.web.response.message.ListResponse;
+import top.chenxin.mc.web.request.message.LogForm;
+import top.chenxin.mc.web.response.SuccessResponse;
+import top.chenxin.mc.web.response.message.FailedResponse;
+import top.chenxin.mc.web.response.message.LogResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -33,32 +31,58 @@ public class MessageController extends BaseController {
     @Autowired
     private CustomerService customerService;
 
-    @RequestMapping(value = "",method = RequestMethod.GET)
-    public Map index(@Validated ListForm form) {
-        Page<Message> messageList = messageService.search(form.getCustomerId(), form.getStatus(), form.getPage(), form.getLimit());
+    /**
+     * 消息日志
+     */
+    @RequestMapping(value = "log", method = RequestMethod.GET)
+    public Map log(@Validated LogForm form) {
+
+        Page<MessageLog> messageList = messageService.searchLog(form.getCustomerId(), form.getPage(), form.getLimit());
 
         if (messageList.isEmpty()) {
-            return new ListResponse(messageList, null, null).toMap();
+            return new LogResponse(messageList, null, null).toMap();
         }
 
-        List<Long> customerIds = messageList.stream().map(Message::getCustomerId).collect(Collectors.toList());
-        List<Long> topicIds = messageList.stream().map(Message::getTopicId).collect(Collectors.toList());
+        List<Long> customerIds = messageList.stream().map(MessageLog::getCustomerId).collect(Collectors.toList());
+        List<Long> topicIds = messageList.stream().map(MessageLog::getTopicId).collect(Collectors.toList());
         Utils.removeDuplicate(customerIds);
         Utils.removeDuplicate(topicIds);
 
         List<Customer> customerList = customerService.getByIds(customerIds);
         List<Topic> topicList = topicService.getByIds(topicIds);
 
-        return new ListResponse(messageList, customerList, topicList).toMap();
+        return new LogResponse(messageList, customerList, topicList).toMap();
     }
 
-    @RequestMapping(value = "detail", method = RequestMethod.GET)
-    public Map detail(@RequestParam("id") Long id) {
-        Message message = messageService.getById(id);
-        Topic topic = topicService.getById(message.getTopicId());
-        Customer customer = customerService.getById(message.getCustomerId());
-        List<MessageLog> messageLogList = messageService.getMessageLogs(message.getId());
-        return new DetailResponse(message, topic, customer, messageLogList).toMap();
+    /**
+     * 失败的消息
+     */
+    @RequestMapping(value = "failed", method = RequestMethod.GET)
+    public Map failed(@Validated LogForm form) {
+        Page<FailedMessage> messageList = messageService.searchFailed(form.getCustomerId(), form.getPage(), form.getLimit());
+
+        if (messageList.isEmpty()) {
+            return new FailedResponse(messageList, null, null).toMap();
+        }
+
+        List<Long> customerIds = messageList.stream().map(FailedMessage::getCustomerId).collect(Collectors.toList());
+        List<Long> topicIds = messageList.stream().map(FailedMessage::getTopicId).collect(Collectors.toList());
+        Utils.removeDuplicate(customerIds);
+        Utils.removeDuplicate(topicIds);
+
+        List<Customer> customerList = customerService.getByIds(customerIds);
+        List<Topic> topicList = topicService.getByIds(topicIds);
+
+        return new FailedResponse(messageList, customerList, topicList).toMap();
+    }
+
+    /**
+     * 重试失败消息
+     */
+    @RequestMapping(value = "failed", method = RequestMethod.POST)
+    public Map retry(@RequestParam("messageId") Long messageId) {
+        messageService.retryMessage(messageId);
+        return new SuccessResponse().toMap();
     }
 
 }
