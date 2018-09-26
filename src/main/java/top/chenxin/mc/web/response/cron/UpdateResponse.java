@@ -12,7 +12,7 @@ public class UpdateResponse extends AbstractResponse {
 
     private Cron cron;
 
-    public UpdateResponse(Cron topic) {
+    public UpdateResponse(Cron cron) {
         this.cron = cron;
     }
 
@@ -25,9 +25,10 @@ public class UpdateResponse extends AbstractResponse {
 
     private Map getCron() {
         Map<String, Object> map = new HashMap<>();
+        map.put("id", cron.getId());
         map.put("name", cron.getName());
         map.put("description", cron.getDescription());
-        map.put("spce", cron.getSpec());
+        map.put("spec", cron.getSpec());
         return map;
     }
 }

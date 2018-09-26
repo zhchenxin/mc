@@ -13,6 +13,7 @@ import top.chenxin.mc.web.request.cron.CreateForm;
 import top.chenxin.mc.web.request.cron.ListForm;
 import top.chenxin.mc.web.request.cron.UpdateForm;
 import top.chenxin.mc.web.response.SuccessResponse;
+import top.chenxin.mc.web.response.cron.CreateResponse;
 import top.chenxin.mc.web.response.cron.ListResponse;
 import top.chenxin.mc.web.response.cron.UpdateResponse;
 
@@ -40,6 +41,12 @@ public class CronController extends BaseController {
         return new ListResponse(cronPage, topicList).toMap();
     }
 
+    @RequestMapping(value = "create", method = RequestMethod.GET)
+    private Map create() {
+        List<Topic> topicList = topicService.getAll();
+        return new CreateResponse(topicList).toMap();
+    }
+
     @RequestMapping(value = "create", method = RequestMethod.POST)
     private Map create(@Validated CreateForm form) {
         cronService.insert(form.getName(), form.getDescription(), form.getSpec(), form.getTopicId());
@@ -54,7 +61,7 @@ public class CronController extends BaseController {
 
     @RequestMapping(value = "update", method = RequestMethod.POST)
     private Map update(@RequestParam("id") Long id, @Validated UpdateForm form) {
-        cronService.update(id, form.getName(), form.getDescription(), form.getSpce());
+        cronService.update(id, form.getName(), form.getDescription(), form.getSpec());
         return new SuccessResponse().toMap();
     }
 

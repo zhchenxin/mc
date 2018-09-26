@@ -77,7 +77,7 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
      */
     private boolean worker() {
         // 1. 推出消息
-        Message message = messageService.popMessage();
+        Message message = popMessage();
         if (message == null) {
             return false;
         }
@@ -93,6 +93,10 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
             messageService.messageFiled(message.getId(), e.getMessage(), (int)(System.currentTimeMillis() - start));
         }
         return true;
+    }
+
+    private synchronized Message popMessage() {
+        return messageService.popMessage();
     }
 
     private String runMessage(Message message) throws Exception {

@@ -4,7 +4,9 @@ Vue.component('user-menu', {
       <router-link to="/"><MenuItem name="/"><Icon type="home"></Icon><span>Dashboard</span></MenuItem></router-link>
       <router-link to="/topic"><MenuItem name="/topic"><Icon type="help-buoy"></Icon><span>Topic</span></MenuItem></router-link>
       <router-link to="/customer"><MenuItem name="/customer"><Icon type="hammer"></Icon><span>消费者</span></MenuItem></router-link>
-      <router-link to="/message"><MenuItem name="/message"><Icon type="ios-paper"></Icon><span>消息管理</span></MenuItem></router-link>
+      <router-link to="/cron"><MenuItem name="/cron"><Icon type="hammer"></Icon><span>定时任务</span></MenuItem></router-link>
+      <router-link to="/message"><MenuItem name="/message"><Icon type="ios-paper"></Icon><span>消息日志</span></MenuItem></router-link>
+      <router-link to="/failed_message"><MenuItem name="/failed_message"><Icon type="ios-paper"></Icon><span>异常消息</span></MenuItem></router-link>
     </div>
   `
 })
@@ -14,10 +16,10 @@ const router = new VueRouter({
   routes: [
     {path: '/', component: {template: '<dashboard />'}},
     {path: '/topic', component: {template: '<topic />'}},
-    {path: '/topic/add', component: {template: '<topic-add />'}},
     {path: '/customer', component: {template: '<customer/>'}},
-    {path: '/customer/add', component: {template: '<customer-add/>'}},
-    {path: '/message', component: {template: '<message />'}}
+    {path: '/cron', component: {template: '<cron/>'}},
+    {path: '/message', component: {template: '<message />'}},
+    {path: '/failed_message', component: {template: '<failed_message />'}},
   ]
 })
 

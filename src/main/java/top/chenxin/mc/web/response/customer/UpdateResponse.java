@@ -30,6 +30,7 @@ public class UpdateResponse extends AbstractResponse {
         map.put("api", customer.getApi());
         map.put("attempts", customer.getAttempts());
         map.put("timeout", customer.getTimeout());
+        map.put("id", customer.getId());
         return map;
     }
 }

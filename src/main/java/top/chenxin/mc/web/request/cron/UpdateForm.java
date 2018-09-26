@@ -9,7 +9,7 @@ public class UpdateForm {
     private String description;
 
     @NotNull
-    private String spce;
+    private String spec;
 
     public String getName() {
         return name;
@@ -27,11 +27,11 @@ public class UpdateForm {
         this.description = description;
     }
 
-    public String getSpce() {
-        return spce;
+    public String getSpec() {
+        return spec;
     }
 
-    public void setSpce(String spce) {
-        this.spce = spce;
+    public void setSpec(String spec) {
+        this.spec = spec;
     }
 }

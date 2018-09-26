@@ -73,6 +73,11 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    public void deleteFailedMessage(Long id) {
+        failedMessageDao.delete(id);
+    }
+
+    @Override
     @Transactional
     public Message popMessage() {
         // 取出消息

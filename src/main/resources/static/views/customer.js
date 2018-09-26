@@ -5,7 +5,7 @@ Vue.component('customer', {
       <Row>
         <Breadcrumb>
           <BreadcrumbItem to="/">Home</BreadcrumbItem>
-          <BreadcrumbItem>Customer</BreadcrumbItem>
+          <BreadcrumbItem>消费者</BreadcrumbItem>
         </Breadcrumb>
       </Row>
       <br>
@@ -24,7 +24,7 @@ Vue.component('customer', {
       <br>
       <Row>
         <Button type="info"  icon="refresh" @click="refresh"></Button>
-        <router-link to="/customer/add"><Button type="primary"  icon="plus-round">添加</Button></router-link>
+        <Button type="primary" icon="plus-round" @click="showAdd">添加</Button>
       </Row>
       <br>
       <Row>
@@ -35,13 +35,63 @@ Vue.component('customer', {
           </div>
         </div>
       </Row>
+
+      <Modal v-model="AddForm_show" :footer-hide="true" title="添加">
+        <div>
+          <Form ref="AddForm_formData" :model="AddForm_formData" :label-width="80">
+            <FormItem label="名称" prop="name">
+              <Input v-model="AddForm_formData.name" placeholder="请输入名称"/>
+            </FormItem>
+            <FormItem label="Topic" prop="topicId">
+              <Select v-model="AddForm_formData.topicId">
+                  <Option v-for="item in AddForm_topicList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+              </Select>
+            </FormItem>
+            <FormItem label="api" prop="api">
+              <Input v-model="AddForm_formData.api"/>
+            </FormItem>
+            <FormItem label="超时时间" prop="timeout">
+              <Input v-model="AddForm_formData.timeout"/>
+            </FormItem>
+            <FormItem label="重试次数" prop="attempts">
+              <Input v-model="AddForm_formData.attempts"/>
+            </FormItem>
+            <FormItem>
+              <Button type="success" :loading="AddForm_doing" @click="add()">提交</Button>
+            </FormItem>
+          </Form>
+        </div>
+      </Modal>
+
+      <Modal v-model="EditForm_show" :footer-hide="true" title="编辑">
+        <div>
+          <Form ref="EditForm_formData" :model="EditForm_formData" :label-width="80">
+            <FormItem label="名称" prop="name">
+              <Input v-model="EditForm_formData.name" placeholder="请输入名称"/>
+            </FormItem>
+            <FormItem label="api" prop="api">
+              <Input v-model="EditForm_formData.api"/>
+            </FormItem>
+            <FormItem label="超时时间" prop="timeout">
+              <Input v-model="EditForm_formData.timeout"/>
+            </FormItem>
+            <FormItem label="重试次数" prop="attempts">
+              <Input v-model="EditForm_formData.attempts"/>
+            </FormItem>
+            <FormItem>
+              <Button type="success" :loading="EditForm_doing" @click="edit()">提交</Button>
+            </FormItem>
+          </Form>
+        </div>
+      </Modal>
+
     </div>
   `,
   data: function () {
     return {
+      // 表格属性
       loading: false,
       tableColumns: [
-        {type: 'selection', width: 60, align: 'center'},
         {title: 'id', key: 'id', width: 60, align: 'right'},
         {title: '名称', key: 'name'},
         {title: 'topic', key: 'topicName'},
@@ -49,15 +99,56 @@ Vue.component('customer', {
         {title: '超时时间', key: 'timeout'},
         {title: '重试次数', key: 'attempts'},
         {title: '创建时间', key: 'createDate'},
+        {
+          title: 'Action',
+          key: 'action',
+          width: 150,
+          align: 'center',
+          render: (h, params) => {
+            return h('div', [
+              h('Button', {props: {type: 'primary',size: 'small'},style: {marginRight: '5px'},on: {click: () => {this.showEdit(params.index)}}}, '编辑'),
+              h('Button', {props: {type: 'error',size: 'small'},on: {click: () => {this.delete(params.index)}}}, '删除')
+            ]);
+          }
+        }
       ],
+
+      // 表格列表
       tableData: [],
+
+      // 分页
       totalCount: 0,
       currentPage: 1,
       limit: 10,
+
+      // 搜索
       formSearch: {
         topicId: ''
       },
       topic_list: [],
+
+      // 增加表单
+      AddForm_show: false,
+      AddForm_doing: false,
+      AddForm_topicList: [],
+      AddForm_formData: {
+        name: '',
+        topic_id: '',
+        api: '',
+        timeout: '',
+        attempts: '',
+      },
+
+      // 编辑表单
+      EditForm_show: false,
+      EditForm_doing: false,
+      EditForm_formData: {
+        id: 0,
+        name: '',
+        api: '',
+        timeout: '',
+        attempts: '',
+      },
     }
   },
   mounted: function () {
@@ -104,98 +195,60 @@ Vue.component('customer', {
         this.tableData = []
         this.loading = false
       })
-    }
+    },
+    showAdd: function() {
+      client.get('/customer/create').then((response) => {
+        this.AddForm_formData = {
+          name: '',
+          topic_id: '',
+          api: '',
+          timeout: '',
+          attempts: '',
+        }
+        this.AddForm_topicList = response.data.data.topicList
+        this.AddForm_show=true
+      }).catch((error) => {
+        this.$Message.error(error)
+      })
+    },
+    add: function() {
+      this.AddForm_doing = true
+      client.post('/customer/create', this.AddForm_formData).then(() => {
+        this.AddForm_show = false
+        this.AddForm_doing = false
+        this.featchTableData()
+      }).catch((error) => {
+        this.AddForm_doing = false
+        this.$Message.error(error)
+      })
+    },
+    showEdit: function(index) {
+      var customer = this.tableData[index]
+      client.get('/customer/update', {params:{id:customer.id}}).then((response) => {
+        this.EditForm_formData = response.data.data.customer
+        this.EditForm_show=true
+      }).catch((error) => {
+        this.$Message.error(error)
+      })
+    },
+    edit: function() {
+      this.EditForm_doing = true
+      client.post('/customer/update', this.EditForm_formData).then(() => {
+        this.EditForm_show = false
+        this.EditForm_doing = false
+        this.featchTableData()
+      }).catch((error) => {
+        this.EditForm_doing = false
+        this.$Message.error(error)
+      })
+    },
+    delete: function(index) {
+      var customer = this.tableData[index]
+      client.post('/customer/delete', {'id': customer.id}).then(() => {
+        this.featchTableData()
+      }).catch((error) => {
+        this.$Message.error(error)
+      })
+    },
   },
 })
-
-
-Vue.component('customer-add', {
-  template: `
-    <div>
-      <Row>
-        <Breadcrumb>
-          <BreadcrumbItem to="/">Home</BreadcrumbItem>
-          <BreadcrumbItem to="/topic">Topic</BreadcrumbItem>
-          <BreadcrumbItem>添加 Topic</BreadcrumbItem>
-        </Breadcrumb>
-      </Row>
-      <br>
-      <Row>
-        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
-          <FormItem label="名称" prop="name">
-            <Input v-model="formValidate.name" placeholder="请输入名称"/>
-          </FormItem>
-          <FormItem label="Topic" prop="topicId">
-            <Select v-model="formValidate.topicId">
-                <Option v-for="item in topic_list" :value="item.id" :key="item.id">{{ item.name }}</Option>
-            </Select>
-          </FormItem>
-          <FormItem label="api" prop="api">
-            <Input v-model="formValidate.api"/>
-          </FormItem>
-          <FormItem label="超时时间" prop="timeout">
-            <Input v-model="formValidate.timeout"/>
-          </FormItem>
-          <FormItem label="重试次数" prop="attempts">
-            <Input v-model="formValidate.attempts"/>
-          </FormItem>
-          <FormItem>
-            <Button type="success" @click="handleSubmit('formValidate')">提交</Button>
-          </FormItem>
-        </Form>
-      </Row>
-    </div>
-  `,
-  data: function () {
-    return {
-      topic_list: [],
-      formValidate: {
-        name: '',
-        topic_id: '',
-        api: '',
-        timeout: '',
-        attempts: '',
-      },
-      ruleValidate: {
-        name: [
-          {required: true, message: '名称不能为空', trigger: 'blur'}
-        ],
-        topicId: [
-          {required: true, type: 'number', message: '', trigger: 'change'}
-        ],
-        api: [
-          {required: true, message: 'api不能为空', trigger: 'blur'}
-        ],
-        timeout: [
-          {required: true, message: '超时时间不能为空', trigger: 'blur'}
-        ],
-        attempts: [
-          {required: true, message: '重试次数不能为空', trigger: 'blur'}
-        ]
-      }
-    }
-  },
-  created: function () {
-    client.get('/topic', {params: {limit: 10000}}).then((response) => {
-      this.topic_list = response.data.data.list
-    }).catch((error) => {
-      this.$Message.error(error)
-      this.topic_list = []
-    })
-  },
-  methods: {
-    handleSubmit(name) {
-      this.$refs[name].validate((valid) => {
-        if (valid) {
-          client.post('/customer', this.formValidate).then(() => {
-            this.$router.go('-1')
-          }).catch((error) => {
-            this.$Message.error(error)
-          });
-        } else {
-          this.$Message.error('参数校验错误')
-        }
-      })
-    }
-  }
-});

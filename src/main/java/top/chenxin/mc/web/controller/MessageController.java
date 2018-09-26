@@ -79,10 +79,18 @@ public class MessageController extends BaseController {
     /**
      * 重试失败消息
      */
-    @RequestMapping(value = "failed", method = RequestMethod.POST)
+    @RequestMapping(value = "retry", method = RequestMethod.POST)
     public Map retry(@RequestParam("messageId") Long messageId) {
         messageService.retryMessage(messageId);
         return new SuccessResponse().toMap();
     }
 
+    /**
+     * 删除失败消息
+     */
+    @RequestMapping(value = "delete", method = RequestMethod.POST)
+    public Map delete(@RequestParam("messageId") Long messageId) {
+        messageService.deleteFailedMessage(messageId);
+        return new SuccessResponse().toMap();
+    }
 }

@@ -24,7 +24,7 @@ Vue.component('topic', {
       <br>
       <Row>
         <Button type="info"  icon="refresh" @click="refresh"></Button>
-        <Button type="primary" icon="plus-round" @click="addModel_show = true">添加</Button>
+        <Button type="primary" icon="plus-round" @click="showAdd">添加</Button>
       </Row>
       <br>
       <Row>
@@ -36,33 +36,33 @@ Vue.component('topic', {
         </div>
       </Row>
 
-      <Modal v-model="addModel_show" :footer-hide="true" title="添加">
+      <Modal v-model="AddForm_show" :footer-hide="true" title="添加">
         <div>
-          <Form ref="addModel_formData" :model="addModel_formData" :rules="addModel_ruleValidate" :label-width="80">
+          <Form ref="AddForm_formData" :model="AddForm_formData" :label-width="80">
             <FormItem label="名称" prop="name">
-              <Input v-model="addModel_formData.name" placeholder="请输入名称"/>
+              <Input v-model="AddForm_formData.name" placeholder="请输入名称"/>
             </FormItem>
             <FormItem label="Topic 描述" prop="description">
-              <Input v-model="addModel_formData.description" placeholder="请输入 Topic 描述"/>
+              <Input v-model="AddForm_formData.description" placeholder="请输入 Topic 描述"/>
             </FormItem>
             <FormItem>
-              <Button type="success" :loading="addModel_doing" @click="add('addModel_formData')">提交</Button>
+              <Button type="success" :loading="AddForm_doing" @click="add()">提交</Button>
             </FormItem>
           </Form>
         </div>
       </Modal>
 
-      <Modal v-model="updateModel_show" :footer-hide="true" title="更新">
+      <Modal v-model="EditForm_show" :footer-hide="true" title="更新">
         <div>
-          <Form ref="updateModel_formData" :model="updateModel_formData" :rules="updateModel_ruleValidate" :label-width="80">
+          <Form ref="EditForm_formData" :model="EditForm_formData" :label-width="80">
             <FormItem label="名称" prop="name">
-              <Input v-model="updateModel_formData.name" placeholder="请输入名称"/>
+              <Input v-model="EditForm_formData.name" placeholder="请输入名称"/>
             </FormItem>
             <FormItem label="Topic 描述" prop="description">
-              <Input v-model="updateModel_formData.description" placeholder="请输入 Topic 描述"/>
+              <Input v-model="EditForm_formData.description" placeholder="请输入 Topic 描述"/>
             </FormItem>
             <FormItem>
-              <Button type="success" :loading="updateModel_doing" @click="update('updateModel_formData')">提交</Button>
+              <Button type="success" :loading="EditForm_doing" @click="edit()">提交</Button>
             </FormItem>
           </Form>
         </div>
@@ -77,7 +77,6 @@ Vue.component('topic', {
 
       // 表格内容
       tableColumns: [
-        {type: 'selection', width: 60, align: 'center'},
         {title: 'id', key: 'id', width: 60, align: 'right'},
         {title: '名称', key: 'name'},
         {title: '描述', key: 'description'},
@@ -89,36 +88,8 @@ Vue.component('topic', {
           align: 'center',
           render: (h, params) => {
             return h('div', [
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    var topic = this.tableData[params.index]
-                    this.updateModel_formData.id = topic.id
-                    this.updateModel_formData.name = topic.name
-                    this.updateModel_formData.description = topic.description
-                    this.updateModel_show=true
-                  }
-                }
-              }, '编辑'),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    var topic = this.tableData[params.index]
-                    this.delete(topic.id)
-                  }
-                }
-              }, '删除')
+              h('Button', {props: {type: 'primary',size: 'small'},style: {marginRight: '5px'},on: {click: () => {this.showEdit(params.index)}}}, '编辑'),
+              h('Button', {props: {type: 'error',size: 'small'},on: {click: () => {this.delete(params.index)}}}, '删除')
             ]);
           }
         }
@@ -139,36 +110,20 @@ Vue.component('topic', {
       topic_list: [],
 
       // 添加模态框表单数据
-      addModel_show: false,
-      addModel_doing: false,
-      addModel_formData: {
+      AddForm_show: false,
+      AddForm_doing: false,
+      AddForm_formData: {
         name: '',
         description: '',
       },
-      addModel_ruleValidate: {
-        name: [
-          {required: true, message: '名称不能为空', trigger: 'blur'}
-        ],
-        description: [
-          {required: true, message: 'Topic 描述不能为空', trigger: 'blur'}
-        ]
-      },   
       
       // 更新模态框表单数据
-      updateModel_show: false,
-      updateModel_doing: false,
-      updateModel_formData: {
+      EditForm_show: false,
+      EditForm_doing: false,
+      EditForm_formData: {
         id: 0,
         name: '',
         description: '',
-      },
-      updateModel_ruleValidate: {
-        name: [
-          {required: true, message: '名称不能为空', trigger: 'blur'}
-        ],
-        description: [
-          {required: true, message: 'Topic 描述不能为空', trigger: 'blur'}
-        ]
       },
     }
   },
@@ -212,41 +167,48 @@ Vue.component('topic', {
         this.loading = false
       })
     },
-    add: function(name) {
-      this.$refs[name].validate((valid) => {
-        if (valid) {
-          this.addModel_doing = true
-          client.post('/topic/create', this.addModel_formData).then(() => {
-            this.addModel_show = false
-            this.addModel_doing = false
-            this.featchTableData()
-          }).catch((error) => {
-            this.addModel_doing = false
-            this.$Message.error({title: error})
-          })
-        }
-      })
+    showAdd: function() {
+      this.AddForm_formData = {
+        name: '',
+        description: '',
+      }
+      this.AddForm_show = true
     },
-    update: function(name) {
-      this.$refs[name].validate((valid) => {
-        if (valid) {
-          this.updateModel_doing = true
-          client.post('/topic/update/' + this.updateModel_formData.id, this.updateModel_formData).then(() => {
-            this.updateModel_show = false
-            this.updateModel_doing = false
-            this.featchTableData()
-          }).catch((error) => {
-            this.updateModel_doing = false
-            this.$Message.error({title: error})
-          })
-        }
-      })
-    },
-    delete: function(id) {
-      client.post('/topic/delete/' + id, null).then(() => {
+    add: function() {
+      this.AddForm_doing = true
+      client.post('/topic/create', this.AddForm_formData).then(() => {
+        this.AddForm_show = false
+        this.AddForm_doing = false
         this.featchTableData()
       }).catch((error) => {
-        this.$Message.error({title: error})
+        this.AddForm_doing = false
+        this.$Message.error(error)
+      })
+    },
+    showEdit: function(index) {
+      var topic = this.tableData[index]
+      this.EditForm_formData.id = topic.id
+      this.EditForm_formData.name = topic.name
+      this.EditForm_formData.description = topic.description
+      this.EditForm_show=true
+    },
+    edit: function() {
+      this.EditForm_doing = true
+      client.post('/topic/update', this.EditForm_formData).then(() => {
+        this.EditForm_show = false
+        this.EditForm_doing = false
+        this.featchTableData()
+      }).catch((error) => {
+        this.EditForm_doing = false
+        this.$Message.error(error)
+      })
+    },
+    delete: function(index) {
+      var data = this.tableData[index]
+      client.post('/topic/delete', {'id': topic.id}).then(() => {
+        this.featchTableData()
+      }).catch((error) => {
+        this.$Message.error(error)
       })
     },
   },

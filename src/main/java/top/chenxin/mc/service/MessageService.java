@@ -24,6 +24,12 @@ public interface MessageService {
     void retryMessage(Long id);
 
     /**
+     * 删除失败消息
+     * @param id
+     */
+    void deleteFailedMessage(Long id);
+
+    /**
      * 从所有消息中推出一条消息用于执行, 如果没有消息, 则返回 null
      */
     Message popMessage();
