@@ -23,8 +23,9 @@ public class UpdateResponse extends AbstractResponse {
 
     private Map getTopic() {
         Map<String, Object> map = new HashMap<>();
-        map.put("topicId", topic.getName());
-        map.put("name", topic.getDescription());
+        map.put("id", topic.getId());
+        map.put("name", topic.getName());
+        map.put("description", topic.getDescription());
         return map;
     }
 }

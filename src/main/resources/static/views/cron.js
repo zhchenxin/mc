@@ -1,25 +1,12 @@
-Vue.component('customer', {
+Vue.component('cron', {
   template: `
     <div>
       <Spin size="large" fix v-if="loading"></Spin>
       <Row>
         <Breadcrumb>
           <BreadcrumbItem to="/">Home</BreadcrumbItem>
-          <BreadcrumbItem>消费者</BreadcrumbItem>
+          <BreadcrumbItem>定时任务</BreadcrumbItem>
         </Breadcrumb>
-      </Row>
-      <br>
-      <Row>
-        <Form label-position="left" :label-width="80" inline>
-          <FormItem label="Topic" prop="topicId">
-            <Select v-model="Search_data.topicId" filterable >
-                <Option v-for="item in Search_topicList" :value="item.id" :key="item.id">{{ item.name }}</Option>
-            </Select>
-          </FormItem>
-          <FormItem>
-            <Button type="primary" @click="search()">搜索</Button>
-          </FormItem>
-        </Form>
       </Row>
       <br>
       <Row>
@@ -43,18 +30,15 @@ Vue.component('customer', {
               <Input v-model="AddForm_formData.name" placeholder="请输入名称"/>
             </FormItem>
             <FormItem label="Topic" prop="topicId">
-              <Select v-model="AddForm_formData.topicId" filterable >
+              <Select v-model="AddForm_formData.topicId">
                   <Option v-for="item in AddForm_topicList" :value="item.id" :key="item.id">{{ item.name }}</Option>
               </Select>
             </FormItem>
-            <FormItem label="api" prop="api">
-              <Input v-model="AddForm_formData.api"/>
+            <FormItem label="描述" prop="description">
+              <Input v-model="AddForm_formData.description"/>
             </FormItem>
-            <FormItem label="超时时间" prop="timeout">
-              <Input v-model="AddForm_formData.timeout"/>
-            </FormItem>
-            <FormItem label="重试次数" prop="attempts">
-              <Input v-model="AddForm_formData.attempts"/>
+            <FormItem label="spec" prop="spec">
+              <Input v-model="AddForm_formData.spec"/>
             </FormItem>
             <FormItem>
               <Button type="success" :loading="AddForm_doing" @click="add()">提交</Button>
@@ -69,14 +53,11 @@ Vue.component('customer', {
             <FormItem label="名称" prop="name">
               <Input v-model="EditForm_formData.name" placeholder="请输入名称"/>
             </FormItem>
-            <FormItem label="api" prop="api">
-              <Input v-model="EditForm_formData.api"/>
+            <FormItem label="描述" prop="description">
+              <Input v-model="EditForm_formData.description"/>
             </FormItem>
-            <FormItem label="超时时间" prop="timeout">
-              <Input v-model="EditForm_formData.timeout"/>
-            </FormItem>
-            <FormItem label="重试次数" prop="attempts">
-              <Input v-model="EditForm_formData.attempts"/>
+            <FormItem label="spec" prop="spec">
+              <Input v-model="EditForm_formData.spec"/>
             </FormItem>
             <FormItem>
               <Button type="success" :loading="EditForm_doing" @click="edit()">提交</Button>
@@ -94,10 +75,9 @@ Vue.component('customer', {
       tableColumns: [
         {title: 'id', key: 'id'},
         {title: '名称', key: 'name'},
+        {title: '描述', key: 'description'},
         {title: 'topic', key: 'topicName'},
-        {title: 'api', key: 'api'},
-        {title: '超时时间', key: 'timeout'},
-        {title: '重试次数', key: 'attempts'},
+        {title: 'spec', key: 'spec'},
         {title: '创建时间', key: 'createDate'},
         {
           title: 'Action',
@@ -122,10 +102,10 @@ Vue.component('customer', {
       limit: 25,
 
       // 搜索
-      Search_data: {
+      formSearch: {
         topicId: ''
       },
-      Search_topicList: [],
+      topic_list: [],
 
       // 增加表单
       AddForm_show: false,
@@ -133,10 +113,9 @@ Vue.component('customer', {
       AddForm_topicList: [],
       AddForm_formData: {
         name: '',
-        topic_id: '',
-        api: '',
-        timeout: '',
-        attempts: '',
+        description: '',
+        spec: '',
+        topicId: '',
       },
 
       // 编辑表单
@@ -145,9 +124,8 @@ Vue.component('customer', {
       EditForm_formData: {
         id: 0,
         name: '',
-        api: '',
-        timeout: '',
-        attempts: '',
+        description: '',
+        spec: '',
       },
     }
   },
@@ -164,16 +142,16 @@ Vue.component('customer', {
       this.featchTableData()
     },
     search: function() {
-      this.currentPage = 1
       this.featchTableData()
+      this.$router.replace({ path: '/cron', query: { topicId: this.formSearch.topicId }})
     },
     featchTableData: function () {
       this.loading = true
-      client.get('/customer', {
+      client.get('/cron', {
         params: {
           page: this.currentPage,
           limit: this.limit,
-          topicId: this.Search_data.topicId
+          topicId: this.formSearch.topicId
         }
       }).then((response) => {
         this.tableData = response.data.data.list
@@ -187,7 +165,7 @@ Vue.component('customer', {
       })
     },
     showAdd: function() {
-      client.get('/customer/create').then((response) => {
+      client.get('/cron/create').then((response) => {
         this.AddForm_formData = {
           name: '',
           topic_id: '',
@@ -203,7 +181,7 @@ Vue.component('customer', {
     },
     add: function() {
       this.AddForm_doing = true
-      client.post('/customer/create', this.AddForm_formData).then(() => {
+      client.post('/cron/create', this.AddForm_formData).then(() => {
         this.AddForm_show = false
         this.AddForm_doing = false
         this.featchTableData()
@@ -213,9 +191,9 @@ Vue.component('customer', {
       })
     },
     showEdit: function(index) {
-      var customer = this.tableData[index]
-      client.get('/customer/update', {params:{id:customer.id}}).then((response) => {
-        this.EditForm_formData = response.data.data.customer
+      var data = this.tableData[index]
+      client.get('/cron/update', {params:{id:data.id}}).then((response) => {
+        this.EditForm_formData = response.data.data.cron
         this.EditForm_show=true
       }).catch((error) => {
         this.$Message.error(error)
@@ -223,7 +201,7 @@ Vue.component('customer', {
     },
     edit: function() {
       this.EditForm_doing = true
-      client.post('/customer/update', this.EditForm_formData).then(() => {
+      client.post('/cron/update', this.EditForm_formData).then(() => {
         this.EditForm_show = false
         this.EditForm_doing = false
         this.featchTableData()
@@ -233,8 +211,8 @@ Vue.component('customer', {
       })
     },
     delete: function(index) {
-      var customer = this.tableData[index]
-      client.post('/customer/delete', {'id': customer.id}).then(() => {
+      var data = this.tableData[index]
+      client.post('/cron/delete', {'id': data.id}).then(() => {
         this.featchTableData()
       }).catch((error) => {
         this.$Message.error(error)

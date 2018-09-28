@@ -5,7 +5,7 @@ Vue.component('user-menu', {
       <router-link to="/topic"><MenuItem name="/topic"><Icon type="help-buoy"></Icon><span>Topic</span></MenuItem></router-link>
       <router-link to="/customer"><MenuItem name="/customer"><Icon type="hammer"></Icon><span>消费者</span></MenuItem></router-link>
       <router-link to="/cron"><MenuItem name="/cron"><Icon type="hammer"></Icon><span>定时任务</span></MenuItem></router-link>
-      <router-link to="/message"><MenuItem name="/message"><Icon type="ios-paper"></Icon><span>消息日志</span></MenuItem></router-link>
+      <router-link to="/message_log"><MenuItem name="/message_log"><Icon type="ios-paper"></Icon><span>消息日志</span></MenuItem></router-link>
       <router-link to="/failed_message"><MenuItem name="/failed_message"><Icon type="ios-paper"></Icon><span>异常消息</span></MenuItem></router-link>
     </div>
   `
@@ -18,7 +18,7 @@ const router = new VueRouter({
     {path: '/topic', component: {template: '<topic />'}},
     {path: '/customer', component: {template: '<customer/>'}},
     {path: '/cron', component: {template: '<cron/>'}},
-    {path: '/message', component: {template: '<message />'}},
+    {path: '/message_log', component: {template: '<message_log />'}},
     {path: '/failed_message', component: {template: '<failed_message />'}},
   ]
 })

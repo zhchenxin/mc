@@ -12,8 +12,9 @@ Vue.component('topic', {
       <Row>
         <Form label-position="left" :label-width="80" inline>
           <FormItem label="Topic" prop="topicId">
-            <Select v-model="formSearch.topicId">
-                <Option v-for="item in topic_list" :value="item.id" :key="item.id">{{ item.name }}</Option>
+            <Select v-model="Search_data.topicId" filterable >
+                <Option value="0">全部</Option>
+                <Option v-for="item in Search_topicList" :value="item.id" :key="item.id">{{ item.name }}</Option>
             </Select>
           </FormItem>
           <FormItem>
@@ -31,7 +32,7 @@ Vue.component('topic', {
         <Table :border="false" :stripe="true" :show-header="true" :data="tableData" :columns="tableColumns"></Table>
         <div style="margin: 10px;overflow: hidden">
           <div style="float: right;">
-            <Page :total="totalCount" :current="currentPage" show-sizer size="small" show-total @on-change="changePage" @on-page-size-change="changePageSize"></Page>
+            <Page :total="totalCount" :current="currentPage" show-sizer  :page-size="25" :page-size-opts="[25, 50, 100, 250, 500]" size="small" show-total @on-change="changePage" @on-page-size-change="changePageSize"></Page>
           </div>
         </div>
       </Row>
@@ -77,7 +78,7 @@ Vue.component('topic', {
 
       // 表格内容
       tableColumns: [
-        {title: 'id', key: 'id', width: 60, align: 'right'},
+        {title: 'id', key: 'id'},
         {title: '名称', key: 'name'},
         {title: '描述', key: 'description'},
         {title: '创建时间', key: 'createDate'},
@@ -101,13 +102,13 @@ Vue.component('topic', {
       // 分页数据
       totalCount: 0,
       currentPage: 1,
-      limit: 10,
+      limit: 25,
 
       // 搜索栏
-      formSearch: {
+      Search_data: {
         topicId: ''
       },
-      topic_list: [],
+      Search_topicList: [],
 
       // 添加模态框表单数据
       AddForm_show: false,
@@ -127,16 +128,6 @@ Vue.component('topic', {
       },
     }
   },
-  mounted: function () {
-    this.formSearch.topic_id = this.$route.query.topicId
-    this.featchTableData()
-    client.get('/topic', {params: {limit: 10000}}).then((response) => {
-      this.topic_list = response.data.data.list
-    }).catch((error) => {
-      this.$Message.error(error)
-      this.topic_list = []
-    })
-  },
   methods: {
     changePage: function (page) {
       this.currentPage = page
@@ -152,11 +143,16 @@ Vue.component('topic', {
     search: function() {
       this.currentPage = 1
       this.featchTableData()
-      this.$router.replace({ path: '/topic', query: { topicId: this.formSearch.topicId }})
     },
     featchTableData: function() {
       this.loading = true
-      client.get('/topic', {params:{page: this.currentPage, limit: this.limit, topicId: this.formSearch.topicId}}).then((response) => {
+      client.get('/topic', {
+        params:{
+          page: this.currentPage, 
+          limit: this.limit, 
+          topicId: this.Search_data.topicId
+        }
+      }).then((response) => {
         this.tableData = response.data.data.list
         this.totalCount = response.data.data.mate.total
         this.currentPage = response.data.data.mate.currentPage
@@ -186,11 +182,13 @@ Vue.component('topic', {
       })
     },
     showEdit: function(index) {
-      var topic = this.tableData[index]
-      this.EditForm_formData.id = topic.id
-      this.EditForm_formData.name = topic.name
-      this.EditForm_formData.description = topic.description
-      this.EditForm_show=true
+      var data = this.tableData[index]
+      client.get('/topic/update', {params:{id:data.id}}).then((response) => {
+        this.EditForm_formData = response.data.data.topic
+        this.EditForm_show=true
+      }).catch((error) => {
+        this.$Message.error(error)
+      })
     },
     edit: function() {
       this.EditForm_doing = true
