@@ -1,21 +1,20 @@
 package top.chenxin.mc.service;
 
-import com.github.pagehelper.Page;
-import top.chenxin.mc.entity.FailedMessage;
-import top.chenxin.mc.entity.Message;
-import top.chenxin.mc.entity.MessageLog;
+import top.chenxin.mc.core.ResourceCollection;
+import top.chenxin.mc.resource.FailedMessageResource;
+import top.chenxin.mc.resource.MessageLogResource;
 
 public interface MessageService {
 
     /**
-     * 搜索消息执行的历史记录
+     * 消息执行日志
      */
-    Page<MessageLog> searchLog(Long customerId, Integer page, Integer limit);
+    ResourceCollection<MessageLogResource> getMessageLogList(Long customerId, Integer page, Integer limit);
 
     /**
-     * 搜索失败的消息
+     * 失败消息
      */
-    Page<FailedMessage> searchFailed(Long customerId, Integer page, Integer limit);
+    ResourceCollection<FailedMessageResource> getFailedMessageList(Long customerId, Integer page, Integer limit);
 
     /**
      * 重试消息
@@ -30,19 +29,12 @@ public interface MessageService {
     void deleteFailedMessage(Long id);
 
     /**
-     * 从所有消息中推出一条消息用于执行, 如果没有消息, 则返回 null
+     * 从消息中取出一条可执行的, 执行消息
+     * 消息执行成功, 删除消息
+     * 消息执行失败, 如果没有超过重试次数, 则此消息会重试, 如果超过了重试次数, 删除消息并将消息设置为失败消息
+     * @return 如果能取出消息则返回 true, 否则 false
      */
-    Message popMessage();
-
-    /**
-     * 消息执行成功的时候调用
-     */
-    void messageSuccess(Long messageId, String response, Integer time);
-
-    /**
-     * 消息执行失败的时候调用
-     */
-    void messageFiled(Long messageId, String error, Integer time);
+    boolean popMessage();
 
     /**
      * 重试超时的消息

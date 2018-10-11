@@ -4,11 +4,16 @@ import com.github.pagehelper.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
+import top.chenxin.mc.core.ResourceCollection;
 import top.chenxin.mc.dao.CronDao;
 import top.chenxin.mc.entity.Cron;
+import top.chenxin.mc.entity.Customer;
+import top.chenxin.mc.resource.CronResource;
+import top.chenxin.mc.resource.CustomerResource;
 import top.chenxin.mc.service.CronService;
 import top.chenxin.mc.service.exception.ServiceException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -63,18 +68,20 @@ public class CronServiceImpl implements CronService {
     }
 
     @Override
-    public Page<Cron> search(Long topicId, Integer page, Integer limit) {
-        return cronDao.search(topicId, page, limit);
+    public ResourceCollection<CronResource> getList(Long topicId, Integer page, Integer limit) {
+        Page<Cron> cronPage = this.cronDao.search(topicId, page, limit);
+
+        List<CronResource> resources = new ArrayList<>();
+        for (Cron cron: cronPage) {
+            resources.add(new CronResource(cron));
+        }
+
+        return new ResourceCollection<>(resources, cronPage);
     }
 
     @Override
-    public List<Cron> getAll() {
-        return cronDao.getAll();
-    }
-
-    @Override
-    public Cron getById(Long id) {
-        return cronDao.getById(id);
+    public List<Cron> getAllNormalCron() {
+        return this.cronDao.getAllNormalCron();
     }
 
     private void checkSpec(String spec) {

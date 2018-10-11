@@ -1,20 +1,24 @@
 package top.chenxin.mc.service.impl;
 
 import com.github.pagehelper.Page;
+import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.chenxin.mc.common.constant.ErrorCode;
 import top.chenxin.mc.common.utils.Utils;
+import top.chenxin.mc.core.ResourceCollection;
 import top.chenxin.mc.dao.*;
-import top.chenxin.mc.entity.Customer;
-import top.chenxin.mc.entity.FailedMessage;
-import top.chenxin.mc.entity.Message;
-import top.chenxin.mc.entity.MessageLog;
+import top.chenxin.mc.entity.*;
+import top.chenxin.mc.resource.FailedMessageResource;
+import top.chenxin.mc.resource.MessageLogResource;
+import top.chenxin.mc.resource.TopicResource;
 import top.chenxin.mc.service.MessageService;
 import top.chenxin.mc.service.exception.ServiceException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -34,20 +38,28 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private FailedMessageDao failedMessageDao;
 
-    /**
-     * 搜索消息执行的历史记录
-     */
     @Override
-    public Page<MessageLog> searchLog(Long customerId, Integer page, Integer limit) {
-        return messageLogDao.search(customerId, page, limit);
+    public ResourceCollection<MessageLogResource> getMessageLogList(Long customerId, Integer page, Integer limit) {
+        Page<MessageLog> logs = this.messageLogDao.search(customerId, page, limit);
+
+        List<MessageLogResource> resources = new ArrayList<>();
+        for (MessageLog log : logs) {
+            resources.add(new MessageLogResource(log));
+        }
+
+        return new ResourceCollection<>(resources, logs);
     }
 
-    /**
-     * 搜索失败的消息
-     */
     @Override
-    public Page<FailedMessage> searchFailed(Long customerId, Integer page, Integer limit) {
-        return failedMessageDao.search(customerId, page, limit);
+    public ResourceCollection<FailedMessageResource> getFailedMessageList(Long customerId, Integer page, Integer limit) {
+        Page<FailedMessage> messages = this.failedMessageDao.search(customerId, page, limit);
+
+        List<FailedMessageResource> resources = new ArrayList<>();
+        for (FailedMessage message : messages) {
+            resources.add(new FailedMessageResource(message));
+        }
+
+        return new ResourceCollection<>(resources, messages);
     }
 
     @Override
@@ -78,8 +90,32 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    public boolean popMessage() {
+        // 1. 推出消息
+        Message message = pop();
+        if (message == null) {
+            return false;
+        }
+
+        // 2. 执行消息
+        long start = System.currentTimeMillis();
+        try {
+            String response = runMessage(message);
+            // 3. 保存执行结果
+            messageSuccess(message.getId(), response, (int)(System.currentTimeMillis() - start));
+        } catch (Exception e) {
+            // 3. 保存执行结果
+            messageFiled(message.getId(), e.getMessage(), (int)(System.currentTimeMillis() - start));
+        }
+        return true;
+    }
+
+    public void retryTimeoutMessage() {
+        messageDao.retryTimeoutMessage();
+    }
+
     @Transactional
-    public Message popMessage() {
+    private Message pop() {
         // 取出消息
         Message message = messageDao.popMessage();
         if (message == null) {
@@ -97,9 +133,8 @@ public class MessageServiceImpl implements MessageService {
         return message;
     }
 
-    @Override
     @Transactional
-    public void messageSuccess(Long messageId, String response, Integer time) {
+    private void messageSuccess(Long messageId, String response, Integer time) {
         Message message = messageDao.getById(messageId);
 
         if (!message.getStatus().equals(Message.StatusRunning)) {
@@ -120,9 +155,8 @@ public class MessageServiceImpl implements MessageService {
         messageDao.delete(messageId);
     }
 
-    @Override
     @Transactional
-    public void messageFiled(Long messageId, String error, Integer time) {
+    private void messageFiled(Long messageId, String error, Integer time) {
         Message message = messageDao.getById(messageId);
 
         if (!message.getStatus().equals(Message.StatusRunning)) {
@@ -162,7 +196,20 @@ public class MessageServiceImpl implements MessageService {
         }
     }
 
-    public void retryTimeoutMessage() {
-        messageDao.retryTimeoutMessage();
+    private String runMessage(Message message) throws Exception {
+        Customer customer = customerDao.getById(message.getCustomerId());
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .readTimeout(customer.getTimeout(), TimeUnit.SECONDS)
+                .build();
+
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), message.getMessage());
+        Request request = new Request.Builder()
+                .url(customer.getApi())
+                .post(body)
+                .build();
+
+        Response response = client.newCall(request).execute();
+        return response.body().string();
     }
 }

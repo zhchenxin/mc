@@ -25,9 +25,9 @@ public class CronJob {
 
     @Scheduled(cron = "0 * * * * *")
     protected void runEverySecond() {
-        List<Cron> cronList = cronService.getAll();
+        List<Cron> cronList = cronService.getAllNormalCron();
         for (Cron cron : cronList) {
-            if (cron.getStatus().equals(Cron.StatusNormal) && specRun(cron.getSpec())) {
+            if (specRun(cron.getSpec())) {
                 topicService.push(cron.getTopicId(), "", 0);
             }
         }

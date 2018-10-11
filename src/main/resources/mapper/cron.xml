@@ -38,12 +38,12 @@
         order by id desc
     </select>
 
-    <select id="getAll" resultType="top.chenxin.mc.entity.Cron">
-        SELECT * FROM cron WHERE delete_date = 0
-    </select>
-
     <select id="getById" resultType="top.chenxin.mc.entity.Cron">
         select * from cron where delete_date = 0 AND id = #{id}
+    </select>
+
+    <select id="getAllNormalCron" resultType="top.chenxin.mc.entity.Cron">
+        SELECT * FROM cron WHERE delete_date = 0 AND status=1
     </select>
 
 </mapper>

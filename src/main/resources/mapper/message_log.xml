@@ -20,10 +20,6 @@
             create_date=unix_timestamp(now())
     </insert>
 
-    <select id="getByMessageId" resultType="top.chenxin.mc.entity.MessageLog">
-        select * from message_log where message_id = #{messageId}
-    </select>
-
     <select id="search" resultType="top.chenxin.mc.entity.MessageLog">
         SELECT * FROM message_log WHERE 1=1
         <if test="customerId != null and customerId != 0">AND customer_id = #{customerId}</if>

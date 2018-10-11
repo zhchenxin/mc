@@ -19,7 +19,7 @@ public interface CronDao {
     // 搜索
     Page<Cron> search(@Param("topicId") Long topicId, @Param("page") int page, @Param("limit") int limit);
 
-    List<Cron> getAll();
-
     Cron getById(Long id);
+
+    List<Cron> getAllNormalCron();
 }

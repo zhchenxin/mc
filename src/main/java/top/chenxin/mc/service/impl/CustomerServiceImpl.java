@@ -3,11 +3,16 @@ package top.chenxin.mc.service.impl;
 import com.github.pagehelper.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.chenxin.mc.core.ResourceCollection;
+import top.chenxin.mc.entity.FailedMessage;
+import top.chenxin.mc.resource.CustomerResource;
+import top.chenxin.mc.resource.FailedMessageResource;
 import top.chenxin.mc.service.CustomerService;
 import top.chenxin.mc.dao.CustomerDao;
 import top.chenxin.mc.dao.TopicDao;
 import top.chenxin.mc.entity.Customer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,17 +52,14 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Page<Customer> search(Long topicId, Integer page, Integer limit) {
-        return customerDao.search(topicId, page, limit);
-    }
+    public ResourceCollection<CustomerResource> search(Long topicId, Integer page, Integer limit) {
+        Page<Customer> customers = this.customerDao.search(topicId, null, page, limit);
 
-    @Override
-    public List<Customer> getByIds(List<Long> ids) {
-        return customerDao.getByIds(ids);
-    }
+        List<CustomerResource> resources = new ArrayList<>();
+        for (Customer customer : customers) {
+            resources.add(new CustomerResource(customer));
+        }
 
-    @Override
-    public Customer getById(Long id) {
-        return customerDao.getById(id);
+        return new ResourceCollection<>(resources, customers);
     }
 }

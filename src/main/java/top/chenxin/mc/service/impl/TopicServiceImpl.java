@@ -6,15 +6,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.chenxin.mc.common.constant.ErrorCode;
 import top.chenxin.mc.common.utils.Utils;
+import top.chenxin.mc.core.ResourceCollection;
 import top.chenxin.mc.entity.Customer;
 import top.chenxin.mc.entity.Message;
 import top.chenxin.mc.dao.CustomerDao;
 import top.chenxin.mc.dao.MessageDao;
 import top.chenxin.mc.dao.TopicDao;
 import top.chenxin.mc.entity.Topic;
+import top.chenxin.mc.resource.TopicResource;
 import top.chenxin.mc.service.TopicService;
 import top.chenxin.mc.service.exception.ServiceException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -57,22 +60,16 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public Page<Topic> search(Long topicId, Integer page, Integer limit) {
-        return topicDao.search(topicId, page, limit);
-    }
+    public ResourceCollection<TopicResource> getList(List<Long> topicIds, Integer page, Integer limit) {
 
-    @Override
-    public List<Topic> getByIds(List<Long> ids) {
-        return topicDao.getByIds(ids);
-    }
+        Page<Topic> topics = this.topicDao.search(topicIds, page, limit);
 
-    @Override
-    public Topic getById(Long id) {
-        return topicDao.getById(id);
-    }
+        List<TopicResource> resources = new ArrayList<>();
+        for (Topic topic : topics) {
+            resources.add(new TopicResource(topic));
+        }
 
-    public List<Topic> getAll() {
-        return topicDao.getAll();
+        return new ResourceCollection<>(resources, topics);
     }
 
     @Transactional

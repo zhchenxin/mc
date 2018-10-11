@@ -1,5 +1,7 @@
 package top.chenxin.mc.entity;
 
+import top.chenxin.mc.core.BaseEntity;
+
 public class FailedMessage extends BaseEntity {
 
     private Long topicId;

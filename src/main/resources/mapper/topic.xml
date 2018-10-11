@@ -26,7 +26,12 @@
 
     <select id="search" resultType="top.chenxin.mc.entity.Topic">
         SELECT * FROM topic WHERE delete_date = 0
-        <if test="topicId != null and topicId != 0">AND id = #{topicId}</if>
+        <if test="ids != null">
+            AND
+            <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         order by id desc
     </select>
 
@@ -35,10 +40,6 @@
         <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
             #{item}
         </foreach>
-    </select>
-
-    <select id="getAll" resultType="top.chenxin.mc.entity.Topic">
-        SELECT * FROM topic WHERE delete_date = 0
     </select>
 
     <select id="getByName" resultType="top.chenxin.mc.entity.Topic">

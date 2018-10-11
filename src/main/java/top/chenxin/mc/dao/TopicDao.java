@@ -16,7 +16,7 @@ public interface TopicDao {
     void delete(Long id);
 
     // 搜索
-    Page<Topic> search(@Param("topicId") Long topicId, @Param("page") int page, @Param("limit") int limit);
+    Page<Topic> search(@Param("ids") List<Long> ids, @Param("page") int page, @Param("limit") int limit);
 
     // 按照特定条件查找
     Topic getByName(@Param("name") String name);
@@ -24,6 +24,4 @@ public interface TopicDao {
     Topic getById(@Param("id") Long id);
 
     List<Topic> getByIds(@Param("ids") List<Long> ids);
-
-    List<Topic> getAll();
 }

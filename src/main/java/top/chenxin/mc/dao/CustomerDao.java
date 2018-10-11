@@ -17,13 +17,10 @@ public interface CustomerDao {
     void delete(Long id);
 
     // 搜索
-    Page<Customer> search(@Param("topicId") Long topicId, @Param("page") int page, @Param("limit") int limit);
+    Page<Customer> search(@Param("topicId") Long topicId, @Param("ids") Long ids, @Param("page") int page, @Param("limit") int limit);
 
     // 根据指定条件查询
     List<Customer> getByTopicId(@Param("topicId") Long topicId);
 
     Customer getById(@Param("id") Long id);
-
-    List<Customer> getByIds(@Param("ids") List<Long> ids);
-
 }

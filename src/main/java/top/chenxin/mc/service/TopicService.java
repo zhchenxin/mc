@@ -1,8 +1,8 @@
 package top.chenxin.mc.service;
 
 
-import com.github.pagehelper.Page;
-import top.chenxin.mc.entity.Topic;
+import top.chenxin.mc.core.ResourceCollection;
+import top.chenxin.mc.resource.TopicResource;
 
 import java.util.List;
 
@@ -15,16 +15,10 @@ public interface TopicService {
     void delete(Long id);
 
     /**
-     * 搜索
-     * @param topicId 默认值 0
+     * 获取 topic 资源
+     * @param topicIds topic id 如果为null, 则表示不指定该搜索条件
      */
-    Page<Topic> search(Long topicId, Integer page, Integer limit);
-
-    List<Topic> getByIds(List<Long> ids);
-
-    Topic getById(Long id);
-
-    List<Topic> getAll();
+    ResourceCollection<TopicResource> getList(List<Long> topicIds, Integer page, Integer limit);
 
     /**
      * 向指定的 topic 中发送消息

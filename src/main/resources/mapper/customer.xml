@@ -35,14 +35,13 @@
     <select id="search" resultType="top.chenxin.mc.entity.Customer">
         SELECT * FROM customer WHERE delete_date = 0
         <if test="topicId != null and topicId != 0">AND topic_id = #{topicId}</if>
+        <if test="ids != null">
+            AND
+            <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         order by id desc
-    </select>
-
-    <select id="getByIds" resultType="top.chenxin.mc.entity.Customer">
-        SELECT * FROM customer WHERE delete_date = 0 AND id in
-        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
-            #{item}
-        </foreach>
     </select>
 
     <select id="getByTopicId" resultType="top.chenxin.mc.entity.Customer">

@@ -1,5 +1,7 @@
 package top.chenxin.mc.entity;
 
+import top.chenxin.mc.core.BaseEntity;
+
 public class Customer extends BaseEntity {
     // topic id
     private Long topicId;
