@@ -1,11 +1,7 @@
 package top.chenxin.mc.service;
 
-import com.github.pagehelper.Page;
 import top.chenxin.mc.core.ResourceCollection;
-import top.chenxin.mc.entity.Customer;
 import top.chenxin.mc.resource.CustomerResource;
-
-import java.util.List;
 
 public interface CustomerService {
 
@@ -23,4 +19,6 @@ public interface CustomerService {
      * @param topicId 默认值为 0
      */
     ResourceCollection<CustomerResource> search(Long topicId, Integer page, Integer limit);
+
+    CustomerResource getById(Long id);
 }

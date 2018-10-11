@@ -1,6 +1,7 @@
 package top.chenxin.mc.service;
 
 import top.chenxin.mc.core.ResourceCollection;
+import top.chenxin.mc.entity.Message;
 import top.chenxin.mc.resource.FailedMessageResource;
 import top.chenxin.mc.resource.MessageLogResource;
 
@@ -24,20 +25,27 @@ public interface MessageService {
 
     /**
      * 删除失败消息
-     * @param id
+     * @param id 消息id
      */
     void deleteFailedMessage(Long id);
-
-    /**
-     * 从消息中取出一条可执行的, 执行消息
-     * 消息执行成功, 删除消息
-     * 消息执行失败, 如果没有超过重试次数, 则此消息会重试, 如果超过了重试次数, 删除消息并将消息设置为失败消息
-     * @return 如果能取出消息则返回 true, 否则 false
-     */
-    boolean popMessage();
 
     /**
      * 重试超时的消息
      */
     void retryTimeoutMessage();
+
+    /**
+     * 从消息中 pop 出一条消息
+     */
+    Message pop();
+
+    /**
+     * 消息执行成功
+     */
+    void messageSuccess(Long messageId, String response, Integer time);
+
+    /**
+     * 消息执行失败
+     */
+    void messageFiled(Long messageId, String error, Integer time);
 }

@@ -62,4 +62,10 @@ public class CustomerServiceImpl implements CustomerService {
 
         return new ResourceCollection<>(resources, customers);
     }
+
+    @Override
+    public CustomerResource getById(Long id) {
+        Customer customer = this.customerDao.getById(id);
+        return new CustomerResource(customer);
+    }
 }

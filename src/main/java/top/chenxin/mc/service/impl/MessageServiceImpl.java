@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import top.chenxin.mc.common.constant.ErrorCode;
 import top.chenxin.mc.common.utils.Utils;
@@ -37,6 +38,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Autowired
     private FailedMessageDao failedMessageDao;
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
 
     @Override
     public ResourceCollection<MessageLogResource> getMessageLogList(Long customerId, Integer page, Integer limit) {
@@ -89,33 +93,13 @@ public class MessageServiceImpl implements MessageService {
         failedMessageDao.delete(id);
     }
 
-    @Override
-    public boolean popMessage() {
-        // 1. 推出消息
-        Message message = pop();
-        if (message == null) {
-            return false;
-        }
-
-        // 2. 执行消息
-        long start = System.currentTimeMillis();
-        try {
-            String response = runMessage(message);
-            // 3. 保存执行结果
-            messageSuccess(message.getId(), response, (int)(System.currentTimeMillis() - start));
-        } catch (Exception e) {
-            // 3. 保存执行结果
-            messageFiled(message.getId(), e.getMessage(), (int)(System.currentTimeMillis() - start));
-        }
-        return true;
-    }
-
     public void retryTimeoutMessage() {
         messageDao.retryTimeoutMessage();
     }
 
+    @Override
     @Transactional
-    private Message pop() {
+    public Message pop() {
         // 取出消息
         Message message = messageDao.popMessage();
         if (message == null) {
@@ -137,8 +121,9 @@ public class MessageServiceImpl implements MessageService {
         return message;
     }
 
+    @Override
     @Transactional
-    private void messageSuccess(Long messageId, String response, Integer time) {
+    public void messageSuccess(Long messageId, String response, Integer time) {
         Message message = messageDao.getById(messageId);
 
         if (!message.getStatus().equals(Message.StatusRunning)) {
@@ -160,8 +145,9 @@ public class MessageServiceImpl implements MessageService {
         messageDao.delete(messageId);
     }
 
+    @Override
     @Transactional
-    private void messageFiled(Long messageId, String error, Integer time) {
+    public void messageFiled(Long messageId, String error, Integer time) {
         Message message = messageDao.getById(messageId);
 
         if (!message.getStatus().equals(Message.StatusRunning)) {
@@ -201,22 +187,5 @@ public class MessageServiceImpl implements MessageService {
             update.setAttempts(message.getAttempts() + 1);
             messageDao.update(update);
         }
-    }
-
-    private String runMessage(Message message) throws Exception {
-        Customer customer = customerDao.getById(message.getCustomerId());
-
-        OkHttpClient client = new OkHttpClient.Builder()
-                .readTimeout(customer.getTimeout(), TimeUnit.SECONDS)
-                .build();
-
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), message.getMessage());
-        Request request = new Request.Builder()
-                .url(customer.getApi())
-                .post(body)
-                .build();
-
-        Response response = client.newCall(request).execute();
-        return response.body().string();
     }
 }
