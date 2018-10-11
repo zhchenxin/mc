@@ -11,6 +11,7 @@ public class MessageLogResource extends Resource {
 
     private Long topicId;
     private Long customerId;
+    private Long messageId;
 
     private Long id;
     private String request;
@@ -22,6 +23,8 @@ public class MessageLogResource extends Resource {
     public MessageLogResource(MessageLog messageLog) {
         this.topicId = messageLog.getTopicId();
         this.customerId = messageLog.getCustomerId();
+        this.messageId = messageLog.getMessageId();
+
         this.id = messageLog.getId();
         this.request = messageLog.getRequest();
         this.response = messageLog.getResponse();
@@ -42,6 +45,7 @@ public class MessageLogResource extends Resource {
 
         map.put("topicId", topicId);
         map.put("customerId", customerId);
+        map.put("messageId", messageId);
         return map;
     }
 
@@ -51,6 +55,10 @@ public class MessageLogResource extends Resource {
 
     public Long getCustomerId() {
         return customerId;
+    }
+
+    public Long getMessageId() {
+        return messageId;
     }
 
     public Long getId() {

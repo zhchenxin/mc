@@ -42,8 +42,8 @@ public class TopicController extends BaseController {
     }
 
     @RequestMapping(value = "/{name}/push", method = RequestMethod.POST)
-    private Map push(@Validated PushForm form) {
-        topicService.push(form.getTopicName(), form.getMessage(), form.getDelay());
+    private Map push(@PathVariable("name") String name, @Validated PushForm form) {
+        topicService.push(name, form.getMessage(), form.getDelay());
         return success();
     }
 }

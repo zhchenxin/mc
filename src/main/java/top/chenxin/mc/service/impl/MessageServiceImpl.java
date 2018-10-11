@@ -124,6 +124,10 @@ public class MessageServiceImpl implements MessageService {
 
         // 修改消息的状态和超时时间
         Customer customer = customerDao.getById(message.getCustomerId());
+        if (customer == null) {
+            // 如果消息的消费者被删除, 则需要删除对应消息
+            messageDao.delete(message.getId());
+        }
 
         Message update = new Message();
         update.setId(message.getId());
@@ -143,6 +147,7 @@ public class MessageServiceImpl implements MessageService {
 
         // 生成执行日志
         MessageLog log = new MessageLog();
+        log.setMessageId(0L); // 消息即将删除, 所以不需要消息id
         log.setRequest(message.getMessage());
         log.setResponse(response);
         log.setCustomerId(message.getCustomerId());
@@ -165,6 +170,7 @@ public class MessageServiceImpl implements MessageService {
 
         // 生成执行日志
         MessageLog log = new MessageLog();
+        log.setMessageId(message.getId());
         log.setError(error);
         log.setCustomerId(message.getCustomerId());
         log.setTopicId(message.getTopicId());
@@ -178,6 +184,7 @@ public class MessageServiceImpl implements MessageService {
         if (message.getAttempts() >= customer.getAttempts()) {
             // 记录到失败表数据
             FailedMessage failedMessage = new FailedMessage();
+            failedMessage.setId(message.getId());
             failedMessage.setTopicId(message.getTopicId());
             failedMessage.setCustomerId(message.getCustomerId());
             failedMessage.setMessage(message.getMessage());

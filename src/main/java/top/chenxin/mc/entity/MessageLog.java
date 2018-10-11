@@ -5,6 +5,7 @@ import top.chenxin.mc.core.BaseEntity;
 public class MessageLog extends BaseEntity {
     private Long topicId;
     private Long customerId;
+    private Long messageId;
 
     // 请求内容
     private String request;
@@ -31,6 +32,14 @@ public class MessageLog extends BaseEntity {
 
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
+    }
+
+    public Long getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(Long messageId) {
+        this.messageId = messageId;
     }
 
     public String getRequest() {

@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS `message` (
 -- 导出  表 message.message_log 结构
 CREATE TABLE IF NOT EXISTS `message_log` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `message_id` bigint(20) NOT NULL DEFAULT 0 COMMENT '消息 id',
   `topic_id` int(11) NOT NULL COMMENT 'topic id',
   `customer_id` int(11) NOT NULL COMMENT '消费者id',
   `request` text NOT NULL COMMENT '请求内容',

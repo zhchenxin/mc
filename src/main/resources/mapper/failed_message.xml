@@ -11,6 +11,7 @@
         </selectKey>
 
         INSERT INTO failed_message SET
+        id=#{id},
         topic_id=#{topicId},
         customer_id=#{customerId},
         message=#{message},

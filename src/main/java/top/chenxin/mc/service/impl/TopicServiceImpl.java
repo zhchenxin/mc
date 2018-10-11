@@ -57,6 +57,12 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public void delete(Long id) {
         topicDao.delete(id);
+
+        // 删除对应的消费者
+        List<Customer> customers = customerDao.getByTopicId(id);
+        for (Customer customer : customers) {
+            customerDao.delete(customer.getId());
+        }
     }
 
     @Override
