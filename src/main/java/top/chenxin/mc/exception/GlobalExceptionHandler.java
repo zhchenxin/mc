@@ -1,5 +1,7 @@
 package top.chenxin.mc.exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,28 +16,30 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
+
     @ExceptionHandler(value = BindException.class)
     @ResponseBody
     public Map validationHandle(HttpServletRequest req, BindException e) {
-        e.printStackTrace();
-        return returnError(ErrorCode.VALIDAT_ERROR, e.getAllErrors().get(0).getDefaultMessage());
+        return error(ErrorCode.VALIDAT_ERROR, e.getAllErrors().get(0).getDefaultMessage());
     }
 
     @ExceptionHandler(value = ServiceException.class)
     @ResponseBody
     public Map ServiceExceptionHandler(HttpServletRequest req, ServiceException e) {
-        e.printStackTrace();
-        return returnError(e.getCode(), e.getMessage());
+        logger.error("服务异常: 原因", e);
+        return error(e.getCode(), e.getMessage());
     }
 
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public Map exceptionHandler(HttpServletRequest req, Exception e) {
-        e.printStackTrace();
-        return returnError(1, e.getMessage());
+        logger.error("未知异常: 原因", e);
+        return error(1, e.getMessage());
     }
 
-    private Map returnError(int code, String msg) {
+    private Map error(int code, String msg) {
         Map<String, Object> map = new HashMap<>();
         map.put("code", code);
         map.put("msg", msg);

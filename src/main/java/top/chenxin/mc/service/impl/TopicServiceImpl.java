@@ -55,6 +55,7 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         topicDao.delete(id);
 
@@ -66,9 +67,9 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public ResourceCollection<TopicResource> getList(List<Long> topicIds, Integer page, Integer limit) {
+    public ResourceCollection<TopicResource> getList(List<Long> ids, Integer page, Integer limit) {
 
-        Page<Topic> topics = this.topicDao.search(topicIds, page, limit);
+        Page<Topic> topics = this.topicDao.search(ids, page, limit);
 
         List<TopicResource> resources = new ArrayList<>();
         for (Topic topic : topics) {
@@ -88,6 +89,7 @@ public class TopicServiceImpl implements TopicService {
         this.push(topic, message, delay);
     }
 
+    @Transactional
     @Override
     public void push(Long topicId, String message, Integer delay) {
         Topic topic = topicDao.getById(topicId);
@@ -98,7 +100,6 @@ public class TopicServiceImpl implements TopicService {
         this.push(topic, message, delay);
     }
 
-    @Transactional
     private void push(Topic topic, String message, Integer delay) {
         List<Customer> customers = customerDao.getByTopicId(topic.getId());
 

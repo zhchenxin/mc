@@ -2,7 +2,7 @@ package top.chenxin.mc.service.exception;
 
 public class ServiceException extends RuntimeException {
 
-    private Integer code;
+    private Integer code = 1;
 
     public ServiceException(String message) {
         super(message);

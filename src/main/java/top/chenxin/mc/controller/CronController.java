@@ -11,41 +11,41 @@ import top.chenxin.mc.request.cron.UpdateForm;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/cron")
+@RequestMapping("")
 public class CronController extends BaseController {
     @Autowired
     private CronService cronService;
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequestMapping(value = "cron", method = RequestMethod.GET)
     private Map index(@Validated ListForm form) {
         return cronService.getList(form.getTopicId(), form.getPage(), form.getLimit()).toMap();
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "cron", method = RequestMethod.POST)
     private Map create(@Validated CreateForm form) {
         cronService.insert(form.getName(), form.getDescription(), form.getSpec(), form.getTopicId());
         return success();
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "cron/{id}", method = RequestMethod.PUT)
     private Map update(@PathVariable("id") Long id, @Validated UpdateForm form) {
         cronService.update(id, form.getName(), form.getDescription(), form.getSpec());
         return success();
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "cron/{id}", method = RequestMethod.DELETE)
     private Map delete(@PathVariable("id") Long id) {
         cronService.delete(id);
         return success();
     }
 
-    @RequestMapping(value = "{id}/start", method = RequestMethod.PUT)
+    @RequestMapping(value = "cron/{id}/start", method = RequestMethod.PUT)
     private Map start(@PathVariable("id") Long id) {
         cronService.start(id);
         return success();
     }
 
-    @RequestMapping(value = "{id}/stop", method = RequestMethod.PUT)
+    @RequestMapping(value = "cron/{id}/stop", method = RequestMethod.PUT)
     private Map stop(@PathVariable("id") Long id) {
         cronService.stop(id);
         return success();

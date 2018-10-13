@@ -2,10 +2,7 @@ package top.chenxin.mc.common.utils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Utils {
 
@@ -17,6 +14,24 @@ public class Utils {
         set.addAll(list);
         list.clear();
         list.addAll(set);
+    }
+
+    /**
+     * 如果没有, 则返回 null
+     */
+    public static List<Long> getIds(String id) {
+        if (id == null) {
+            return null;
+        }
+        String [] stringArr= id.split(",");
+        if (stringArr.length == 0) {
+            return null;
+        }
+        List<Long> ids = new ArrayList<>();
+        for (String aStringArr : stringArr) {
+            ids.add(Long.parseLong(aStringArr));
+        }
+        return ids;
     }
 
     /**

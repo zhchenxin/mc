@@ -16,9 +16,9 @@ public interface TopicService {
 
     /**
      * 获取 topic 资源
-     * @param topicIds topic id 如果为null, 则表示不指定该搜索条件
+     * @param ids topic id 如果为null, 则表示不指定该搜索条件
      */
-    ResourceCollection<TopicResource> getList(List<Long> topicIds, Integer page, Integer limit);
+    ResourceCollection<TopicResource> getList(List<Long> ids, Integer page, Integer limit);
 
     /**
      * 向指定的 topic 中发送消息

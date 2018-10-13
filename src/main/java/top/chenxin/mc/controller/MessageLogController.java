@@ -11,12 +11,15 @@ import top.chenxin.mc.service.MessageService;
 import java.util.Map;
 
 @RestController
-@RequestMapping("message_log")
+@RequestMapping("")
 public class MessageLogController extends BaseController {
     @Autowired
     private MessageService messageService;
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    /**
+     * 查看执行日志
+     */
+    @RequestMapping(value = "message_log", method = RequestMethod.GET)
     public Map index(@Validated ListForm form) {
         return messageService.getMessageLogList(form.getTopicId(), form.getPage(), form.getLimit()).toMap();
     }

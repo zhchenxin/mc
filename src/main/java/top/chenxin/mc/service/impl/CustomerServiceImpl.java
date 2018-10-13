@@ -52,8 +52,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ResourceCollection<CustomerResource> search(Long topicId, Integer page, Integer limit) {
-        Page<Customer> customers = this.customerDao.search(topicId, null, page, limit);
+    public ResourceCollection<CustomerResource> search(List<Long> ids, Long topicId, Integer page, Integer limit) {
+        Page<Customer> customers = this.customerDao.search(topicId, ids, page, limit);
 
         List<CustomerResource> resources = new ArrayList<>();
         for (Customer customer : customers) {

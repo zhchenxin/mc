@@ -27,7 +27,7 @@
     <select id="search" resultType="top.chenxin.mc.entity.Topic">
         SELECT * FROM topic WHERE delete_date = 0
         <if test="ids != null">
-            AND
+            AND id in
             <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
                 #{item}
             </foreach>

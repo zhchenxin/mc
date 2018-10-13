@@ -9,24 +9,33 @@ import top.chenxin.mc.service.MessageService;
 import java.util.Map;
 
 @RestController
-@RequestMapping("failed_message")
+@RequestMapping("")
 public class FailedMessageController extends BaseController {
 
     @Autowired
     private MessageService messageService;
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    /**
+     * 查看失败的消息
+     */
+    @RequestMapping(value = "failed_message", method = RequestMethod.GET)
     public Map index(@Validated ListForm form) {
         return messageService.getFailedMessageList(form.getTopicId(), form.getPage(), form.getLimit()).toMap();
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    /**
+     * 删除失败的消息
+     */
+    @RequestMapping(value = "failed_message/{id}", method = RequestMethod.DELETE)
     private Map delete(@PathVariable("id") Long id) {
         messageService.deleteFailedMessage(id);
         return success();
     }
 
-    @RequestMapping(value = "{id}/retry", method = RequestMethod.PUT)
+    /**
+     * 重试
+     */
+    @RequestMapping(value = "failed_message/{id}/retry", method = RequestMethod.PUT)
     private Map retry(@PathVariable("id") Long id) {
         messageService.retryMessage(id);
         return success();

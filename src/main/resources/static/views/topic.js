@@ -172,7 +172,7 @@ Vue.component('topic', {
     },
     add: function() {
       this.AddForm_doing = true
-      client.post('/topic/create', this.AddForm_formData).then(() => {
+      client.post('/topic', this.AddForm_formData).then(() => {
         this.AddForm_show = false
         this.AddForm_doing = false
         this.featchTableData()
@@ -203,7 +203,7 @@ Vue.component('topic', {
     },
     delete: function(index) {
       var data = this.tableData[index]
-      client.post('/topic/delete', {'id': topic.id}).then(() => {
+      client.delete('/topic/' + topic.id).then(() => {
         this.featchTableData()
       }).catch((error) => {
         this.$Message.error(error)

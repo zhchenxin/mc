@@ -36,7 +36,7 @@
         SELECT * FROM customer WHERE delete_date = 0
         <if test="topicId != null and topicId != 0">AND topic_id = #{topicId}</if>
         <if test="ids != null">
-            AND
+            AND id in
             <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
                 #{item}
             </foreach>
