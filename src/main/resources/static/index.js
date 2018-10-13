@@ -1,16 +1,3 @@
-Vue.component('user-menu', {
-  template: `
-    <div>
-      <router-link to="/"><MenuItem name="/"><Icon type="home"></Icon><span>Dashboard</span></MenuItem></router-link>
-      <router-link to="/topic"><MenuItem name="/topic"><Icon type="help-buoy"></Icon><span>Topic</span></MenuItem></router-link>
-      <router-link to="/customer"><MenuItem name="/customer"><Icon type="hammer"></Icon><span>消费者</span></MenuItem></router-link>
-      <router-link to="/cron"><MenuItem name="/cron"><Icon type="hammer"></Icon><span>定时任务</span></MenuItem></router-link>
-      <router-link to="/message_log"><MenuItem name="/message_log"><Icon type="ios-paper"></Icon><span>消息日志</span></MenuItem></router-link>
-      <router-link to="/failed_message"><MenuItem name="/failed_message"><Icon type="ios-paper"></Icon><span>异常消息</span></MenuItem></router-link>
-    </div>
-  `
-})
-
 const router = new VueRouter({
   mode: 'hash',
   routes: [
@@ -27,34 +14,30 @@ new Vue({
   router,
   el: '#app',
   data: {
-    active_menu: '/'
   },
   template: `
-    <div class="layout">
-      <Sider :style="{position: 'fixed', height: '100vh', left: 0, overflow: 'auto'}">
-        <Menu :active-name="active_menu" theme="dark" width="auto" :open-names="['1']">
-          <user-menu/>
-        </Menu>
-      </Sider>
-      <Layout :style="{marginLeft: '200px'}">
-        <Content :style="{padding: '16px 16px 16px'}">
-          <Card>
-            <router-view/>
-          </Card>
-        </Content>
-      </Layout>
-    </div>
+    <el-container>
+      <el-aside width="200px">
+        <el-menu route class="el-menu-vertical-demo" :default-active="$route.path" @select="handleSelect">
+          <el-menu-item index="/">Dashboard</el-menu-item>
+          <el-menu-item index="/topic">Topic</el-menu-item>
+          <el-menu-item index="/customer">消费者</el-menu-item>
+          <el-menu-item index="/cron">定时任务</el-menu-item>
+          <el-menu-item index="/message_log">消息日志</el-menu-item>
+          <el-menu-item index="/failed_message">异常消息</el-menu-item>
+        </el-menu>
+      </el-aside>
+      
+      <el-container>
+        <el-main>
+          <router-view/>
+        </el-main>
+      </el-container>
+    </el-container>
   `,
-  created: function () {
-    this.fetchData()
-  },
-  watch: {
-    // 如果路由有变化，会再次执行该方法
-    '$route': 'fetchData'
-  },
   methods: {
-    fetchData: function() {
-      this.active_menu = router.currentRoute.path
-    }
+    handleSelect: function(index) {
+      router.push(index)
+    },
   }
 })

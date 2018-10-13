@@ -11,5 +11,5 @@ public interface MessageLogDao {
     void insert(MessageLog log);
 
     // 搜索
-    Page<MessageLog> search(@Param("customerId") Long customerId, @Param("page") int page, @Param("limit") int limit);
+    Page<MessageLog> search(@Param("customerId") Long customerId, @Param("messageId") Long messageId, @Param("page") int page, @Param("limit") int limit);
 }

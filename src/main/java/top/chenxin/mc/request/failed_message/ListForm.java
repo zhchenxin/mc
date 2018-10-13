@@ -1,8 +1,8 @@
-package top.chenxin.mc.request.message;
+package top.chenxin.mc.request.failed_message;
 
 import top.chenxin.mc.request.BaseListForm;
 
-public class LogForm extends BaseListForm {
+public class ListForm extends BaseListForm {
     private Long customerId;
 
     public Long getCustomerId() {

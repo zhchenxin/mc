@@ -38,9 +38,9 @@ public class CronResource extends Resource {
         map.put("name", name);
         map.put("description", description);
         map.put("spec", spec);
+        map.put("status", status);
         map.put("createDate", Utils.simpleDate(createDate));
         map.put("updateDate", Utils.simpleDate(updateDate));
-        map.put("status", Utils.simpleDate(status));
 
         map.put("topicId", topicId);
         return map;

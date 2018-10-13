@@ -22,3 +22,8 @@ client.interceptors.response.use(function (response) {
 }, function (error) {
   return Promise.reject(error.message)
 });
+
+// 数组去重方法
+function unique(array) {
+   return Array.from(new Set(array));
+}

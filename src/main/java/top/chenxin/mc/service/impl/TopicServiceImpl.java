@@ -47,7 +47,12 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public void update(Long id, String name, String description) {
-        Topic topic = new Topic();
+        Topic topic = topicDao.getByName(name);
+        if (topic != null && !topic.getId().equals(id)) {
+            throw new ServiceException("topic name 重复");
+        }
+
+        topic = new Topic();
         topic.setId(id);
         topic.setName(name);
         topic.setDescription(description);

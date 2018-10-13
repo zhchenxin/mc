@@ -10,7 +10,7 @@ public interface MessageService {
     /**
      * 消息执行日志
      */
-    ResourceCollection<MessageLogResource> getMessageLogList(Long customerId, Integer page, Integer limit);
+    ResourceCollection<MessageLogResource> getMessageLogList(Long customerId, Long messageId, Integer page, Integer limit);
 
     /**
      * 失败消息

@@ -5,7 +5,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import top.chenxin.mc.request.customer.ListForm;
+import top.chenxin.mc.request.message_log.ListForm;
 import top.chenxin.mc.service.MessageService;
 
 import java.util.Map;
@@ -21,6 +21,6 @@ public class MessageLogController extends BaseController {
      */
     @RequestMapping(value = "message_log", method = RequestMethod.GET)
     public Map index(@Validated ListForm form) {
-        return messageService.getMessageLogList(form.getTopicId(), form.getPage(), form.getLimit()).toMap();
+        return messageService.getMessageLogList(form.getCustomerId(), form.getMessageId(),form.getPage(), form.getLimit()).toMap();
     }
 }

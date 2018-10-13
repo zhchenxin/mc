@@ -43,8 +43,8 @@ public class MessageServiceImpl implements MessageService {
     private PlatformTransactionManager transactionManager;
 
     @Override
-    public ResourceCollection<MessageLogResource> getMessageLogList(Long customerId, Integer page, Integer limit) {
-        Page<MessageLog> logs = this.messageLogDao.search(customerId, page, limit);
+    public ResourceCollection<MessageLogResource> getMessageLogList(Long customerId, Long messageId, Integer page, Integer limit) {
+        Page<MessageLog> logs = this.messageLogDao.search(customerId, messageId, page, limit);
 
         List<MessageLogResource> resources = new ArrayList<>();
         for (MessageLog log : logs) {

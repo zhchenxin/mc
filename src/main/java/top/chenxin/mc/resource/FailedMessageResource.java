@@ -36,6 +36,9 @@ public class FailedMessageResource extends Resource {
         map.put("error", error);
         map.put("attempts", attempts);
         map.put("createDate", Utils.simpleDate(createDate));
+
+        map.put("topicId", topicId);
+        map.put("customerId", customerId);
         return map;
     }
 

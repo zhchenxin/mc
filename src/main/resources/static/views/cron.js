@@ -1,221 +1,230 @@
 Vue.component('cron', {
   template: `
     <div>
-      <Spin size="large" fix v-if="loading"></Spin>
-      <Row>
-        <Breadcrumb>
-          <BreadcrumbItem to="/">Home</BreadcrumbItem>
-          <BreadcrumbItem>定时任务</BreadcrumbItem>
-        </Breadcrumb>
-      </Row>
-      <br>
-      <Row>
-        <Button type="info"  icon="refresh" @click="refresh"></Button>
-        <Button type="primary" icon="plus-round" @click="showAdd">添加</Button>
-      </Row>
-      <br>
-      <Row>
-        <Table :border="false" :stripe="true" :show-header="true" :data="tableData" :columns="tableColumns"></Table>
-        <div style="margin: 10px;overflow: hidden">
-          <div style="float: right;">
-            <Page :total="totalCount" :current="currentPage" show-sizer :page-size="25" :page-size-opts="[25, 50, 100, 250, 500]" size="small" show-total @on-change="changePage" @on-page-size-change="changePageSize"></Page>
-          </div>
-        </div>
-      </Row>
+			<!- 功能栏 -->
+			<el-row>
+			  <el-button type="primary" icon="el-icon-refresh" @click="handleRefresh" size="small"></el-button>
+			  <el-button type="primary" icon="el-icon-plus" @click="handleAdd" size="small"></el-button>
+			</el-row>
 
-      <Modal v-model="AddForm_show" :footer-hide="true" title="添加">
-        <div>
-          <Form ref="AddForm_formData" :model="AddForm_formData" :label-width="80">
-            <FormItem label="名称" prop="name">
-              <Input v-model="AddForm_formData.name" placeholder="请输入名称"/>
-            </FormItem>
-            <FormItem label="Topic" prop="topicId">
-              <Select v-model="AddForm_formData.topicId">
-                  <Option v-for="item in AddForm_topicList" :value="item.id" :key="item.id">{{ item.name }}</Option>
-              </Select>
-            </FormItem>
-            <FormItem label="描述" prop="description">
-              <Input v-model="AddForm_formData.description"/>
-            </FormItem>
-            <FormItem label="spec" prop="spec">
-              <Input v-model="AddForm_formData.spec"/>
-            </FormItem>
-            <FormItem>
-              <Button type="success" :loading="AddForm_doing" @click="add()">提交</Button>
-            </FormItem>
-          </Form>
-        </div>
-      </Modal>
+			<!- 表格 -->
+			<el-row>
+				<el-table v-loading="tableLoading" :data="tableData" style="width: 100%">
+					<el-table-column prop="id" label="ID" />
+					<el-table-column prop="topic.name" label="topic" />
+					<el-table-column prop="name" label="名称" />
+					<el-table-column prop="description" label="描述" />
+					<el-table-column prop="spec" label="spec" />
+			    <el-table-column prop="updateDate" label="更新日期" width="160" />
+			    <el-table-column prop="createDate" label="创建日期" width="160" />
+          <el-table-column label="状态" width="70">
+            <template slot-scope="scope">
+              <el-button v-if="scope.row.status == 1" type="success" size="mini"  @click="handleStatusChange(scope.$index, scope.row)">暂停</el-button>
+              <el-button v-if="scope.row.status == 2" type="info" size="mini" @click="handleStatusChange(scope.$index, scope.row)">启动</el-button>            
+            </template>
+          </el-table-column>
+			    <el-table-column label="操作" width="160">
+			      <template slot-scope="scope">
+			        <el-button size="mini" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)"></el-button>
+			        <el-button size="mini" icon="el-icon-delete" type="danger" @click="handleDelete(scope.$index, scope.row)"></el-button>
+			      </template>
+			    </el-table-column>
+			  </el-table>
+			  <el-pagination
+		      @size-change="handleSizeChange"
+		      @current-change="handleCurrentChange"
+		      :current-page="currentPage"
+		      :page-sizes="[50, 100, 250, 500]"
+		      :page-size="limit"
+		      :total="totalCount"
+		      layout="total, sizes, prev, pager, next" >
+		    </el-pagination>
+			</el-row>
 
-      <Modal v-model="EditForm_show" :footer-hide="true" title="编辑">
-        <div>
-          <Form ref="EditForm_formData" :model="EditForm_formData" :label-width="80">
-            <FormItem label="名称" prop="name">
-              <Input v-model="EditForm_formData.name" placeholder="请输入名称"/>
-            </FormItem>
-            <FormItem label="描述" prop="description">
-              <Input v-model="EditForm_formData.description"/>
-            </FormItem>
-            <FormItem label="spec" prop="spec">
-              <Input v-model="EditForm_formData.spec"/>
-            </FormItem>
-            <FormItem>
-              <Button type="success" :loading="EditForm_doing" @click="edit()">提交</Button>
-            </FormItem>
-          </Form>
-        </div>
-      </Modal>
+			<!-- 添加表单 -->
+			<el-dialog title="添加" :visible.sync="addFormVisible">
+			  <el-form :model="addForm" label-width="60px" label-position="right">
+			  	<el-form-item label="topic">
+				  	<el-select v-model="addForm.topicId" filterable placeholder="请选择">
+					    <el-option v-for="item in addFormTopicList" :key="item.id" :label="item.name" :value="item.id">
+					    </el-option>
+					  </el-select>
+					</el-form-item>
+			    <el-form-item label="名称">
+			      <el-input v-model="addForm.name" autocomplete="off"></el-input>
+			    </el-form-item>
+			    <el-form-item label="描述">
+			      <el-input v-model="addForm.description" autocomplete="off"></el-input>
+			    </el-form-item>
+			    <el-form-item label="spec">
+			      <el-input v-model="addForm.spec" autocomplete="off"></el-input>
+			    </el-form-item>
+			  </el-form>
+			  <div slot="footer" class="dialog-footer">
+			    <el-button @click="addFormVisible = false">取 消</el-button>
+			    <el-button type="primary" :loading="addFormLoading" @click="handleAddSave()">确 定</el-button>
+			  </div>
+			</el-dialog>
 
-    </div>
+			<!-- 修改表单 -->
+			<el-dialog title="编辑" :visible.sync="editFormVisible">
+			  <el-form :model="editForm" label-width="60px" label-position="right">
+			    <el-form-item label="名称">
+			      <el-input v-model="editForm.name" autocomplete="off"></el-input>
+			    </el-form-item>
+			    <el-form-item label="描述">
+			      <el-input v-model="editForm.description" autocomplete="off"></el-input>
+			    </el-form-item>
+			    <el-form-item label="spec">
+			      <el-input v-model="editForm.spec" autocomplete="off"></el-input>
+			    </el-form-item>
+			  </el-form>
+			  <div slot="footer" class="dialog-footer">
+			    <el-button @click="editFormVisible = false">取 消</el-button>
+			    <el-button type="primary" :loading="editFormLoading" @click="handleEditSave()">确 定</el-button>
+			  </div>
+			</el-dialog>
+		</div>
   `,
   data: function () {
     return {
-      // 表格属性
-      loading: false,
-      tableColumns: [
-        {title: 'id', key: 'id'},
-        {title: '名称', key: 'name'},
-        {title: '描述', key: 'description'},
-        {title: 'topic', key: 'topicName'},
-        {title: 'spec', key: 'spec'},
-        {title: '创建时间', key: 'createDate'},
-        {
-          title: 'Action',
-          key: 'action',
-          width: 150,
-          align: 'center',
-          render: (h, params) => {
-            return h('div', [
-              h('Button', {props: {type: 'primary',size: 'small'},style: {marginRight: '5px'},on: {click: () => {this.showEdit(params.index)}}}, '编辑'),
-              h('Button', {props: {type: 'error',size: 'small'},on: {click: () => {this.delete(params.index)}}}, '删除')
-            ]);
-          }
-        }
-      ],
-
-      // 表格列表
+      // 表格
+    	tableLoading: false,
       tableData: [],
 
       // 分页
       totalCount: 0,
       currentPage: 1,
-      limit: 25,
+      limit: 50,
 
-      // 搜索
-      formSearch: {
-        topicId: ''
-      },
-      topic_list: [],
+      // 添加表单
+      addFormVisible: false,
+      addFormLoading: false,
+      addForm: {},
+      addFormTopicList: [],
 
-      // 增加表单
-      AddForm_show: false,
-      AddForm_doing: false,
-      AddForm_topicList: [],
-      AddForm_formData: {
-        name: '',
-        description: '',
-        spec: '',
-        topicId: '',
-      },
-
-      // 编辑表单
-      EditForm_show: false,
-      EditForm_doing: false,
-      EditForm_formData: {
-        id: 0,
-        name: '',
-        description: '',
-        spec: '',
-      },
+      // 修改表单
+      editFormVisible: false,
+      editFormLoading: false,
+      editIndex: 0,
+      editForm: {},
     }
   },
+  created: function () {
+    this.handleRefresh()
+  },
   methods: {
-    changePage: function (page) {
-      this.currentPage = page
-      this.featchTableData()
+    handleSizeChange: function(size) {
+    	this.limit = size
+    	this.handleRefresh()
     },
-    changePageSize: function (size) {
-      this.limit = size
-      this.featchTableData()
+    handleCurrentChange: function(page) {
+    	this.currentPage = page
+    	this.handleRefresh()
     },
-    refresh: function () {
-      this.featchTableData()
-    },
-    search: function() {
-      this.featchTableData()
-      this.$router.replace({ path: '/cron', query: { topicId: this.formSearch.topicId }})
-    },
-    featchTableData: function () {
-      this.loading = true
-      client.get('/cron', {
-        params: {
-          page: this.currentPage,
-          limit: this.limit,
-          topicId: this.formSearch.topicId
+    handleRefresh: async function() {
+    	this.tableLoading = true
+    	try {
+    		var tableData = await client.get('/cron', {
+	        params:{
+	          page: this.currentPage, 
+	          limit: this.limit,
+	        }
+      	})
+        this.totalCount = tableData.data.data.mate.total
+        this.currentPage = tableData.data.data.mate.currentPage
+      	tableData = tableData.data.data.list
+
+        if (tableData.length == 0) {
+          this.tableData = tableData
+          this.tableLoading = false
+          return
         }
-      }).then((response) => {
-        this.tableData = response.data.data.list
-        this.totalCount = response.data.data.mate.total
-        this.currentPage = response.data.data.mate.currentPage
-        this.loading = false
-      }).catch((error) => {
-        this.$Message.error(error)
+
+      	// 获取 topic 信息
+    		var topicIds = []
+    		for (var i = tableData.length - 1; i >= 0; i--) {
+    			topicIds.push(tableData[i].topicId)
+    		}
+    		topicIds = unique(topicIds)
+    		var topicList = await client.get('/topic', {
+					params:{
+						id: topicIds.join(','),
+	          limit: topicIds.length,
+	        }
+    		})
+    		topicList = topicList.data.data.list
+
+				// 拼接数据
+				for (var i = tableData.length - 1; i >= 0; i--) {
+    			for (var j = topicList.length - 1; j >= 0; j--) {
+    				if (tableData[i].topicId == topicList[j].id) {
+    					tableData[i]["topic"] = topicList[j]
+    				}
+    			}
+    		}
+        this.tableData = tableData
+        this.tableLoading = false
+    	} catch(error) {
+        this.$message.error(error)
         this.tableData = []
-        this.loading = false
+        this.tableLoading = false
+    	}
+    },
+    handleAdd: async function() {
+    	try {
+	    	this.addForm = {}
+	    	this.addFormVisible = true
+	    	var topicList = await client.get('/topic', {params:{limit: 10000}})
+    		topicList = topicList.data.data.list
+    		this.addFormTopicList = topicList
+    	} catch(error) {
+        this.$message.error(error)
+    	}
+    },
+    handleEdit: function(index, row) {
+    	this.editIndex = index;
+    	this.editForm = {name: row.name, description: row.description, spec: row.spec}
+    	this.editFormVisible = true
+    },
+    handleStatusChange: function(index, row) {
+      var url = '/cron/' + row.id + '/start'
+      if (row.status == 1) {
+        url = '/cron/' + row.id + '/stop'
+      }
+      client.put(url).then(() => {
+        this.handleRefresh()
+      }).catch((error) => {
+        this.$message.error(error)
       })
     },
-    showAdd: function() {
-      client.get('/cron/create').then((response) => {
-        this.AddForm_formData = {
-          name: '',
-          topic_id: '',
-          api: '',
-          timeout: '',
-          attempts: '',
-        }
-        this.AddForm_topicList = response.data.data.topicList
-        this.AddForm_show=true
+    handleDelete: function(index, row) {
+			client.delete('/cron/' + row.id).then(() => {
+        this.handleRefresh()
       }).catch((error) => {
-        this.$Message.error(error)
+        this.$message.error(error)
       })
     },
-    add: function() {
-      this.AddForm_doing = true
-      client.post('/cron/create', this.AddForm_formData).then(() => {
-        this.AddForm_show = false
-        this.AddForm_doing = false
-        this.featchTableData()
+    handleAddSave: function() {
+    	this.addFormLoading = true
+			client.post('/cron', this.addForm).then(() => {
+        this.addFormLoading = false
+        this.addFormVisible = false
+        this.handleRefresh()
       }).catch((error) => {
-        this.AddForm_doing = false
-        this.$Message.error(error)
+        this.addFormLoading = false
+        this.$message.error(error)
       })
     },
-    showEdit: function(index) {
-      var data = this.tableData[index]
-      client.get('/cron/update', {params:{id:data.id}}).then((response) => {
-        this.EditForm_formData = response.data.data.cron
-        this.EditForm_show=true
+    handleEditSave: function() {
+    	this.editFormLoading = true
+			client.put('/cron/' + this.tableData[this.editIndex].id, this.editForm).then(() => {
+        this.editFormLoading = false
+        this.editFormVisible = false
+        this.handleRefresh()
       }).catch((error) => {
-        this.$Message.error(error)
-      })
-    },
-    edit: function() {
-      this.EditForm_doing = true
-      client.post('/cron/update', this.EditForm_formData).then(() => {
-        this.EditForm_show = false
-        this.EditForm_doing = false
-        this.featchTableData()
-      }).catch((error) => {
-        this.EditForm_doing = false
-        this.$Message.error(error)
-      })
-    },
-    delete: function(index) {
-      var data = this.tableData[index]
-      client.post('/cron/delete', {'id': data.id}).then(() => {
-        this.featchTableData()
-      }).catch((error) => {
-        this.$Message.error(error)
+        this.editFormLoading = false
+        this.$message.error(error)
       })
     },
   },

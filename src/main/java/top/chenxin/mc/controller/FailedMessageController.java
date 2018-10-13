@@ -3,7 +3,7 @@ package top.chenxin.mc.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import top.chenxin.mc.request.customer.ListForm;
+import top.chenxin.mc.request.failed_message.ListForm;
 import top.chenxin.mc.service.MessageService;
 
 import java.util.Map;
@@ -20,7 +20,7 @@ public class FailedMessageController extends BaseController {
      */
     @RequestMapping(value = "failed_message", method = RequestMethod.GET)
     public Map index(@Validated ListForm form) {
-        return messageService.getFailedMessageList(form.getTopicId(), form.getPage(), form.getLimit()).toMap();
+        return messageService.getFailedMessageList(form.getCustomerId(), form.getPage(), form.getLimit()).toMap();
     }
 
     /**

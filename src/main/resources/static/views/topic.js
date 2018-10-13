@@ -1,212 +1,158 @@
 Vue.component('topic', {
   template: `
-    <div>
-      <Spin size="large" fix v-if="loading"></Spin>
-      <Row>
-        <Breadcrumb>
-          <BreadcrumbItem to="/">Home</BreadcrumbItem>
-          <BreadcrumbItem>Topic</BreadcrumbItem>
-        </Breadcrumb>
-      </Row>
-      <br>
-      <Row>
-        <Form label-position="left" :label-width="80" inline>
-          <FormItem label="Topic" prop="topicId">
-            <Select v-model="Search_data.topicId" filterable >
-                <Option value="0">全部</Option>
-                <Option v-for="item in Search_topicList" :value="item.id" :key="item.id">{{ item.name }}</Option>
-            </Select>
-          </FormItem>
-          <FormItem>
-            <Button type="primary" @click="search">搜索</Button>
-          </FormItem>
-        </Form>
-      </Row>
-      <br>
-      <Row>
-        <Button type="info"  icon="refresh" @click="refresh"></Button>
-        <Button type="primary" icon="plus-round" @click="showAdd">添加</Button>
-      </Row>
-      <br>
-      <Row>
-        <Table :border="false" :stripe="true" :show-header="true" :data="tableData" :columns="tableColumns"></Table>
-        <div style="margin: 10px;overflow: hidden">
-          <div style="float: right;">
-            <Page :total="totalCount" :current="currentPage" show-sizer  :page-size="25" :page-size-opts="[25, 50, 100, 250, 500]" size="small" show-total @on-change="changePage" @on-page-size-change="changePageSize"></Page>
-          </div>
-        </div>
-      </Row>
+		<div>
+			<!- 功能栏 -->
+			<el-row>
+			  <el-button type="primary" icon="el-icon-refresh" @click="handleRefresh" size="small"></el-button>
+			  <el-button type="primary" icon="el-icon-plus" @click="handleAdd" size="small"></el-button>
+			</el-row>
+			<el-row>
+				<el-table v-loading="tableLoading" :data="tableData" style="width: 100%">
+					<el-table-column prop="id" label="ID" />
+					<el-table-column prop="name" label="名称" />
+					<el-table-column prop="description" label="描述" />
+			    <el-table-column prop="createDate" label="创建日期" width="160" />
+			    <el-table-column prop="updateDate" label="更新日期" width="160" />
+			    <el-table-column label="操作" width="160">
+			      <template slot-scope="scope">
+			        <el-button size="mini" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)"></el-button>
+			        <el-button size="mini" icon="el-icon-delete" type="danger" @click="handleDelete(scope.$index, scope.row)"></el-button>
+			      </template>
+			    </el-table-column>
+			  </el-table>
+			  <el-pagination
+		      @size-change="handleSizeChange"
+		      @current-change="handleCurrentChange"
+		      :current-page="currentPage"
+		      :page-sizes="[50, 100, 250, 500]"
+		      :page-size="limit"
+		      :total="totalCount"
+		      layout="total, sizes, prev, pager, next" >
+		    </el-pagination>
+			</el-row>
 
-      <Modal v-model="AddForm_show" :footer-hide="true" title="添加">
-        <div>
-          <Form ref="AddForm_formData" :model="AddForm_formData" :label-width="80">
-            <FormItem label="名称" prop="name">
-              <Input v-model="AddForm_formData.name" placeholder="请输入名称"/>
-            </FormItem>
-            <FormItem label="Topic 描述" prop="description">
-              <Input v-model="AddForm_formData.description" placeholder="请输入 Topic 描述"/>
-            </FormItem>
-            <FormItem>
-              <Button type="success" :loading="AddForm_doing" @click="add()">提交</Button>
-            </FormItem>
-          </Form>
-        </div>
-      </Modal>
+			<!-- 添加表单 -->
+			<el-dialog title="添加" :visible.sync="addFormVisible">
+			  <el-form :model="addForm" label-width="60px" label-position="right">
+			    <el-form-item label="名称">
+			      <el-input v-model="addForm.name" autocomplete="off"></el-input>
+			    </el-form-item>
+			    <el-form-item label="描述">
+			      <el-input v-model="addForm.description" autocomplete="off"></el-input>
+			    </el-form-item>
+			  </el-form>
+			  <div slot="footer" class="dialog-footer">
+			    <el-button @click="addFormVisible = false">取 消</el-button>
+			    <el-button type="primary" :loading="addFormLoading" @click="handleAddSave()">确 定</el-button>
+			  </div>
+			</el-dialog>
 
-      <Modal v-model="EditForm_show" :footer-hide="true" title="更新">
-        <div>
-          <Form ref="EditForm_formData" :model="EditForm_formData" :label-width="80">
-            <FormItem label="名称" prop="name">
-              <Input v-model="EditForm_formData.name" placeholder="请输入名称"/>
-            </FormItem>
-            <FormItem label="Topic 描述" prop="description">
-              <Input v-model="EditForm_formData.description" placeholder="请输入 Topic 描述"/>
-            </FormItem>
-            <FormItem>
-              <Button type="success" :loading="EditForm_doing" @click="edit()">提交</Button>
-            </FormItem>
-          </Form>
-        </div>
-      </Modal>
-
-    </div>
+			<!-- 修改表单 -->
+			<el-dialog title="编辑" :visible.sync="editFormVisible">
+			  <el-form :model="editForm" label-width="60px" label-position="right">
+			    <el-form-item label="名称">
+			      <el-input v-model="editForm.name" autocomplete="off"></el-input>
+			    </el-form-item>
+			    <el-form-item label="描述">
+			      <el-input v-model="editForm.description" autocomplete="off"></el-input>
+			    </el-form-item>
+			  </el-form>
+			  <div slot="footer" class="dialog-footer">
+			    <el-button @click="editFormVisible = false">取 消</el-button>
+			    <el-button type="primary" :loading="editFormLoading" @click="handleEditSave()">确 定</el-button>
+			  </div>
+			</el-dialog>
+		</div>
   `,
   data: function () {
     return {
-      // 表格加载loadding
-      loading: false,
-
-      // 表格内容
-      tableColumns: [
-        {title: 'id', key: 'id'},
-        {title: '名称', key: 'name'},
-        {title: '描述', key: 'description'},
-        {title: '创建时间', key: 'createDate'},
-        {
-          title: 'Action',
-          key: 'action',
-          width: 150,
-          align: 'center',
-          render: (h, params) => {
-            return h('div', [
-              h('Button', {props: {type: 'primary',size: 'small'},style: {marginRight: '5px'},on: {click: () => {this.showEdit(params.index)}}}, '编辑'),
-              h('Button', {props: {type: 'error',size: 'small'},on: {click: () => {this.delete(params.index)}}}, '删除')
-            ]);
-          }
-        }
-      ],
-
-      // 表格内容
+    	// 表格
+    	tableLoading: false,
       tableData: [],
 
-      // 分页数据
+      // 分页
       totalCount: 0,
       currentPage: 1,
-      limit: 25,
+      limit: 50,
 
-      // 搜索栏
-      Search_data: {
-        topicId: ''
-      },
-      Search_topicList: [],
+      // 添加表单
+      addFormVisible: false,
+      addFormLoading: false,
+      addForm: {},
 
-      // 添加模态框表单数据
-      AddForm_show: false,
-      AddForm_doing: false,
-      AddForm_formData: {
-        name: '',
-        description: '',
-      },
-      
-      // 更新模态框表单数据
-      EditForm_show: false,
-      EditForm_doing: false,
-      EditForm_formData: {
-        id: 0,
-        name: '',
-        description: '',
-      },
+      // 修改表单
+      editFormVisible: false,
+      editFormLoading: false,
+      editIndex: 0,
+      editForm: {},
     }
   },
+  created: function () {
+    this.handleRefresh()
+  },
   methods: {
-    changePage: function (page) {
-      this.currentPage = page
-      this.featchTableData()
+    handleSizeChange: function(size) {
+    	this.limit = size
+    	this.handleRefresh()
     },
-    changePageSize: function (size) {
-      this.limit = size
-      this.featchTableData()
+    handleCurrentChange: function(page) {
+    	this.currentPage = page
+    	this.handleRefresh()
     },
-    refresh: function() {
-      this.featchTableData()
-    },
-    search: function() {
-      this.currentPage = 1
-      this.featchTableData()
-    },
-    featchTableData: function() {
-      this.loading = true
-      client.get('/topic', {
+    handleRefresh: function() {
+    	this.tableLoading = true
+    	client.get('/topic', {
         params:{
           page: this.currentPage, 
-          limit: this.limit, 
-          topicId: this.Search_data.topicId
+          limit: this.limit,
         }
       }).then((response) => {
         this.tableData = response.data.data.list
         this.totalCount = response.data.data.mate.total
         this.currentPage = response.data.data.mate.currentPage
-        this.loading = false
+        this.tableLoading = false
       }).catch((error) => {
-        this.$Message.error(error)
+        this.$message.error(error)
         this.tableData = []
-        this.loading = false
+        this.tableLoading = false
       })
     },
-    showAdd: function() {
-      this.AddForm_formData = {
-        name: '',
-        description: '',
-      }
-      this.AddForm_show = true
+    handleAdd: function() {
+    	this.addForm = {}
+    	this.addFormVisible = true
     },
-    add: function() {
-      this.AddForm_doing = true
-      client.post('/topic', this.AddForm_formData).then(() => {
-        this.AddForm_show = false
-        this.AddForm_doing = false
-        this.featchTableData()
+    handleEdit: function(index, row) {
+    	this.editIndex = index
+    	this.editForm = {name: row.name, description: row.description}
+    	this.editFormVisible = true
+    },
+    handleDelete: function(index, row) {
+			client.delete('/topic/' + row.id).then(() => {
+        this.handleRefresh()
       }).catch((error) => {
-        this.AddForm_doing = false
-        this.$Message.error(error)
+        this.$message.error(error)
       })
     },
-    showEdit: function(index) {
-      var data = this.tableData[index]
-      client.get('/topic/update', {params:{id:data.id}}).then((response) => {
-        this.EditForm_formData = response.data.data.topic
-        this.EditForm_show=true
+    handleAddSave: function() {
+    	this.addFormLoading = true
+			client.post('/topic', this.addForm).then(() => {
+        this.addFormLoading = false
+        this.addFormVisible = false
+        this.handleRefresh()
       }).catch((error) => {
-        this.$Message.error(error)
+        this.addFormLoading = false
+        this.$message.error(error)
       })
     },
-    edit: function() {
-      this.EditForm_doing = true
-      client.post('/topic/update', this.EditForm_formData).then(() => {
-        this.EditForm_show = false
-        this.EditForm_doing = false
-        this.featchTableData()
+    handleEditSave: function() {
+    	this.editFormLoading = true
+			client.put('/topic/' + this.tableData[this.editIndex].id, this.editForm).then(() => {
+        this.editFormLoading = false
+        this.editFormVisible = false
+        this.handleRefresh()
       }).catch((error) => {
-        this.EditForm_doing = false
-        this.$Message.error(error)
-      })
-    },
-    delete: function(index) {
-      var data = this.tableData[index]
-      client.delete('/topic/' + topic.id).then(() => {
-        this.featchTableData()
-      }).catch((error) => {
-        this.$Message.error(error)
+        this.editFormLoading = false
+        this.$message.error(error)
       })
     },
   },
