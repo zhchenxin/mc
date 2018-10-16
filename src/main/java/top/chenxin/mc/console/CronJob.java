@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.scheduling.support.SimpleTriggerContext;
 import org.springframework.stereotype.Component;
+import top.chenxin.mc.common.utils.RedisLock;
 import top.chenxin.mc.common.utils.Utils;
 import top.chenxin.mc.entity.Cron;
 import top.chenxin.mc.service.CronService;
@@ -27,8 +28,15 @@ public class CronJob {
     @Autowired
     private TopicService topicService;
 
+    @Autowired
+    private RedisLock redisLock;
+
     @Scheduled(cron = "0 * * * * *")
     protected void runEverySecond() {
+        String lockKey = "run_evety_second";
+        if (!redisLock.checkLock(lockKey, 30)) {
+            return;
+        }
         List<Cron> cronList = cronService.getAllNormalCron();
         for (Cron cron : cronList) {
             if (specRun(cron.getSpec())) {
@@ -39,6 +47,7 @@ public class CronJob {
                 }
             }
         }
+        redisLock.deleteLock(lockKey);
     }
 
     /**

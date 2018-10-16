@@ -44,12 +44,10 @@
 			<version>5.1.6</version>
 		</dependency>
 
-
-		<!-- https://mvnrepository.com/artifact/com.squareup.okhttp/okhttp -->
+		<!-- Redis -->
 		<dependency>
-			<groupId>com.squareup.okhttp3</groupId>
-			<artifactId>okhttp</artifactId>
-			<version>3.11.0</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 
 		<!-- spring boot -->
