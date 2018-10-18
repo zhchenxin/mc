@@ -101,10 +101,10 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
 
     private String runMessage(Message message) throws Exception {
         CustomerResource customer = customerService.getById(message.getCustomerId());
-        return sendPost(customer.getApi(), message.getMessage());
+        return sendPost(customer.getApi(), message.getMessage(), customer.getTimeout());
     }
 
-    private String sendPost(String url, String param) throws IOException {
+    private String sendPost(String url, String param, int timeout) throws IOException {
         PrintWriter out = null;
         BufferedReader in = null;
         String result = "";
@@ -120,6 +120,8 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
             // 发送POST请求必须设置如下两行
             conn.setDoOutput(true);
             conn.setDoInput(true);
+            conn.setConnectTimeout(timeout);
+            conn.setReadTimeout(timeout);
             // 获取URLConnection对象对应的输出流
             out = new PrintWriter(conn.getOutputStream());
             // 发送请求参数
