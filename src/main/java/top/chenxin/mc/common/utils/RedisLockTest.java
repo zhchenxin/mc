@@ -2,7 +2,6 @@ package top.chenxin.mc.common.utils;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +33,11 @@ public class RedisLockTest implements Runnable, InitializingBean {
     public void run() {
         String lockKey = "test_key";
         String reqestId = Utils.getRandomString(32);
-        while (!redisLock.checkLock(lockKey, reqestId,10)) {
+        while (redisLock.lock(lockKey, reqestId, 10)) {
 
         }
         val++;
         System.out.println(val);
-        redisLock.deleteLock(lockKey, reqestId);
+        redisLock.unLock(lockKey, reqestId);
     }
 }

@@ -15,7 +15,6 @@ import top.chenxin.mc.service.TopicService;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 @Component
 public class CronJob {
@@ -35,7 +34,7 @@ public class CronJob {
     protected void runEverySecond() {
         String lockKey = "run_evety_second";
         String requestId = Utils.getRandomString(32);
-        if (!redisLock.checkLock(lockKey, requestId,30)) {
+        if (redisLock.lock(lockKey, requestId, 30)) {
             return;
         }
         List<Cron> cronList = cronService.getAllNormalCron();
@@ -48,7 +47,7 @@ public class CronJob {
                 }
             }
         }
-        redisLock.deleteLock(lockKey, requestId);
+        redisLock.unLock(lockKey, requestId);
     }
 
     /**
