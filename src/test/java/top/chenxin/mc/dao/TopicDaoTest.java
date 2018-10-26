@@ -21,10 +21,10 @@ public class TopicDaoTest {
 
     @Test
     public void create() {
-        Topic topic = new Topic();
-        topic.setName("test");
-        topic.setDescription("test");
-        topicDao.insert(topic);
+//        Topic topic = new Topic();
+//        topic.setName("test");
+//        topic.setDescription("test");
+//        topicDao.insert(topic);
     }
 
     @Test
