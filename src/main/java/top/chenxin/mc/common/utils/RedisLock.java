@@ -22,7 +22,11 @@ public class RedisLock {
     public boolean checkLock(String key, String requestId, int expire) {
         try (Jedis redis = redisPool.getClient()) {
             String res = redis.set(key, requestId, "NX", "PX", expire);
-            return res.equalsIgnoreCase("ok");
+            if (res != null && res.equalsIgnoreCase("ok")) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 

@@ -19,8 +19,8 @@ public class RedisPool implements InitializingBean {
         //连接池配置
         GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
         // 最大连接数
-        poolConfig.setMaxTotal(50);
-        poolConfig.setMaxIdle(50);
+        poolConfig.setMaxTotal(100);
+        poolConfig.setMaxIdle(100);
         poolConfig.setMinIdle(2);
         poolConfig.setMaxWaitMillis(3000);
         poolConfig.setTestOnBorrow(true);
