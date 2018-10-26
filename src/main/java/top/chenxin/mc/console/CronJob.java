@@ -34,7 +34,8 @@ public class CronJob {
     @Scheduled(cron = "0 * * * * *")
     protected void runEverySecond() {
         String lockKey = "run_evety_second";
-        if (!redisLock.checkLock(lockKey, 30)) {
+        String requestId = Utils.getRandomString(32);
+        if (!redisLock.checkLock(lockKey, requestId,30)) {
             return;
         }
         List<Cron> cronList = cronService.getAllNormalCron();
@@ -47,7 +48,7 @@ public class CronJob {
                 }
             }
         }
-        redisLock.deleteLock(lockKey);
+        redisLock.deleteLock(lockKey, requestId);
     }
 
     /**
