@@ -9,6 +9,12 @@ public class RedisLock {
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
+    /**
+     * 获取锁
+     * @param key 锁名称
+     * @param expire 超时时间 单位秒
+     * @return 如果获取到锁, 赶回true, 没有则返回false
+     */
     public boolean checkLock(String key, int expire) {
         int now = Utils.getCurrentTimestamp();
         int expireTimestamp = now + expire;
@@ -31,6 +37,10 @@ public class RedisLock {
         return getTimestamp == getSetTimestamp;
     }
 
+    /**
+     * 释放锁
+     * @param key 锁名称
+     */
     public void deleteLock(String key) {
         Integer now = Utils.getCurrentTimestamp();
         Integer getTimestamp = Integer.valueOf(stringRedisTemplate.opsForValue().get(key));
@@ -38,5 +48,7 @@ public class RedisLock {
             stringRedisTemplate.delete(key);
         }
     }
+
+    
 
 }
