@@ -56,3 +56,19 @@ customer_count=10
 2. 消费者暂停和重启
 3. 消息日志分表
 
+## 消息发布接口
+
+api：`topic/{name}/push`
+
+name参数为topic的名称
+
+参数：
+
+```
+{
+    "message": "",
+    "delay": 0
+}
+```
+
+message 参数为消费者内容，delay参数为消息延迟时间，单位秒
