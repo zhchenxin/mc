@@ -31,9 +31,9 @@ public interface MessageService {
     void deleteFailedMessage(Long id);
 
     /**
-     * 重试超时的消息
+     * 数据合并。将过期、延迟等消息合并到消息队列中
      */
-    void retryTimeoutMessage();
+    void migrate();
 
     /**
      * 从消息中 pop 出一条消息

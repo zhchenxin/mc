@@ -28,6 +28,8 @@ public class MessageModel {
 
     private int delay;
 
+    private String reserved;
+
     public MessageModel() {
 
     }
@@ -125,5 +127,13 @@ public class MessageModel {
 
     public void setDelay(int delay) {
         this.delay = delay;
+    }
+
+    public String getReserved() {
+        return reserved;
+    }
+
+    public void setReserved(String reserved) {
+        this.reserved = reserved;
     }
 }

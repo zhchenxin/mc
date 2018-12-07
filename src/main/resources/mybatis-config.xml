@@ -6,6 +6,7 @@
     <settings>
         <setting name="mapUnderscoreToCamelCase" value="true"/>
         <setting name="jdbcTypeForNull" value="NULL" />
+        <setting name="cacheEnabled" value="true"/>
     </settings>
     <plugins>
         <!-- com.github.pagehelper为PageHelper类所在包名 -->

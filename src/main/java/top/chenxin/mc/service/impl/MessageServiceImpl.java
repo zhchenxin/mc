@@ -65,7 +65,6 @@ public class MessageServiceImpl implements MessageService {
         return new ResourceCollection<>(resources, messages);
     }
 
-    @Override
     @Transactional
     public void retryMessage(Long id) {
         FailedMessage message = failedMessageDao.getById(id);
@@ -88,18 +87,16 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void retryTimeoutMessage() {
-        queue.retryTimeout();
+    public void migrate() {
+        queue.migrate();
     }
 
     @Override
-    @Transactional
     public MessageModel pop() {
         return queue.pop();
     }
 
     @Override
-    @Transactional
     public void messageSuccess(MessageModel message, String response, Integer time) {
         // 生成执行日志
         insertMessageLog(message, "", response, time);
@@ -140,6 +137,7 @@ public class MessageServiceImpl implements MessageService {
         log.setTime(time);
         log.setRequest(message.getMessage());
         log.setResponse(response);
+        log.setCreateDate(Utils.getCurrentTimestamp());
         messageLogDao.insert(log);
     }
 }

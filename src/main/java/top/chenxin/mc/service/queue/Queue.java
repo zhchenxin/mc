@@ -11,7 +11,7 @@ public interface Queue {
     void push(MessageModel message);
 
     // 将超时的订单，重新放入队列中
-    void retryTimeout();
+    void migrate();
 
     // 消息执行成功时调用
     void success(MessageModel message);

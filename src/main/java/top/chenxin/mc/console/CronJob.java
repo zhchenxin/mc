@@ -11,6 +11,7 @@ import top.chenxin.mc.common.utils.RedisLock;
 import top.chenxin.mc.common.utils.Utils;
 import top.chenxin.mc.entity.Cron;
 import top.chenxin.mc.service.CronService;
+import top.chenxin.mc.service.MessageService;
 import top.chenxin.mc.service.TopicService;
 
 import java.util.Date;
@@ -30,9 +31,12 @@ public class CronJob {
     @Autowired
     private RedisLock redisLock;
 
+    @Autowired
+    private MessageService messageService;
+
     @Scheduled(cron = "0 * * * * *")
-    protected void runEverySecond() {
-        String lockKey = "run_evety_second";
+    protected void cron() {
+        String lockKey = "cron";
         String requestId = Utils.getRandomString(32);
         if (redisLock.lock(lockKey, requestId, 30)) {
             return;
@@ -43,10 +47,29 @@ public class CronJob {
                 try {
                     topicService.push(cron.getTopicId(), "", 0);
                 } catch (Exception e) {
-                    logger.error("定时任务发布失败,原因:" + e.getMessage(), e);
+                    logger.error("定时任务失败,原因:" + e.getMessage(), e);
                 }
             }
         }
+
+        logger.info("定时任务执行完成");
+
+        redisLock.unLock(lockKey, requestId);
+    }
+
+    @Scheduled(cron = "* * * * * *")
+    protected void migrate() {
+        String lockKey = "migrate";
+        String requestId = Utils.getRandomString(32);
+        if (redisLock.lock(lockKey, requestId, 60)) {
+            return;
+        }
+        try {
+            messageService.migrate();
+        } catch (Exception e) {
+            logger.error("合并失败,原因:" + e.getMessage(), e);
+        }
+
         redisLock.unLock(lockKey, requestId);
     }
 

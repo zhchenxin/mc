@@ -18,7 +18,7 @@
             request=#{request},
             response=#{response},
             error=#{error},
-            create_date=unix_timestamp(now())
+            create_date=#{createDate}
     </insert>
 
     <select id="search" resultType="top.chenxin.mc.entity.MessageLog">

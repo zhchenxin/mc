@@ -1,6 +1,8 @@
 package top.chenxin.mc.core;
 
-public abstract class BaseEntity {
+import java.io.Serializable;
+
+public abstract class BaseEntity implements Serializable {
     private Long id;
 
     public Long getId() {

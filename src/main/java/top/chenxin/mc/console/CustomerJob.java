@@ -7,7 +7,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import top.chenxin.mc.entity.Message;
 import top.chenxin.mc.model.MessageModel;
 import top.chenxin.mc.resource.CustomerResource;
@@ -67,12 +69,12 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
             try {
                 boolean res = worker();
                 if (!res) {
-                    Thread.sleep(3000);
+                    Thread.sleep(300);
                 }
             }catch (Exception e) {
                 logger.error("worker error: ", e);
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(300);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -105,55 +107,17 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
         return messageService.pop();
     }
 
-    private String runMessage(MessageModel message) throws Exception {
+    private String runMessage(MessageModel message) {
         CustomerResource customer = customerService.getById(message.getCustomerId());
         return sendPost(customer.getApi(), message.getMessage(), customer.getTimeout());
     }
 
-    private String sendPost(String url, String param, int timeout) throws IOException {
-        PrintWriter out = null;
-        BufferedReader in = null;
-        String result = "";
-        try {
-            URL realUrl = new URL(url);
-            // 打开和URL之间的连接
-            URLConnection conn = realUrl.openConnection();
-            // 设置通用的请求属性
-            conn.setRequestProperty("accept", "*/*");
-            conn.setRequestProperty("connection", "Keep-Alive");
-            conn.setRequestProperty("user-agent",
-                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-            // 发送POST请求必须设置如下两行
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-            conn.setConnectTimeout(timeout);
-            conn.setReadTimeout(timeout);
-            // 获取URLConnection对象对应的输出流
-            out = new PrintWriter(conn.getOutputStream());
-            // 发送请求参数
-            out.print(param);
-            // flush输出流的缓冲
-            out.flush();
-            // 定义BufferedReader输入流来读取URL的响应
-            in = new BufferedReader( new InputStreamReader(conn.getInputStream()));
-            String line;
-            while ((line = in.readLine()) != null) {
-                result += line;
-            }
-        } catch (Exception e) {
-            throw e;
-        } finally{
-            try{
-                if(out!=null){
-                    out.close();
-                }
-                if(in!=null){
-                    in.close();
-                }
-            } catch(IOException ex){
-                ex.printStackTrace();
-            }
-        }
-        return result;
+    private String sendPost(String url, String message, int timeout) {
+
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(timeout * 1000);
+        requestFactory.setReadTimeout(timeout * 1000);
+        RestTemplate restTemplate = new RestTemplate(requestFactory);
+        return restTemplate.getForObject(url + "?msg=" + message, String.class);
     }
 }

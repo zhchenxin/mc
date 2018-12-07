@@ -1,7 +1,7 @@
 package top.chenxin.mc.service.queue;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import top.chenxin.mc.common.utils.Utils;
 import top.chenxin.mc.dao.CustomerDao;
 import top.chenxin.mc.dao.MessageDao;
@@ -12,7 +12,7 @@ import top.chenxin.mc.entity.Message;
 /**
  * 数据库队列
  */
-@Service
+//@Service
 public class DatabaseQueue implements Queue {
 
     @Autowired
@@ -22,6 +22,7 @@ public class DatabaseQueue implements Queue {
     private CustomerDao customerDao;
 
     @Override
+    @Transactional
     public MessageModel pop() {
         // 取出消息
         Message message = messageDao.popMessage();
@@ -61,7 +62,7 @@ public class DatabaseQueue implements Queue {
     }
 
     @Override
-    public void retryTimeout() {
+    public void migrate() {
         messageDao.retryTimeoutMessage();
     }
 
