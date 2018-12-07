@@ -5,17 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.chenxin.mc.common.constant.ErrorCode;
-import top.chenxin.mc.common.utils.Utils;
+import top.chenxin.mc.common.utils.IdBuilder;
 import top.chenxin.mc.core.ResourceCollection;
 import top.chenxin.mc.entity.Customer;
-import top.chenxin.mc.entity.Message;
 import top.chenxin.mc.dao.CustomerDao;
-import top.chenxin.mc.dao.MessageDao;
 import top.chenxin.mc.dao.TopicDao;
 import top.chenxin.mc.entity.Topic;
+import top.chenxin.mc.model.MessageModel;
 import top.chenxin.mc.resource.TopicResource;
 import top.chenxin.mc.service.TopicService;
 import top.chenxin.mc.service.exception.ServiceException;
+import top.chenxin.mc.service.queue.Queue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,10 @@ public class TopicServiceImpl implements TopicService {
     private CustomerDao customerDao;
 
     @Autowired
-    private MessageDao messageDao;
+    private Queue queue;
+
+    @Autowired
+    private IdBuilder idBuilder;
 
     @Override
     public void insert(String name, String description) {
@@ -109,14 +112,16 @@ public class TopicServiceImpl implements TopicService {
         List<Customer> customers = customerDao.getByTopicId(topic.getId());
 
         for (Customer item : customers) {
-            Message msg = new Message();
+            MessageModel msg = new MessageModel();
+            msg.setId(idBuilder.createMessageId());
             msg.setTopicId(topic.getId());
             msg.setCustomerId(item.getId());
             msg.setMessage(message);
-            msg.setAvailableDate(Utils.getCurrentTimestamp() + delay);
-            msg.setStatus(Message.StatusWatting);
             msg.setAttempts(0);
-            messageDao.insert(msg);
+            msg.setMaxAttempts(item.getAttempts());
+            msg.setDelay(delay);
+            msg.setTimeout(item.getTimeout());
+            queue.push(msg);
         }
     }
 }

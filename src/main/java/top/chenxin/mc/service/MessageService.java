@@ -2,6 +2,7 @@ package top.chenxin.mc.service;
 
 import top.chenxin.mc.core.ResourceCollection;
 import top.chenxin.mc.entity.Message;
+import top.chenxin.mc.model.MessageModel;
 import top.chenxin.mc.resource.FailedMessageResource;
 import top.chenxin.mc.resource.MessageLogResource;
 
@@ -37,15 +38,15 @@ public interface MessageService {
     /**
      * 从消息中 pop 出一条消息
      */
-    Message pop();
+    MessageModel pop();
 
     /**
      * 消息执行成功
      */
-    void messageSuccess(Long messageId, String response, Integer time);
+    void messageSuccess(MessageModel message, String response, Integer time);
 
     /**
      * 消息执行失败
      */
-    void messageFiled(Long messageId, String error, Integer time);
+    void messageFiled(MessageModel message, String error, Integer time);
 }

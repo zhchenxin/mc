@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import top.chenxin.mc.entity.Message;
+import top.chenxin.mc.model.MessageModel;
 import top.chenxin.mc.resource.CustomerResource;
 import top.chenxin.mc.service.CustomerService;
 import top.chenxin.mc.service.MessageService;
@@ -70,6 +71,11 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
                 }
             }catch (Exception e) {
                 logger.error("worker error: ", e);
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
         logger.debug("进程停止" + Thread.currentThread().getName());
@@ -77,7 +83,7 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
 
     private boolean worker() {
         // 1. 推出消息
-        Message message = pop();
+        MessageModel message = pop();
         if (message == null) {
             return false;
         }
@@ -87,19 +93,19 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
         try {
             String response = runMessage(message);
             // 3. 保存执行结果
-            messageService.messageSuccess(message.getId(), response, (int)(System.currentTimeMillis() - start));
+            messageService.messageSuccess(message, response, (int)(System.currentTimeMillis() - start));
         } catch (Exception e) {
             // 3. 保存执行结果
-            messageService.messageFiled(message.getId(), e.getMessage(), (int)(System.currentTimeMillis() - start));
+            messageService.messageFiled(message, e.getMessage(), (int)(System.currentTimeMillis() - start));
         }
         return true;
     }
 
-    private synchronized Message pop() {
+    private synchronized MessageModel pop() {
         return messageService.pop();
     }
 
-    private String runMessage(Message message) throws Exception {
+    private String runMessage(MessageModel message) throws Exception {
         CustomerResource customer = customerService.getById(message.getCustomerId());
         return sendPost(customer.getApi(), message.getMessage(), customer.getTimeout());
     }

@@ -21,7 +21,7 @@ public class RedisLock {
      */
     public boolean lock(String key, String requestId, int expire) {
         try (Jedis redis = redisPool.getClient()) {
-            String res = redis.set(key, requestId, "NX", "PX", expire);
+            String res = redis.set("lock:" + key, requestId, "NX", "PX", expire);
             return res == null || !res.equalsIgnoreCase("ok");
         }
     }
@@ -33,7 +33,7 @@ public class RedisLock {
     public void unLock(String key, String requestId) {
         try (Jedis redis = redisPool.getClient()) {
             String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
-            redis.eval(script, Collections.singletonList(key), Collections.singletonList(requestId));
+            redis.eval(script, Collections.singletonList("lock:" + key), Collections.singletonList(requestId));
         }
     }
 

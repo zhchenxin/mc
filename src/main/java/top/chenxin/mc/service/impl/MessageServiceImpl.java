@@ -10,19 +10,18 @@ import top.chenxin.mc.common.utils.Utils;
 import top.chenxin.mc.core.ResourceCollection;
 import top.chenxin.mc.dao.*;
 import top.chenxin.mc.entity.*;
+import top.chenxin.mc.model.MessageModel;
 import top.chenxin.mc.resource.FailedMessageResource;
 import top.chenxin.mc.resource.MessageLogResource;
 import top.chenxin.mc.service.MessageService;
 import top.chenxin.mc.service.exception.ServiceException;
+import top.chenxin.mc.service.queue.Queue;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class MessageServiceImpl implements MessageService {
-
-    @Autowired
-    private MessageDao messageDao;
 
     @Autowired
     private TopicDao topicDao;
@@ -38,6 +37,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Autowired
     private PlatformTransactionManager transactionManager;
+
+    @Autowired
+    private Queue queue;
 
     @Override
     public ResourceCollection<MessageLogResource> getMessageLogList(Long customerId, Long messageId, Integer page, Integer limit) {
@@ -74,15 +76,10 @@ public class MessageServiceImpl implements MessageService {
         // 从失败表中删除
         failedMessageDao.delete(id);
 
+        Customer customer = customerDao.getById(message.getCustomerId());
+
         // 添加消息到 message 表中
-        Message msg = new Message();
-        msg.setTopicId(message.getTopicId());
-        msg.setCustomerId(message.getCustomerId());
-        msg.setMessage(message.getMessage());
-        msg.setAvailableDate(Utils.getCurrentTimestamp());
-        msg.setStatus(Message.StatusWatting);
-        msg.setAttempts(0);
-        messageDao.insert(msg);
+        queue.push(new MessageModel(message, customer, 0));
     }
 
     @Override
@@ -90,81 +87,35 @@ public class MessageServiceImpl implements MessageService {
         failedMessageDao.delete(id);
     }
 
+    @Override
     public void retryTimeoutMessage() {
-        messageDao.retryTimeoutMessage();
+        queue.retryTimeout();
     }
 
     @Override
     @Transactional
-    public Message pop() {
-        // 取出消息
-        Message message = messageDao.popMessage();
-        if (message == null) {
-            return null;
-        }
-
-        // 修改消息的状态和超时时间
-        Customer customer = customerDao.getById(message.getCustomerId());
-        if (customer == null) {
-            // 如果消息的消费者被删除, 则需要删除对应消息
-            messageDao.delete(message.getId());
-        }
-
-        Message update = new Message();
-        update.setId(message.getId());
-        update.setTimeoutDate(Utils.getCurrentTimestamp() + customer.getTimeout());
-        update.setStatus(Message.StatusRunning);
-        messageDao.update(update);
-        return message;
+    public MessageModel pop() {
+        return queue.pop();
     }
 
     @Override
     @Transactional
-    public void messageSuccess(Long messageId, String response, Integer time) {
-        Message message = messageDao.getById(messageId);
+    public void messageSuccess(MessageModel message, String response, Integer time) {
+        // 生成执行日志
+        insertMessageLog(message, "", response, time);
 
-        if (!message.getStatus().equals(Message.StatusRunning)) {
-            throw new ServiceException("消息状态异常");
-        }
+        // 通知消息队列
+        queue.success(message);
+    }
+
+    @Override
+    @Transactional
+    public void messageFiled(MessageModel message, String error, Integer time) {
 
         // 生成执行日志
-        MessageLog log = new MessageLog();
-        log.setMessageId(0L); // 消息即将删除, 所以不需要消息id
-        log.setRequest(message.getMessage());
-        log.setResponse(response);
-        log.setCustomerId(message.getCustomerId());
-        log.setTopicId(message.getTopicId());
-        log.setTime(time);
-        log.setError("");
-        messageLogDao.insert(log);
+        insertMessageLog(message, error, "", time);
 
-        // 移除消息
-        messageDao.delete(messageId);
-    }
-
-    @Override
-    @Transactional
-    public void messageFiled(Long messageId, String error, Integer time) {
-        Message message = messageDao.getById(messageId);
-
-        if (!message.getStatus().equals(Message.StatusRunning)) {
-            throw new ServiceException("消息状态异常");
-        }
-
-        // 生成执行日志
-        MessageLog log = new MessageLog();
-        log.setMessageId(message.getId());
-        log.setError(error);
-        log.setCustomerId(message.getCustomerId());
-        log.setTopicId(message.getTopicId());
-        log.setTime(time);
-        log.setRequest(message.getMessage());
-        log.setResponse("");
-        messageLogDao.insert(log);
-
-        // 判断消息是否需要重试
-        Customer customer = customerDao.getById(message.getCustomerId());
-        if (message.getAttempts() >= customer.getAttempts()) {
+        if (!queue.needRetry(message)) {
             // 记录到失败表数据
             FailedMessage failedMessage = new FailedMessage();
             failedMessage.setId(message.getId());
@@ -174,15 +125,21 @@ public class MessageServiceImpl implements MessageService {
             failedMessage.setError(error);
             failedMessage.setAttempts(message.getAttempts());
             failedMessageDao.insert(failedMessage);
-
-            // 删除消息
-            messageDao.delete(messageId);
-        } else {
-            Message update = new Message();
-            update.setId(message.getId());
-            update.setStatus(Message.StatusWatting);
-            update.setAttempts(message.getAttempts() + 1);
-            messageDao.update(update);
         }
+
+        // 通知消息队列
+        queue.failed(message);
+    }
+
+    private void insertMessageLog(MessageModel message, String error, String response, Integer time){
+        MessageLog log = new MessageLog();
+        log.setMessageId(message.getId());
+        log.setError(error);
+        log.setCustomerId(message.getCustomerId());
+        log.setTopicId(message.getTopicId());
+        log.setTime(time);
+        log.setRequest(message.getMessage());
+        log.setResponse(response);
+        messageLogDao.insert(log);
     }
 }
