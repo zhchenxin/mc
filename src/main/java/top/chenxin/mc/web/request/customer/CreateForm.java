@@ -1,11 +1,25 @@
-package top.chenxin.mc.request.customer;
+package top.chenxin.mc.web.request.customer;
 
-public class UpdateForm {
+import javax.validation.constraints.NotNull;
 
-    private String name;
-    private String api;
-    private Integer timeout;
-    private Integer attempts;
+public class CreateForm {
+
+    @NotNull
+    private Long topicId = 0L;
+    @NotNull
+    private String name = "";
+    @NotNull
+    private String api = "";
+    private Integer timeout = 60;
+    private Integer attempts = 3;
+
+    public Long getTopicId() {
+        return topicId;
+    }
+
+    public void setTopicId(Long topicId) {
+        this.topicId = topicId;
+    }
 
     public String getName() {
         return name;

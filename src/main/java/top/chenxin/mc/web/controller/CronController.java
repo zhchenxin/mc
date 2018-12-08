@@ -1,12 +1,12 @@
-package top.chenxin.mc.controller;
+package top.chenxin.mc.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import top.chenxin.mc.service.CronService;
-import top.chenxin.mc.request.cron.CreateForm;
-import top.chenxin.mc.request.cron.ListForm;
-import top.chenxin.mc.request.cron.UpdateForm;
+import top.chenxin.mc.web.request.cron.CreateForm;
+import top.chenxin.mc.web.request.cron.ListForm;
+import top.chenxin.mc.web.request.cron.UpdateForm;
 
 import java.util.Map;
 

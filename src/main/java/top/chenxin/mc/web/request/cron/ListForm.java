@@ -1,6 +1,6 @@
-package top.chenxin.mc.request.cron;
+package top.chenxin.mc.web.request.cron;
 
-import top.chenxin.mc.request.BaseListForm;
+import top.chenxin.mc.web.request.BaseListForm;
 
 public class ListForm extends BaseListForm {
     private Long topicId;

@@ -1,4 +1,4 @@
-package top.chenxin.mc.request;
+package top.chenxin.mc.web.request;
 
 public class BaseListForm {
 

@@ -1,4 +1,4 @@
-package top.chenxin.mc.request.topic;
+package top.chenxin.mc.web.request.topic;
 
 public class PushForm {
     private String topicName = "";

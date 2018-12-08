@@ -1,6 +1,6 @@
-package top.chenxin.mc.request.failed_message;
+package top.chenxin.mc.web.request.failed_message;
 
-import top.chenxin.mc.request.BaseListForm;
+import top.chenxin.mc.web.request.BaseListForm;
 
 public class ListForm extends BaseListForm {
     private Long customerId;

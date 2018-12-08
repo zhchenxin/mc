@@ -1,4 +1,4 @@
-package top.chenxin.mc.controller;
+package top.chenxin.mc.web.controller;
 
 
 import java.util.HashMap;

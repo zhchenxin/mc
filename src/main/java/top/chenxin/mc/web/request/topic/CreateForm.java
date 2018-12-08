@@ -1,4 +1,4 @@
-package top.chenxin.mc.request.topic;
+package top.chenxin.mc.web.request.topic;
 
 import javax.validation.constraints.NotNull;
 

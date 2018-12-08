@@ -1,4 +1,4 @@
-package top.chenxin.mc.config;
+package top.chenxin.mc.web.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

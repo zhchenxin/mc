@@ -1,6 +1,6 @@
-package top.chenxin.mc.request.topic;
+package top.chenxin.mc.web.request.topic;
 
-import top.chenxin.mc.request.BaseListForm;
+import top.chenxin.mc.web.request.BaseListForm;
 
 public class ListForm extends BaseListForm {
     private String name;

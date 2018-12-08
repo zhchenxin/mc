@@ -1,8 +1,15 @@
-package top.chenxin.mc.request.topic;
+package top.chenxin.mc.web.request.cron;
+
+import javax.validation.constraints.NotNull;
 
 public class UpdateForm {
+    @NotNull
     private String name;
+    @NotNull
     private String description;
+
+    @NotNull
+    private String spec;
 
     public String getName() {
         return name;
@@ -20,4 +27,11 @@ public class UpdateForm {
         this.description = description;
     }
 
+    public String getSpec() {
+        return spec;
+    }
+
+    public void setSpec(String spec) {
+        this.spec = spec;
+    }
 }

@@ -1,9 +1,9 @@
-package top.chenxin.mc.controller;
+package top.chenxin.mc.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import top.chenxin.mc.request.failed_message.ListForm;
+import top.chenxin.mc.web.request.failed_message.ListForm;
 import top.chenxin.mc.service.MessageService;
 
 import java.util.Map;

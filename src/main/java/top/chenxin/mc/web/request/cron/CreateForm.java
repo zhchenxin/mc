@@ -1,15 +1,16 @@
-package top.chenxin.mc.request.cron;
+package top.chenxin.mc.web.request.cron;
 
 import javax.validation.constraints.NotNull;
 
-public class UpdateForm {
-    @NotNull
+public class CreateForm {
+    @NotNull(message = "name 不能为空")
     private String name;
-    @NotNull
+    @NotNull(message = "description 不能为空")
     private String description;
-
-    @NotNull
+    @NotNull(message = "spec 不能为空")
     private String spec;
+    @NotNull(message = "topic id 不能为空")
+    private Long topicId;
 
     public String getName() {
         return name;
@@ -33,5 +34,13 @@ public class UpdateForm {
 
     public void setSpec(String spec) {
         this.spec = spec;
+    }
+
+    public Long getTopicId() {
+        return topicId;
+    }
+
+    public void setTopicId(Long topicId) {
+        this.topicId = topicId;
     }
 }

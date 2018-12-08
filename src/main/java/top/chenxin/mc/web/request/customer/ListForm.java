@@ -1,6 +1,6 @@
-package top.chenxin.mc.request.customer;
+package top.chenxin.mc.web.request.customer;
 
-import top.chenxin.mc.request.BaseListForm;
+import top.chenxin.mc.web.request.BaseListForm;
 
 public class ListForm extends BaseListForm {
     private Long topicId = 0L;

@@ -1,4 +1,4 @@
-package top.chenxin.mc.exception;
+package top.chenxin.mc.web.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

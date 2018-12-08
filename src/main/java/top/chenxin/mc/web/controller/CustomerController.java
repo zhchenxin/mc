@@ -1,12 +1,12 @@
-package top.chenxin.mc.controller;
+package top.chenxin.mc.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import top.chenxin.mc.common.utils.Utils;
-import top.chenxin.mc.request.customer.ListForm;
-import top.chenxin.mc.request.customer.CreateForm;
-import top.chenxin.mc.request.customer.UpdateForm;
+import top.chenxin.mc.web.request.customer.ListForm;
+import top.chenxin.mc.web.request.customer.CreateForm;
+import top.chenxin.mc.web.request.customer.UpdateForm;
 import top.chenxin.mc.service.CustomerService;
 
 import java.util.List;
