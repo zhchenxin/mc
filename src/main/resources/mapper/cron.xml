@@ -34,7 +34,7 @@
         UPDATE cron SET delete_date=unix_timestamp(now()) WHERE id=#{id}
     </update>
 
-    <select id="search" resultType="top.chenxin.mc.entity.Cron">
+    <select id="getList" resultType="top.chenxin.mc.entity.Cron">
         SELECT * FROM cron WHERE delete_date = 0
         <if test="topicId != null and topicId != 0">AND topic_id = #{topicId}</if>
         order by id desc

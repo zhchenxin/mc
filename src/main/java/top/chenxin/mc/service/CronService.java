@@ -1,9 +1,8 @@
 package top.chenxin.mc.service;
 
 
-import top.chenxin.mc.core.ResourceCollection;
 import top.chenxin.mc.entity.Cron;
-import top.chenxin.mc.resource.CronResource;
+import top.chenxin.mc.service.model.PageList;
 
 import java.util.List;
 
@@ -29,11 +28,10 @@ public interface CronService {
      * 搜索
      * @param topicId 默认值 0
      */
-    ResourceCollection<CronResource> getList(Long topicId, Integer page, Integer limit);
+    PageList<Cron> getPage(Long topicId, Integer page, Integer limit);
 
     /**
      * 获取所有正常状态的任务
-     * @return
      */
     List<Cron> getAllNormalCron();
 }

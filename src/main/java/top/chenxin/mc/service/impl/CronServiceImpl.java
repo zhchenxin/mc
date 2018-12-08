@@ -1,17 +1,16 @@
 package top.chenxin.mc.service.impl;
 
 import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
-import top.chenxin.mc.core.ResourceCollection;
 import top.chenxin.mc.dao.CronDao;
 import top.chenxin.mc.entity.Cron;
-import top.chenxin.mc.resource.CronResource;
 import top.chenxin.mc.service.CronService;
 import top.chenxin.mc.service.exception.ServiceException;
+import top.chenxin.mc.service.model.PageList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -66,15 +65,10 @@ public class CronServiceImpl implements CronService {
     }
 
     @Override
-    public ResourceCollection<CronResource> getList(Long topicId, Integer page, Integer limit) {
-        Page<Cron> cronPage = this.cronDao.search(topicId, page, limit);
-
-        List<CronResource> resources = new ArrayList<>();
-        for (Cron cron: cronPage) {
-            resources.add(new CronResource(cron));
-        }
-
-        return new ResourceCollection<>(resources, cronPage);
+    public PageList<Cron> getPage(Long topicId, Integer page, Integer limit) {
+        PageHelper.startPage(page, limit);
+        Page<Cron> cronPage = (Page<Cron>) this.cronDao.getList(topicId);
+        return new PageList<>(cronPage);
     }
 
     @Override

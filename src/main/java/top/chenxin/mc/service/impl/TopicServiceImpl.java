@@ -1,23 +1,22 @@
 package top.chenxin.mc.service.impl;
 
 import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.chenxin.mc.common.constant.ErrorCode;
 import top.chenxin.mc.common.utils.IdBuilder;
-import top.chenxin.mc.core.ResourceCollection;
 import top.chenxin.mc.entity.Customer;
 import top.chenxin.mc.dao.CustomerDao;
 import top.chenxin.mc.dao.TopicDao;
 import top.chenxin.mc.entity.Topic;
-import top.chenxin.mc.model.MessageModel;
-import top.chenxin.mc.resource.TopicResource;
+import top.chenxin.mc.service.model.MessageModel;
 import top.chenxin.mc.service.TopicService;
 import top.chenxin.mc.service.exception.ServiceException;
+import top.chenxin.mc.service.model.PageList;
 import top.chenxin.mc.service.queue.Queue;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -75,16 +74,10 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public ResourceCollection<TopicResource> getList(List<Long> ids, Integer page, Integer limit) {
-
-        Page<Topic> topics = this.topicDao.search(ids, page, limit);
-
-        List<TopicResource> resources = new ArrayList<>();
-        for (Topic topic : topics) {
-            resources.add(new TopicResource(topic));
-        }
-
-        return new ResourceCollection<>(resources, topics);
+    public PageList<Topic> getPage(List<Long> ids, Integer page, Integer limit) {
+        PageHelper.startPage(page, limit);
+        Page<Topic> topics = (Page<Topic>) this.topicDao.getList(ids);
+        return new PageList<>(topics);
     }
 
     @Transactional

@@ -7,7 +7,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
 import top.chenxin.mc.common.utils.RedisPool;
 import top.chenxin.mc.common.utils.Utils;
-import top.chenxin.mc.model.MessageModel;
+import top.chenxin.mc.service.model.MessageModel;
 
 
 /**

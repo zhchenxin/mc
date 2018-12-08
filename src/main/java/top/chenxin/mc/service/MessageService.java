@@ -1,21 +1,21 @@
 package top.chenxin.mc.service;
 
-import top.chenxin.mc.core.ResourceCollection;
-import top.chenxin.mc.model.MessageModel;
-import top.chenxin.mc.resource.FailedMessageResource;
-import top.chenxin.mc.resource.MessageLogResource;
+import top.chenxin.mc.entity.FailedMessage;
+import top.chenxin.mc.entity.MessageLog;
+import top.chenxin.mc.service.model.MessageModel;
+import top.chenxin.mc.service.model.PageList;
 
 public interface MessageService {
 
     /**
      * 消息执行日志
      */
-    ResourceCollection<MessageLogResource> getMessageLogList(Long customerId, Long messageId, Integer page, Integer limit);
+    PageList<MessageLog> getMessageLogPage(Long customerId, Long messageId, Integer page, Integer limit);
 
     /**
      * 失败消息
      */
-    ResourceCollection<FailedMessageResource> getFailedMessageList(Long customerId, Integer page, Integer limit);
+    PageList<FailedMessage> getFailedMessageList(Long customerId, Integer page, Integer limit);
 
     /**
      * 重试消息

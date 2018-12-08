@@ -6,7 +6,7 @@ import top.chenxin.mc.common.utils.Utils;
 import top.chenxin.mc.dao.CustomerDao;
 import top.chenxin.mc.dao.MessageDao;
 import top.chenxin.mc.entity.Customer;
-import top.chenxin.mc.model.MessageModel;
+import top.chenxin.mc.service.model.MessageModel;
 import top.chenxin.mc.entity.Message;
 
 /**

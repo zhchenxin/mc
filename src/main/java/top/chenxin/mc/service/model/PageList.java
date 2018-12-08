@@ -39,30 +39,4 @@ public class PageList<T> extends ArrayList<T> {
     public Long getTotal() {
         return total;
     }
-
-    //    public Map<String, Object> toMap() {
-//        Map<String, Object> map = new HashMap<>();
-//        map.put("code", 0);
-//        map.put("msg", "操作成功");
-//
-//        Map<String, Object> data = new HashMap<>();
-//
-//        // list
-//        List<Map> list = new ArrayList<>();
-//        for (T resource :resources) {
-//            list.add(resource.getData());
-//        }
-//        data.put("list", list);
-//
-//        // mate
-//        Map<String, Object> mate = new HashMap<>();
-//        mate.put("total", total);
-//        mate.put("totalPage", Math.ceil((float)total / (float)limit));
-//        mate.put("currentPage", page);
-//        mate.put("limit", limit);
-//        data.put("mate", mate);
-//
-//        map.put("data", data);
-//        return map;
-//    }
 }

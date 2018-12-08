@@ -10,18 +10,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import top.chenxin.mc.entity.Message;
-import top.chenxin.mc.model.MessageModel;
-import top.chenxin.mc.resource.CustomerResource;
+import top.chenxin.mc.service.model.MessageModel;
 import top.chenxin.mc.service.CustomerService;
 import top.chenxin.mc.service.MessageService;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,8 +100,7 @@ public class CustomerJob implements Runnable, InitializingBean, DisposableBean {
     }
 
     private String runMessage(MessageModel message) {
-        CustomerResource customer = customerService.getById(message.getCustomerId());
-        return sendPost(customer.getApi(), message.getMessage(), customer.getTimeout());
+        return sendPost(message.getApi(), message.getMessage(), message.getTimeout());
     }
 
     private String sendPost(String url, String message, int timeout) {

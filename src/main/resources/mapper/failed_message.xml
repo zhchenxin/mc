@@ -24,7 +24,7 @@
         DELETE FROM failed_message WHERE id=#{id}
     </delete>
 
-    <select id="search" resultType="top.chenxin.mc.entity.FailedMessage">
+    <select id="getList" resultType="top.chenxin.mc.entity.FailedMessage">
         SELECT * FROM failed_message WHERE 1=1
         <if test="customerId != null and customerId != 0">AND customer_id = #{customerId}</if>
         order by id desc

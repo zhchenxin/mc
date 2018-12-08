@@ -1,4 +1,4 @@
-package top.chenxin.mc.core;
+package top.chenxin.mc.entity;
 
 import java.io.Serializable;
 

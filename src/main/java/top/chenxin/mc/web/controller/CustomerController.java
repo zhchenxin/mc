@@ -1,16 +1,18 @@
 package top.chenxin.mc.web.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import top.chenxin.mc.common.utils.Utils;
+import top.chenxin.mc.web.APIResponse;
 import top.chenxin.mc.web.request.customer.ListForm;
 import top.chenxin.mc.web.request.customer.CreateForm;
 import top.chenxin.mc.web.request.customer.UpdateForm;
 import top.chenxin.mc.service.CustomerService;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("")
@@ -20,27 +22,27 @@ public class CustomerController extends BaseController {
     private CustomerService customerService;
 
     @RequestMapping(value = "customer", method = RequestMethod.GET)
-    public Map index(@Validated ListForm form) {
+    public ResponseEntity<JSONObject> index(@Validated ListForm form) {
         List<Long> ids = Utils.getIds(form.getId());
-        return customerService.search(ids, form.getTopicId(), form.getPage(), form.getLimit()).toMap();
+        return APIResponse.success(customerService.getPage(ids, form.getTopicId(), form.getPage(), form.getLimit()));
     }
 
     @RequestMapping(value = "customer", method = RequestMethod.POST)
-    private Map create(@Validated CreateForm form) {
+    private ResponseEntity<JSONObject> create(@Validated CreateForm form) {
         customerService.insert(form.getTopicId(), form.getName(), form.getApi(), form.getTimeout(), form.getAttempts());
-        return success();
+        return APIResponse.success();
     }
 
     @RequestMapping(value = "customer/{id}", method = RequestMethod.PUT)
-    private Map update(@PathVariable("id") Long id, @Validated UpdateForm form) {
+    private ResponseEntity<JSONObject> update(@PathVariable("id") Long id, @Validated UpdateForm form) {
         customerService.update(id, form.getName(), form.getApi(), form.getTimeout(), form.getAttempts());
-        return success();
+        return APIResponse.success();
     }
 
     @RequestMapping(value = "customer/{id}", method = RequestMethod.DELETE)
-    private Map delete(@PathVariable("id") Long id) {
+    private ResponseEntity<JSONObject> delete(@PathVariable("id") Long id) {
         customerService.delete(id);
-        return success();
+        return APIResponse.success();
     }
 
 }

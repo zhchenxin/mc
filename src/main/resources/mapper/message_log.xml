@@ -21,7 +21,7 @@
             create_date=#{createDate}
     </insert>
 
-    <select id="search" resultType="top.chenxin.mc.entity.MessageLog">
+    <select id="getList" resultType="top.chenxin.mc.entity.MessageLog">
         SELECT * FROM message_log WHERE 1=1
         <if test="customerId != null and customerId != 0">AND customer_id = #{customerId}</if>
         <if test="messageId != null and messageId != 0">AND message_id = #{messageId}</if>

@@ -1,8 +1,8 @@
 package top.chenxin.mc.service;
 
 
-import top.chenxin.mc.core.ResourceCollection;
-import top.chenxin.mc.resource.TopicResource;
+import top.chenxin.mc.entity.Topic;
+import top.chenxin.mc.service.model.PageList;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public interface TopicService {
      * 获取 topic 资源
      * @param ids topic id 如果为null, 则表示不指定该搜索条件
      */
-    ResourceCollection<TopicResource> getList(List<Long> ids, Integer page, Integer limit);
+    PageList<Topic> getPage(List<Long> ids, Integer page, Integer limit);
 
     /**
      * 向指定的 topic 中发送消息

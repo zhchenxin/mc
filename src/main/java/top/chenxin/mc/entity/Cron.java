@@ -1,7 +1,5 @@
 package top.chenxin.mc.entity;
 
-import top.chenxin.mc.core.BaseEntity;
-
 public class Cron extends BaseEntity {
 
     public static final int StatusNormal = 1; // 正常状态

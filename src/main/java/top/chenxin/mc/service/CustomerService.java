@@ -1,7 +1,7 @@
 package top.chenxin.mc.service;
 
-import top.chenxin.mc.core.ResourceCollection;
-import top.chenxin.mc.resource.CustomerResource;
+import top.chenxin.mc.entity.Customer;
+import top.chenxin.mc.service.model.PageList;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public interface CustomerService {
     /**
      * 按照指定参数进行筛选, 如果参数为默认值, 则不筛选此参数
      */
-    ResourceCollection<CustomerResource> search(List<Long> ids, Long topicId, Integer page, Integer limit);
+    PageList<Customer> getPage(List<Long> ids, Long topicId, Integer page, Integer limit);
 
-    CustomerResource getById(Long id);
+    Customer getById(Long id);
 }

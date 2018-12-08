@@ -25,7 +25,7 @@
         UPDATE topic SET delete_date=unix_timestamp(now()) WHERE id=#{id}
     </update>
 
-    <select id="search" resultType="top.chenxin.mc.entity.Topic">
+    <select id="getList" resultType="top.chenxin.mc.entity.Topic">
         SELECT * FROM topic WHERE delete_date = 0
         <if test="ids != null">
             AND id in

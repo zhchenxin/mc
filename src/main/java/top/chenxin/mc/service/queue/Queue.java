@@ -1,6 +1,6 @@
 package top.chenxin.mc.service.queue;
 
-import top.chenxin.mc.model.MessageModel;
+import top.chenxin.mc.service.model.MessageModel;
 
 public interface Queue {
 

@@ -33,7 +33,7 @@
         UPDATE customer SET delete_date=unix_timestamp(now()) WHERE id=#{id}
     </update>
 
-    <select id="search" resultType="top.chenxin.mc.entity.Customer">
+    <select id="getList" resultType="top.chenxin.mc.entity.Customer">
         SELECT * FROM customer WHERE delete_date = 0
         <if test="topicId != null and topicId != 0">AND topic_id = #{topicId}</if>
         <if test="ids != null">

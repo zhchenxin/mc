@@ -1,16 +1,15 @@
 package top.chenxin.mc.service.impl;
 
 import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import top.chenxin.mc.core.ResourceCollection;
-import top.chenxin.mc.resource.CustomerResource;
 import top.chenxin.mc.service.CustomerService;
 import top.chenxin.mc.dao.CustomerDao;
 import top.chenxin.mc.dao.TopicDao;
 import top.chenxin.mc.entity.Customer;
+import top.chenxin.mc.service.model.PageList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -50,20 +49,14 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ResourceCollection<CustomerResource> search(List<Long> ids, Long topicId, Integer page, Integer limit) {
-        Page<Customer> customers = this.customerDao.search(topicId, ids, page, limit);
-
-        List<CustomerResource> resources = new ArrayList<>();
-        for (Customer customer : customers) {
-            resources.add(new CustomerResource(customer));
-        }
-
-        return new ResourceCollection<>(resources, customers);
+    public PageList<Customer> getPage(List<Long> ids, Long topicId, Integer page, Integer limit) {
+        PageHelper.startPage(page, limit);
+        Page<Customer> customers = (Page<Customer>) this.customerDao.getList(topicId, ids);
+        return new PageList<>(customers);
     }
 
     @Override
-    public CustomerResource getById(Long id) {
-        Customer customer = this.customerDao.getById(id);
-        return new CustomerResource(customer);
+    public Customer getById(Long id) {
+        return this.customerDao.getById(id);
     }
 }

@@ -1,7 +1,5 @@
 package top.chenxin.mc.entity;
 
-import top.chenxin.mc.core.BaseEntity;
-
 public class Message extends BaseEntity {
 
     public static final int StatusWatting = 1; // 等待中

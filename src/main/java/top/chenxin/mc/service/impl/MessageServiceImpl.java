@@ -1,24 +1,20 @@
 package top.chenxin.mc.service.impl;
 
 import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import top.chenxin.mc.common.constant.ErrorCode;
 import top.chenxin.mc.common.utils.Utils;
-import top.chenxin.mc.core.ResourceCollection;
 import top.chenxin.mc.dao.*;
 import top.chenxin.mc.entity.*;
-import top.chenxin.mc.model.MessageModel;
-import top.chenxin.mc.resource.FailedMessageResource;
-import top.chenxin.mc.resource.MessageLogResource;
+import top.chenxin.mc.service.model.MessageModel;
 import top.chenxin.mc.service.MessageService;
 import top.chenxin.mc.service.exception.ServiceException;
+import top.chenxin.mc.service.model.PageList;
 import top.chenxin.mc.service.queue.Queue;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -42,27 +38,15 @@ public class MessageServiceImpl implements MessageService {
     private Queue queue;
 
     @Override
-    public ResourceCollection<MessageLogResource> getMessageLogList(Long customerId, Long messageId, Integer page, Integer limit) {
-        Page<MessageLog> logs = this.messageLogDao.search(customerId, messageId, page, limit);
-
-        List<MessageLogResource> resources = new ArrayList<>();
-        for (MessageLog log : logs) {
-            resources.add(new MessageLogResource(log));
-        }
-
-        return new ResourceCollection<>(resources, logs);
+    public PageList<MessageLog> getMessageLogPage(Long customerId, Long messageId, Integer page, Integer limit) {
+        PageHelper.startPage(page, limit);
+        return new PageList<>((Page<MessageLog>) this.messageLogDao.getList(customerId, messageId));
     }
 
     @Override
-    public ResourceCollection<FailedMessageResource> getFailedMessageList(Long customerId, Integer page, Integer limit) {
-        Page<FailedMessage> messages = this.failedMessageDao.search(customerId, page, limit);
-
-        List<FailedMessageResource> resources = new ArrayList<>();
-        for (FailedMessage message : messages) {
-            resources.add(new FailedMessageResource(message));
-        }
-
-        return new ResourceCollection<>(resources, messages);
+    public PageList<FailedMessage> getFailedMessageList(Long customerId, Integer page, Integer limit) {
+        PageHelper.startPage(page, limit);
+        return new PageList<>((Page<FailedMessage>) this.failedMessageDao.getList(customerId));
     }
 
     @Transactional

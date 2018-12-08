@@ -1,6 +1,5 @@
 package top.chenxin.mc.dao;
 
-import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Param;
 import top.chenxin.mc.entity.Topic;
 
@@ -16,7 +15,7 @@ public interface TopicDao {
     void delete(Long id);
 
     // 搜索
-    Page<Topic> search(@Param("ids") List<Long> ids, @Param("page") int page, @Param("limit") int limit);
+    List<Topic> getList(@Param("ids") List<Long> ids);
 
     // 按照特定条件查找
     Topic getByName(@Param("name") String name);

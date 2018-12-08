@@ -1,6 +1,5 @@
 package top.chenxin.mc.dao;
 
-import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Param;
 import top.chenxin.mc.entity.Customer;
 
@@ -17,7 +16,7 @@ public interface CustomerDao {
     void delete(Long id);
 
     // 搜索
-    Page<Customer> search(@Param("topicId") Long topicId, @Param("ids") List<Long> ids, @Param("page") int page, @Param("limit") int limit);
+    List<Customer> getList(@Param("topicId") Long topicId, @Param("ids") List<Long> ids);
 
     // 根据指定条件查询
     List<Customer> getByTopicId(@Param("topicId") Long topicId);

@@ -1,4 +1,4 @@
-package top.chenxin.mc.model;
+package top.chenxin.mc.service.model;
 
 import top.chenxin.mc.entity.Customer;
 import top.chenxin.mc.entity.FailedMessage;

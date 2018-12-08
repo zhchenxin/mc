@@ -1,17 +1,18 @@
 package top.chenxin.mc.web.exception;
 
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import top.chenxin.mc.common.constant.ErrorCode;
 import top.chenxin.mc.service.exception.ServiceException;
+import top.chenxin.mc.web.APIResponse;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -21,28 +22,22 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = BindException.class)
     @ResponseBody
-    public Map validationHandle(HttpServletRequest req, BindException e) {
-        return error(ErrorCode.VALIDAT_ERROR, e.getAllErrors().get(0).getDefaultMessage());
+    public ResponseEntity<JSONObject> validationHandle(HttpServletRequest req, BindException e) {
+        return APIResponse.error(ErrorCode.VALIDAT_ERROR, e.getAllErrors().get(0).getDefaultMessage());
     }
 
     @ExceptionHandler(value = ServiceException.class)
     @ResponseBody
-    public Map ServiceExceptionHandler(HttpServletRequest req, ServiceException e) {
+    public ResponseEntity<JSONObject> ServiceExceptionHandler(HttpServletRequest req, ServiceException e) {
         logger.error("服务异常: 原因", e);
-        return error(e.getCode(), e.getMessage());
+        return APIResponse.error(e.getCode(), e.getMessage());
     }
 
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public Map exceptionHandler(HttpServletRequest req, Exception e) {
+    public ResponseEntity<JSONObject> exceptionHandler(HttpServletRequest req, Exception e) {
         logger.error("未知异常: 原因", e);
-        return error(1, e.getMessage());
+        return APIResponse.error(1, e.getMessage());
     }
 
-    private Map error(int code, String msg) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("code", code);
-        map.put("msg", msg);
-        return map;
-    }
 }

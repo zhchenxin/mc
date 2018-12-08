@@ -1,6 +1,6 @@
 package top.chenxin.mc.web.request;
 
-public class BaseListForm {
+public abstract class BaseListForm {
 
     private Integer page = 1;
     private Integer limit = 10;

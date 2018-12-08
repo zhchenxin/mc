@@ -1,6 +1,5 @@
 package top.chenxin.mc.dao;
 
-import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Param;
 import top.chenxin.mc.entity.Cron;
 
@@ -16,7 +15,7 @@ public interface CronDao {
     void delete(Long id);
 
     // 搜索
-    Page<Cron> search(@Param("topicId") Long topicId, @Param("page") int page, @Param("limit") int limit);
+    List<Cron> getList(@Param("topicId") Long topicId);
 
     Cron getById(Long id);
 
