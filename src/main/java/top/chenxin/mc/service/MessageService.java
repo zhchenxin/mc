@@ -1,7 +1,6 @@
 package top.chenxin.mc.service;
 
 import top.chenxin.mc.core.ResourceCollection;
-import top.chenxin.mc.entity.Message;
 import top.chenxin.mc.model.MessageModel;
 import top.chenxin.mc.resource.FailedMessageResource;
 import top.chenxin.mc.resource.MessageLogResource;

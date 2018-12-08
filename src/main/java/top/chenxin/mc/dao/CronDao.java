@@ -3,7 +3,6 @@ package top.chenxin.mc.dao;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Param;
 import top.chenxin.mc.entity.Cron;
-import top.chenxin.mc.entity.Topic;
 
 import java.util.List;
 

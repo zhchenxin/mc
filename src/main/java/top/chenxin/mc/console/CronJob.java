@@ -34,6 +34,9 @@ public class CronJob {
     @Autowired
     private MessageService messageService;
 
+    /**
+     * 每分钟跑一次，检查数据库中定时任务是否需要执行
+     */
     @Scheduled(cron = "0 * * * * *")
     protected void cron() {
         String lockKey = "cron";
@@ -57,6 +60,9 @@ public class CronJob {
         redisLock.unLock(lockKey, requestId);
     }
 
+    /**
+     * 每秒跑一次，将数据库中延迟执行的消息推送到队列中
+     */
     @Scheduled(cron = "* * * * * *")
     protected void migrate() {
         String lockKey = "migrate";
