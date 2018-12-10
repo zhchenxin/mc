@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import top.chenxin.mc.common.utils.RedisLock;
 import top.chenxin.mc.common.utils.Utils;
 import top.chenxin.mc.entity.Cron;
+import top.chenxin.mc.service.CountService;
 import top.chenxin.mc.service.CronService;
 import top.chenxin.mc.service.MessageService;
 import top.chenxin.mc.service.TopicService;
@@ -34,6 +35,9 @@ public class CronJob {
     @Autowired
     private MessageService messageService;
 
+    @Autowired
+    private CountService countService;
+
     /**
      * 每分钟跑一次，检查数据库中定时任务是否需要执行
      */
@@ -48,7 +52,7 @@ public class CronJob {
         for (Cron cron : cronList) {
             if (specRun(cron.getSpec())) {
                 try {
-                    topicService.push(cron.getTopicId(), "", 0);
+                    messageService.push(cron.getTopicId(), "", 0);
                 } catch (Exception e) {
                     logger.error("定时任务失败,原因:" + e.getMessage(), e);
                 }
@@ -56,6 +60,22 @@ public class CronJob {
         }
 
         logger.info("定时任务执行完成");
+
+        redisLock.unLock(lockKey, requestId);
+    }
+
+    /**
+     * 每分钟跑一次，插入统计数据
+     */
+    @Scheduled(cron = "0 * * * * *")
+    protected void minCount() {
+        String lockKey = "min_count";
+        String requestId = Utils.getRandomString(32);
+        if (redisLock.lock(lockKey, requestId, 30)) {
+            return;
+        }
+
+        countService.gather(Utils.getCurrentTimestamp() - 30);
 
         redisLock.unLock(lockKey, requestId);
     }

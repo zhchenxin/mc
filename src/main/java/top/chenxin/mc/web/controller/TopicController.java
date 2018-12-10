@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import top.chenxin.mc.common.utils.Utils;
+import top.chenxin.mc.service.MessageService;
 import top.chenxin.mc.web.APIResponse;
 import top.chenxin.mc.web.request.topic.CreateForm;
 import top.chenxin.mc.web.request.topic.ListForm;
@@ -21,6 +22,9 @@ public class TopicController extends BaseController {
 
     @Autowired
     private TopicService topicService;
+
+    @Autowired
+    private MessageService messageService;
 
     @RequestMapping(value = "topic", method = RequestMethod.GET)
     private ResponseEntity<JSONObject> index(@Validated ListForm form) {
@@ -48,7 +52,7 @@ public class TopicController extends BaseController {
 
     @RequestMapping(value = "topic/{name}/push", method = RequestMethod.POST)
     private ResponseEntity<JSONObject> push(@PathVariable("name") String name, @Validated PushForm form) {
-        topicService.push(name, form.getMessage(), form.getDelay());
+        messageService.push(name, form.getMessage(), form.getDelay());
         return APIResponse.success();
     }
 }

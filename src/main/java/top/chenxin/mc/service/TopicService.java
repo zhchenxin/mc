@@ -20,13 +20,5 @@ public interface TopicService {
      */
     PageList<Topic> getPage(List<Long> ids, Integer page, Integer limit);
 
-    /**
-     * 向指定的 topic 中发送消息
-     * @param topicName topic 名称
-     * @param message 消息内容
-     * @param delay 消息延迟时间, 单位秒
-     */
-    void push(String topicName, String message, Integer delay);
 
-    void push(Long topicId, String message, Integer delay);
 }

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import top.chenxin.mc.common.constant.ErrorCode;
+import top.chenxin.mc.common.utils.IdBuilder;
+import top.chenxin.mc.common.utils.RedisCount;
 import top.chenxin.mc.common.utils.Utils;
 import top.chenxin.mc.dao.*;
 import top.chenxin.mc.entity.*;
@@ -15,6 +17,8 @@ import top.chenxin.mc.service.MessageService;
 import top.chenxin.mc.service.exception.ServiceException;
 import top.chenxin.mc.service.model.PageList;
 import top.chenxin.mc.service.queue.Queue;
+
+import java.util.List;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -36,6 +40,12 @@ public class MessageServiceImpl implements MessageService {
 
     @Autowired
     private Queue queue;
+
+    @Autowired
+    private IdBuilder idBuilder;
+
+    @Autowired
+    private RedisCount redisCount;
 
     @Override
     public PageList<MessageLog> getMessageLogPage(Long customerId, Long messageId, Integer page, Integer limit) {
@@ -63,6 +73,8 @@ public class MessageServiceImpl implements MessageService {
 
         // 添加消息到 message 表中
         queue.push(new MessageModel(message, customer, 0));
+
+        redisCount.incrPushNum();
     }
 
     @Override
@@ -77,6 +89,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageModel pop() {
+        redisCount.incrPopNum();
         return queue.pop();
     }
 
@@ -126,5 +139,41 @@ public class MessageServiceImpl implements MessageService {
         log.setResponse(response);
         log.setCreateDate(Utils.getCurrentTimestamp());
         messageLogDao.insert(log);
+    }
+
+    @Transactional
+    @Override
+    public void push(String topicName, String message, Integer delay) {
+        Topic topic = topicDao.getByName(topicName);
+        if (topic == null) {
+            throw new ServiceException("topic 不存在", ErrorCode.OBJECT_NOT_DOUND);
+        }
+        this.push(topic, message, delay);
+    }
+
+    @Transactional
+    @Override
+    public void push(Long topicId, String message, Integer delay) {
+        Topic topic = topicDao.getById(topicId);
+        if (topic == null) {
+            throw new ServiceException("topic 不存在", ErrorCode.OBJECT_NOT_DOUND);
+        }
+
+        this.push(topic, message, delay);
+    }
+
+    private void push(Topic topic, String message, Integer delay) {
+        List<Customer> customers = customerDao.getByTopicId(topic.getId());
+
+        for (Customer item : customers) {
+            MessageModel msg = new MessageModel(item);
+            msg.setId(idBuilder.createMessageId());
+            msg.setMessage(message);
+            msg.setAttempts(0);
+            msg.setDelay(delay);
+            queue.push(msg);
+
+            redisCount.incrPushNum();
+        }
     }
 }
