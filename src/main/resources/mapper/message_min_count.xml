@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.chenxin.mc.dao.MessageMinCountDao">
+    <cache/>
+
+    <insert id="insert">
+        <selectKey order="AFTER" resultType="java.lang.Long">
+            select LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO message_min_count SET type=#{type},num=#{num},create_date=unix_timestamp(now())
+    </insert>
+
+    <select id="getList" resultType="top.chenxin.mc.entity.MessageMinCount">
+        SELECT * FROM message_min_count WHERE 1=1 AND
+        <if test="start != null and start != 0">AND create_date &gt;= #{start}</if>
+        <if test="end != null and end != 0">AND create_date &lt;= #{end}</if>
+        order by id desc
+    </select>
+
+</mapper>
