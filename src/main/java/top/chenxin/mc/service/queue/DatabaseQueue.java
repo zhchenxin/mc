@@ -42,6 +42,7 @@ public class DatabaseQueue implements Queue {
         update.setId(message.getId());
         update.setTimeoutDate(Utils.getCurrentTimestamp() + customer.getTimeout());
         update.setStatus(Message.StatusRunning);
+        update.setAttempts(message.getAttempts() + 1);
         messageDao.update(update);
 
         // 将 message 包装成 model
@@ -58,6 +59,7 @@ public class DatabaseQueue implements Queue {
         msg.setAvailableDate(Utils.getCurrentTimestamp() + message.getDelay());
         msg.setStatus(Message.StatusWatting);
         msg.setAttempts(message.getAttempts());
+        msg.setPriority(message.getPriority());
         messageDao.insert(msg);
     }
 
@@ -79,7 +81,6 @@ public class DatabaseQueue implements Queue {
             Message update = new Message();
             update.setId(message.getId());
             update.setStatus(Message.StatusWatting);
-            update.setAttempts(message.getAttempts() + 1);
             messageDao.update(update);
         } else {
             // 删除消息

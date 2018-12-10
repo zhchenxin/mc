@@ -7,7 +7,11 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
 import top.chenxin.mc.common.utils.RedisPool;
 import top.chenxin.mc.common.utils.Utils;
+import top.chenxin.mc.service.exception.ServiceException;
 import top.chenxin.mc.service.model.MessageModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -19,18 +23,22 @@ public class RedisQueue implements Queue {
     @Autowired
     RedisPool redisPool;
 
-    // 默认队列名称
-    private static final String DefaultQueue = "queue:default";
-
     // 最大超时时间
     private static final int MaxTimeout = 600;
 
     @Override
     public MessageModel pop() {
-        String str = _pop(DefaultQueue, MaxTimeout);
+        String str = null;
+        for (String name: Priority.getAllNames()) {
+            str = _pop(name, MaxTimeout);
+            if (str != null) {
+                break;
+            }
+        }
         if (str == null) {
             return null;
         }
+
         MessageModel model = str2Model(str);
         model.setReserved(str);
         return model;
@@ -38,27 +46,32 @@ public class RedisQueue implements Queue {
 
     @Override
     public void push(MessageModel message) {
-        _push(DefaultQueue, model2Str(message), message.getDelay());
+        _push(Priority.getInstance(message.getPriority()).name, model2Str(message), message.getDelay());
     }
 
     @Override
     public void migrate() {
-        _migrateExpiredJobs(DefaultQueue);
+        for (String name: Priority.getAllNames()) {
+            _migrateExpiredJobs(name);
+        }
     }
 
     @Override
     public void success(MessageModel message) {
-        _delete(DefaultQueue, message.getReserved());
+        _delete(Priority.getInstance(message.getPriority()).name, message.getReserved());
     }
 
     @Override
     public void failed(MessageModel message) {
+
+        String queueName = Priority.getInstance(message.getPriority()).name;
+
         if (needRetry(message)) {
             // 重新放入数据库中
-            _release(DefaultQueue, message.getReserved());
+            _release(queueName, message.getReserved());
         } else {
             // 删除消息
-            _delete(DefaultQueue, message.getReserved());
+            _delete(queueName, message.getReserved());
         }
     }
 
@@ -158,6 +171,38 @@ public class RedisQueue implements Queue {
             multi.zrem(queue + ":reserved", message);
             multi.rpush(queue, message);
             multi.exec();
+        }
+    }
+
+    // 优先级
+    enum Priority {
+
+        Default("queue:default", 50), High("queue:high", 100), Low("queue:low", 0);
+
+        private String name;
+        private int priority;
+
+        Priority(String name, int priority) {
+            this.name = name;
+            this.priority = priority;
+        }
+
+        public static Priority getInstance(int priority) {
+            for (Priority c : Priority.values()) {
+                if (c.priority == priority) {
+                    return c;
+                }
+            }
+            throw new ServiceException("队列优先级获取异常");
+        }
+
+        // 获取所有的队列名
+        public static List<String> getAllNames() {
+            List<String> names = new ArrayList<>();
+            for (Priority c : Priority.values()) {
+                names.add(c.name);
+            }
+            return names;
         }
     }
 }

@@ -105,15 +105,11 @@ public class TopicServiceImpl implements TopicService {
         List<Customer> customers = customerDao.getByTopicId(topic.getId());
 
         for (Customer item : customers) {
-            MessageModel msg = new MessageModel();
+            MessageModel msg = new MessageModel(item);
             msg.setId(idBuilder.createMessageId());
-            msg.setTopicId(topic.getId());
-            msg.setCustomerId(item.getId());
             msg.setMessage(message);
             msg.setAttempts(0);
-            msg.setMaxAttempts(item.getAttempts());
             msg.setDelay(delay);
-            msg.setTimeout(item.getTimeout());
             queue.push(msg);
         }
     }

@@ -22,24 +22,28 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerDao customerDao;
 
     @Override
-    public void insert(Long topicId, String name, String api, Integer timeout, Integer attempts) {
+    public void insert(Long topicId, String name, String api, Integer timeout, Integer attempts, boolean isLog, Integer priority) {
         Customer item = new Customer();
         item.setTopicId(topicId);
         item.setName(name);
         item.setApi(api);
         item.setAttempts(attempts);
         item.setTimeout(timeout);
+        item.setIsLog(isLog);
+        item.setPriority(priority);
         customerDao.insert(item);
     }
 
     @Override
-    public void update(Long id, String name, String api, Integer timeout, Integer attempts) {
+    public void update(Long id, String name, String api, Integer timeout, Integer attempts, boolean isLog, Integer priority) {
         Customer item = new Customer();
         item.setId(id);
         item.setName(name);
         item.setApi(api);
         item.setAttempts(attempts);
         item.setTimeout(timeout);
+        item.setIsLog(isLog);
+        item.setPriority(priority);
         customerDao.update(item);
     }
 

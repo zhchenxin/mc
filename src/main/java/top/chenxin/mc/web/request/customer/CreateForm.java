@@ -13,6 +13,9 @@ public class CreateForm {
     private Integer timeout = 60;
     private Integer attempts = 3;
 
+    private boolean isLog = true;
+    private Integer priority = 50;
+
     public Long getTopicId() {
         return topicId;
     }
@@ -51,5 +54,21 @@ public class CreateForm {
 
     public void setAttempts(Integer attempts) {
         this.attempts = attempts;
+    }
+
+    public boolean isLog() {
+        return isLog;
+    }
+
+    public void setIsLog(boolean log) {
+        isLog = log;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 }

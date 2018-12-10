@@ -113,6 +113,9 @@ public class MessageServiceImpl implements MessageService {
     }
 
     private void insertMessageLog(MessageModel message, String error, String response, Integer time){
+        if (!message.getIsLog()) {
+            return;
+        }
         MessageLog log = new MessageLog();
         log.setMessageId(message.getId());
         log.setError(error);

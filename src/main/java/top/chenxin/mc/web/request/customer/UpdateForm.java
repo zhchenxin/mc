@@ -6,6 +6,8 @@ public class UpdateForm {
     private String api;
     private Integer timeout;
     private Integer attempts;
+    private boolean isLog;
+    private Integer priority;
 
     public String getName() {
         return name;
@@ -37,5 +39,21 @@ public class UpdateForm {
 
     public void setAttempts(Integer attempts) {
         this.attempts = attempts;
+    }
+
+    public boolean isLog() {
+        return isLog;
+    }
+
+    public void setIsLog(boolean log) {
+        isLog = log;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 }

@@ -29,13 +29,13 @@ public class CustomerController extends BaseController {
 
     @RequestMapping(value = "customer", method = RequestMethod.POST)
     private ResponseEntity<JSONObject> create(@Validated CreateForm form) {
-        customerService.insert(form.getTopicId(), form.getName(), form.getApi(), form.getTimeout(), form.getAttempts());
+        customerService.insert(form.getTopicId(), form.getName(), form.getApi(), form.getTimeout(), form.getAttempts(), form.isLog(), form.getPriority());
         return APIResponse.success();
     }
 
     @RequestMapping(value = "customer/{id}", method = RequestMethod.PUT)
     private ResponseEntity<JSONObject> update(@PathVariable("id") Long id, @Validated UpdateForm form) {
-        customerService.update(id, form.getName(), form.getApi(), form.getTimeout(), form.getAttempts());
+        customerService.update(id, form.getName(), form.getApi(), form.getTimeout(), form.getAttempts(), form.isLog(), form.getPriority());
         return APIResponse.success();
     }
 

@@ -7,12 +7,12 @@ import java.util.List;
 
 public interface CustomerService {
 
-    void insert(Long topicId, String name, String api, Integer timeout, Integer attempts);
+    void insert(Long topicId, String name, String api, Integer timeout, Integer attempts, boolean isLog, Integer priority);
 
     /**
      * 更新数据, 如果参数为空, 表示此字段不更新
      */
-    void update(Long id, String name, String api, Integer timeout, Integer attempts);
+    void update(Long id, String name, String api, Integer timeout, Integer attempts, boolean isLog, Integer priority);
 
     void delete(Long id);
 

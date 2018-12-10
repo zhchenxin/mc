@@ -15,7 +15,9 @@
             name=#{name},
             api=#{api},
             timeout=#{timeout},
-            attempts=#{attempts}
+            attempts=#{attempts},
+            priority=#{priority},
+            is_log=#{isLog}
     </insert>
 
     <update id="update">
@@ -24,6 +26,8 @@
         <if test="api != null">api = #{api},</if>
         <if test="timeout != null">timeout = #{timeout},</if>
         <if test="attempts != null">attempts = #{attempts},</if>
+        <if test="priority != null">priority = #{priority},</if>
+        <if test="isLog != null">is_log = #{isLog},</if>
         id = #{id},
         update_date=unix_timestamp(now())
         WHERE id=#{id}

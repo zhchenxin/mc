@@ -20,6 +20,9 @@ public class Message extends BaseEntity {
     // 超时时间
     private Integer timeoutDate;
 
+    // 优先级:0=低,50=正常,100=高
+    private Integer priority;
+
     public Long getTopicId() {
         return topicId;
     }
@@ -82,5 +85,13 @@ public class Message extends BaseEntity {
 
     public void setTimeoutDate(Integer timeoutDate) {
         this.timeoutDate = timeoutDate;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 }

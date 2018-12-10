@@ -11,6 +11,10 @@ public class Customer extends BaseEntity {
     private Integer timeout;
     // 重试次数
     private Integer attempts;
+    // 是否记录日志
+    private Boolean isLog;
+    // 优先级:0=低,50=正常,100=高
+    private Integer priority;
     // 创建时间
     private Integer createDate;
 
@@ -70,5 +74,21 @@ public class Customer extends BaseEntity {
 
     public void setUpdateDate(Integer updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public Boolean getIsLog() {
+        return isLog;
+    }
+
+    public void setIsLog(Boolean log) {
+        isLog = log;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 }

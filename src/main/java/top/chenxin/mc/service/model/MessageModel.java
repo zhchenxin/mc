@@ -15,46 +15,57 @@ public class MessageModel {
     private String api;
 
     // 最大重试次数
-    private int maxAttempts;
+    private Integer maxAttempts;
 
     // 当前重试次数
-    private int attempts;
+    private Integer attempts;
 
     // 消息内容
     private String message;
 
     // 超时时间
-    private int timeout;
+    private Integer timeout;
 
-    private int delay;
+    private Integer delay;
 
+    // 是否记录日志
+    private Boolean isLog;
+    // 优先级:0=低,50=正常,100=高
+    private Integer priority;
+
+    // redis 中的 reserved 文本
     private String reserved;
 
     public MessageModel() {
 
     }
 
+    public MessageModel(Customer customer) {
+        initWithCustomer(customer);
+    }
+
     public MessageModel(Message message, Customer customer) {
         setId(message.getId());
-        setTopicId(message.getTopicId());
-        setCustomerId(message.getCustomerId());
-        setAttempts(message.getAttempts());
-        setMaxAttempts(customer.getAttempts());
-        setApi(customer.getApi());
         setMessage(message.getMessage());
-        setTimeout(customer.getTimeout());
+        initWithCustomer(customer);
     }
 
     public MessageModel(FailedMessage message, Customer customer, int delay) {
         setId(message.getId());
-        setTopicId(message.getTopicId());
-        setCustomerId(message.getCustomerId());
         setAttempts(message.getAttempts());
+        setMessage(message.getMessage());
+        setDelay(delay);
+        initWithCustomer(customer);
+    }
+
+    private void initWithCustomer(Customer customer) {
+        setTopicId(customer.getTopicId());
+        setCustomerId(customer.getId());
         setMaxAttempts(customer.getAttempts());
         setApi(customer.getApi());
-        setMessage(message.getMessage());
         setTimeout(customer.getTimeout());
-        setDelay(delay);
+        setIsLog(customer.getIsLog());
+        setPriority(customer.getPriority());
     }
 
     public Long getId() {
@@ -135,5 +146,21 @@ public class MessageModel {
 
     public void setReserved(String reserved) {
         this.reserved = reserved;
+    }
+
+    public Boolean getIsLog() {
+        return isLog;
+    }
+
+    public void setIsLog(Boolean log) {
+        isLog = log;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 }

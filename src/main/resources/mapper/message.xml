@@ -17,6 +17,7 @@
         topic_id=#{topicId},
         customer_id=#{customerId},
         message=#{message},
+        priority=#{priority},
         available_date=#{availableDate},
         create_date=unix_timestamp(now())
     </insert>
@@ -39,7 +40,7 @@
     </select>
 
     <select id="popMessage" resultType="top.chenxin.mc.entity.Message">
-        SELECT * FROM message WHERE status = 1 AND available_date 	&lt; unix_timestamp(now()) limit 1 for update;
+        SELECT * FROM message WHERE status = 1 AND available_date 	&lt; unix_timestamp(now()) order by priority desc limit 1 for update;
     </select>
 
     <update id="retryTimeoutMessage">

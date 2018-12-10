@@ -16,6 +16,19 @@ Vue.component('customer', {
 					<el-table-column prop="api" label="api" />
 					<el-table-column prop="timeout" label="超时时间" />
 					<el-table-column prop="attempts" label="重试次数" />
+          <el-table-column prop="isLog" label="日志" >
+            <template slot-scope="scope">
+              <el-button v-if="scope.row.isLog == true" size="mini" type="success" disabled>启用</el-button>
+              <el-button v-if="scope.row.isLog == false" size="mini" type="info" disabled>关闭</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column label="优先级" >
+            <template slot-scope="scope">
+              <span v-if="scope.row.priority == 100">高</span>
+              <span v-if="scope.row.priority == 50">默认</span>
+              <span v-if="scope.row.priority == 0">低</span>
+            </template>
+          </el-table-column>
 			    <el-table-column prop="createDate" label="创建日期" width="160" />
 			    <el-table-column prop="updateDate" label="更新日期" width="160" />
 			    <el-table-column label="操作" width="160">
@@ -38,7 +51,7 @@ Vue.component('customer', {
 
 			<!-- 添加表单 -->
 			<el-dialog title="添加" :visible.sync="addFormVisible">
-			  <el-form :model="addForm" label-width="80px" label-position="right">
+			  <el-form :model="addForm" label-width="120px" label-position="right">
 			  	<el-form-item label="topic">
 				  	<el-select v-model="addForm.topicId" filterable placeholder="请选择">
 					    <el-option v-for="item in addFormTopicList" :key="item.id" :label="item.name" :value="item.id">
@@ -57,6 +70,16 @@ Vue.component('customer', {
 			    <el-form-item label="重试次数">
 			      <el-input v-model="addForm.attempts" autocomplete="off"></el-input>
 			    </el-form-item>
+          <el-form-item label="优先级">
+            <el-radio-group v-model="addForm.priority">
+              <el-radio :label="0">低</el-radio>
+              <el-radio :label="50">默认</el-radio>
+              <el-radio :label="100">高</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="是否启动日志">
+            <el-switch v-model="addForm.isLog" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          </el-form-item>
 			  </el-form>
 			  <div slot="footer" class="dialog-footer">
 			    <el-button @click="addFormVisible = false">取 消</el-button>
@@ -66,7 +89,7 @@ Vue.component('customer', {
 
 			<!-- 修改表单 -->
 			<el-dialog title="编辑" :visible.sync="editFormVisible">
-			  <el-form :model="editForm" label-width="80px" label-position="right">
+			  <el-form :model="editForm" label-width="120px" label-position="right">
 			    <el-form-item label="名称">
 			      <el-input v-model="editForm.name" autocomplete="off"></el-input>
 			    </el-form-item>
@@ -79,6 +102,16 @@ Vue.component('customer', {
 			    <el-form-item label="重试次数">
 			      <el-input v-model="editForm.attempts" autocomplete="off"></el-input>
 			    </el-form-item>
+          <el-form-item label="优先级">
+            <el-radio-group v-model="editForm.priority">
+              <el-radio :label="0">低</el-radio>
+              <el-radio :label="50">默认</el-radio>
+              <el-radio :label="100">高</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="是否启动日志">
+            <el-switch v-model="editForm.isLog" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          </el-form-item>
 			  </el-form>
 			  <div slot="footer" class="dialog-footer">
 			    <el-button @click="editFormVisible = false">取 消</el-button>
@@ -185,7 +218,14 @@ Vue.component('customer', {
     },
     handleEdit: function(index, row) {
     	this.editIndex = index
-    	this.editForm = {name: row.name, api: row.api, timeout: row.timeout, attempts: row.attempts}
+    	this.editForm = {
+        name: row.name, 
+        api: row.api, 
+        timeout: row.timeout, 
+        attempts: row.attempts, 
+        priority: row.priority, 
+        isLog: row.isLog
+      }
     	this.editFormVisible = true
     },
     handleDelete: function(index, row) {
