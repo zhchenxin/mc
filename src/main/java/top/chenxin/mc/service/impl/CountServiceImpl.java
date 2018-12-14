@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.chenxin.mc.common.utils.RedisCount;
+import top.chenxin.mc.common.utils.Utils;
 import top.chenxin.mc.dao.MessageMinCountDao;
 import top.chenxin.mc.entity.MessageMinCount;
 import top.chenxin.mc.service.CountService;
@@ -26,11 +27,13 @@ public class CountServiceImpl implements CountService {
         MessageMinCount count = new MessageMinCount();
         count.setType(MessageMinCount.TypePush);
         count.setNum(pushNum);
+        count.setCreateDate(Utils.getCurrentTimestamp());
         messageMinCountDao.insert(count);
 
         count = new MessageMinCount();
         count.setType(MessageMinCount.TypePop);
         count.setNum(popNum);
+        count.setCreateDate(Utils.getCurrentTimestamp());
         messageMinCountDao.insert(count);
 
     }

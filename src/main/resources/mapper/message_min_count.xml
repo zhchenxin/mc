@@ -9,7 +9,7 @@
         <selectKey order="AFTER" resultType="java.lang.Long">
             select LAST_INSERT_ID()
         </selectKey>
-        INSERT INTO message_min_count SET type=#{type},num=#{num},create_date=unix_timestamp(now())
+        INSERT INTO message_min_count SET type=#{type},num=#{num},create_date=#{createDate}
     </insert>
 
     <select id="getList" resultType="top.chenxin.mc.entity.MessageMinCount">
