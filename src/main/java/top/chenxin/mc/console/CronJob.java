@@ -55,14 +55,11 @@ public class CronJob {
             if (specRun(cron.getSpec())) {
                 try {
                     messageService.push(cron.getTopicId(), "", 0);
-                    logger.info("insert into a message");
                 } catch (Exception e) {
                     logger.error("定时任务失败,原因:" + e.getMessage(), e);
                 }
             }
         }
-
-        logger.info("定时任务执行完成");
 
         redisLock.unLock(lockKey, requestId);
     }
