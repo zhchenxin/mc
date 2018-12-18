@@ -15,6 +15,8 @@ import top.chenxin.mc.service.CronService;
 import top.chenxin.mc.service.MessageService;
 import top.chenxin.mc.service.TopicService;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -53,6 +55,7 @@ public class CronJob {
             if (specRun(cron.getSpec())) {
                 try {
                     messageService.push(cron.getTopicId(), "", 0);
+                    logger.info("insert into a message");
                 } catch (Exception e) {
                     logger.error("定时任务失败,原因:" + e.getMessage(), e);
                 }
@@ -108,9 +111,11 @@ public class CronJob {
 
         CronTrigger trigger = new CronTrigger("0 " + spec);
         SimpleTriggerContext context = new SimpleTriggerContext();
-        context.update(null, null, new Date(((long)currentTimestamp - 1)*1000));
+        context.update(null, null, new Date(((long)currentTimestamp - 60)*1000));
         Date date = trigger.nextExecutionTime(context);
         assert date != null;
-        return (int)(date.getTime() / 1000) == currentTimestamp;
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmm");
+        return dateFormat.format(date).equalsIgnoreCase(dateFormat.format(new Date(currentTimestamp * 1000L)));
     }
 }
