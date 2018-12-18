@@ -1,3 +1,6 @@
+import axios from 'axios'
+
+
 var client = axios.create({
   baseURL: 'http://localhost:8080',
   timeout: 15000,
@@ -23,7 +26,4 @@ client.interceptors.response.use(function (response) {
   return Promise.reject(error.message)
 });
 
-// 数组去重方法
-function unique(array) {
-   return Array.from(new Set(array));
-}
+export default client
